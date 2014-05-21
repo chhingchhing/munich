@@ -239,4 +239,8 @@ iframe {
 	padding: 8px 124px 18px 0px;
 }
 
-
+/* Customize FE*/
+.clear_both {
+	clear: both; 
+	height: 10px;
+}

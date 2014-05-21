@@ -4,6 +4,7 @@ class Site extends MU_Controller {
 
 	public function __construct() {
         parent::__construct();
+        $this->load->library('general_lib');
 
         $this->load->model(array('mod_index','mod_booking','mod_profilefe','mod_fepackage','mod_fecustomize'));
     }
@@ -221,11 +222,17 @@ class Site extends MU_Controller {
 		$this->load->view('index', $fe_data);
 	}
 
-	/*
-	* public function customize
-	* @param $display_page default (false)
-	* load template customizes and include customize
-	*/
+	/**
+     * @insert a new array member at a given index
+     * @param array $array
+     * @param mixed $new_element
+     * @param int $index
+     * @return array
+     */
+     function insertArrayIndex($array, $new_element, $index) {
+        $array[$index] = $new_element;
+        return $array;
+     }
         
         /*
 	* public function customize
@@ -239,18 +246,19 @@ class Site extends MU_Controller {
 		}
 		if ($display_page == "activities") {
 			if($this->input->post('btnActivity')){
-				$mainactivitiesID = $this->input->post('checkbox_activity');
-				$subactivitiesId = $this->input->post('checkbox_subactivity');
-				$extrasActivityID = $this->input->post('checkbox_extra');
-				$actDate = $this->input->post('actTxtDate');
-				$peopleAmount = $this->input->post('actPeople');
-				$amountextras = $this->input->post('amountextras');
-				$this->session->set_userdata('mainactivity', $mainactivitiesID);
-				$this->session->set_userdata('subactivity', $subactivitiesId);
-				$this->session->set_userdata('extraactivity',$extrasActivityID);
-				$this->session->set_userdata('actDate', $actDate);
-				$this->session->set_userdata('peopleAmount', $peopleAmount);
-				$this->session->set_userdata('amountextras', $amountextras);
+
+				foreach ($this->input->post('checkbox_activity') as $element) {
+					$arr_mainactivity = $this->general_lib->get_main_activities();
+			        $new_arr_mainactivity = $this->insertArrayIndex($arr_mainactivity, $element, $element);
+			        $this->general_lib->set_main_activities($new_arr_mainactivity);
+				}
+
+				$this->session->set_userdata('mainactivity', $this->input->post('checkbox_activity'));
+				$this->session->set_userdata('subactivity', $this->input->post('checkbox_subactivity'));
+				$this->session->set_userdata('extraactivity', $this->input->post('checkbox_extra'));
+				$this->session->set_userdata('actDate', $this->input->post('actTxtDate'));
+				$this->session->set_userdata('peopleAmount', $this->input->post('actPeople'));
+				$this->session->set_userdata('amountextras', $this->input->post('amountextras'));
 				redirect('site/customizes/accommodation');
 			}else{
 				$fe_data['recordActivities'] = $this->customizeActivity();
@@ -416,6 +424,7 @@ class Site extends MU_Controller {
 		$activites = $this->mod_fecustomize->trip_information($this->session->userdata('ftvID'), $this->session->userdata('lcID'));
 		$records = array();
 		if($activites->num_rows() > 0){
+			// var_dump($activites->result()); die();
 			foreach($activites->result() as $act){
 				$recodeavaliable = $this->convertDateToRange($findate, $act->start_date, $act->end_date);				
 				if($recodeavaliable){

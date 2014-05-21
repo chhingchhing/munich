@@ -6,21 +6,24 @@
 		   		<div class="form-group">
 			        <label class="col-sm-3 control-label">From :</label>
 		                <?php
-		                    $txtFrom = array('id'=>'d1' ,'name' => 'txtFrom', 'class' => 'form-control','data-date-format'=>'yyyy-mm-dd','style'=>'width:210px;', 'value' => set_value('from'));
+		                    $txtFrom = array('id'=>'d1' ,'name' => 'txtFrom', 'class' => 'form-control','data-date-format'=>'yyyy-mm-dd','style'=>'width:210px;', 'value' => $this->session->userdata('txtFrom') ? $this->session->userdata('txtFrom') : "");
 		                    echo form_input($txtFrom);
 		                ?>
 			    </div>
 			    <div class="form-group">
 			        <label class="col-sm-3 control-label">To :</label>
 		                <?php
-		                    $txtTo = array('id'=>'d2' ,'name' => 'txtTo', 'class' => 'form-control','data-date-format'=>'yyyy-mm-dd','style'=>'width:210px;', 'value' => set_value('to'));
+		                    $txtTo = array('id'=>'d2' ,'name' => 'txtTo', 'class' => 'form-control','data-date-format'=>'yyyy-mm-dd','style'=>'width:210px;', 'value' => $this->session->userdata('txtTo') ? $this->session->userdata('txtTo') : "");
 		                    echo form_input($txtTo);
 		                ?>
 			    </div>
 			    <div class="form-group">
 			        <label class="col-sm-3 control-label">Amount of People :</label>
 			        <div class="col-sm-2">
-			            <?php $people = array('name' => 'people', 'class' => 'form-control'); echo form_input($people);?>
+			            <?php 
+			            $people = array('name' => 'people', 'class' => 'form-control', 'value' => $this->session->userdata("people") ? $this->session->userdata("people") : 0); 
+			            echo form_input($people);
+			            ?>
 			        </div>
 			    </div>
 			</div>

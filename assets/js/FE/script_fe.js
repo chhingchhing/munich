@@ -187,3 +187,21 @@ jQuery(document).ready(function(){
 		return false;
         });
 });
+
+// Checked box for Customize FE
+// $('input.check_sub_element, input.people_sub_activity, input.amount_extras').prop('disabled', true);
+
+if ( $('input.check_main_element').is(':checked') )
+    $('input.check_sub_element, input.people_sub_activity,input.amount_extras').prop('disabled', false);
+else
+    $('input.check_sub_element, input.people_sub_activity, input.amount_extras').prop('disabled', true);
+
+$(function () {
+    $('input.check_main_element').click(function(){
+        if ( $(this).is(':checked') )
+            // $('input.check_sub_element').prop('checked', true);
+            $('input.check_sub_element, input.people_sub_activity,input.amount_extras').prop('disabled', false);
+        else
+            $('input.check_sub_element, input.people_sub_activity, input.amount_extras').prop('disabled', true);
+    })
+});

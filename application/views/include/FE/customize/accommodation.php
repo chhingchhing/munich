@@ -13,24 +13,23 @@
 			        <?php echo anchor('accommodation/list_record',img($accomodation_img)).br(1);?>
 	   			</div>
 	   			<div class="col-sm-9">
+	   				<?php echo form_checkbox(array('name' => 'checkbox_accommodation[]', 'id' => 'checkbox_accommodation', 'class' => 'check_main_element'), $acc['acc_id']);?>   
 	   				<label><?php echo $acc['acc_name'];?></label>
 	   				<p><?php echo $acc['acc_bookingtext'];?></p>
 	   				<div class="form-group">
 				        <label class="col-sm-2 control-label">Check In :</label>
 				        <div class="col-sm-4">
-				            <select class="form-control">
-								<option> Monday to Friday </option>
-								<option> Tuesday to Sunday </option>
-								<option> Sunday to Wednesday </option>
-							</select>
+				            <?php 
+				            	$checkIn = array('id'=>'dp4' ,'name' => 'checkIn', 'class' => 'form-control','data-date-format'=>'yyyy-mm-dd','style'=>'', 'value' => $this->session->userdata('txtFrom') ? $this->session->userdata('txtFrom') : "");
+			                    echo form_input($checkIn);
+				            ?>
 						</div>
 						<label class="col-sm-2 control-label">Check Out :</label>
 						<div class="col-sm-4">
-							<select class="form-control">
-								<option> Monday to Friday </option>
-								<option> Tuesday to Sunday </option>
-								<option> Sunday to Wednesday </option>
-							</select>
+							<?php 
+								$checkOut = array('id'=>'dp5' ,'name' => 'checkOut', 'class' => 'form-control','data-date-format'=>'yyyy-mm-dd','style'=>'', 'value' => $this->session->userdata('txtTo') ? $this->session->userdata('txtTo') : "");
+			                    echo form_input($checkOut);
+							?>
 				        </div>
 			    	</div>
 			    	<div class="form-group">
@@ -66,19 +65,19 @@
 					   			</div>
 					   			<div class="col-sm-9">
 					   				<label>
-					   					<?php echo form_checkbox($checkbox_accommodation = array('name' => 'checkbox_accommodation[]', 'id' => 'checkbox_accommodation'), $sub_accommodation['acc_id']);?>   
+					   					<?php echo form_checkbox(array('name' => 'checkbox_sub_accommodation[]', 'id' => 'checkbox_sub_accommodation', 'class' => 'check_sub_element'), $sub_accommodation['acc_id']);?>   
 					   					<?php echo $sub_accommodation['acc_name'];?>
 					   				</label>
 					   				<p><?php echo $sub_accommodation['acc_bookingtext']; ?></p>
 					   			</div>
+					   			<div class="clear_both"></div>
 					    	</div>
 				    	<?php }?>
 				    	
 	   			</div>
 	   			<?php }?>	
 	   		</div> 			
-	   		<!--<button type="button" class="btn btn-primary btn-sm"> Back </button>-->
-	   		<button type="button" class="btn btn-primary btn-sm"><?php echo anchor("site/customizes/activities","Previous"); ?></button>
+	   		<?php echo anchor("site/customizes/activities","Previous", array('role'=>'button', 'class'=>'btn btn-info btn-sm')); ?>
 			<?php $input = array('name' => 'btnAccommodation', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
 			<p></p>
 	   </div>
