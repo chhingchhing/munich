@@ -3,14 +3,15 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Extra_products extends MU_Controller {
+class Extra_products extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array('mod_extra_products'));
     }
+
+
     public function list_record() {
-    if ($this->check_user_session()) {
         $data['title'] = "Extra Products";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
@@ -35,7 +36,7 @@ class Extra_products extends MU_Controller {
         }
         $config['total_rows'] = MU_Model::count_all_data('extraproduct', array('ep_deleted' => 0));
         $config['per_page'] = 10;
-            $config['next_tag_open'] = '<li>';
+	    	$config['next_tag_open'] = '<li>';
         $choice = $config["total_rows"] / $config["per_page"];
         $config["num_links"] = round($choice);
         $config['next_tag_close'] = '</li>';
@@ -53,19 +54,18 @@ class Extra_products extends MU_Controller {
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
     }
-  }  
+	
     public function search_extra_products() {
-    if ($this->check_user_session()) {
             $data['title'] = "Search Extra Products";
             $data['dashboard'] = "management";
             $controller = $this->uri->segment(1);
             $function = 'search_extra_products';
-            
-            if($this->input->post('search_extra_products_name')){
-            $this->session->set_userdata("extra_products_name", $this->input->post('search_extra_products_name'));
-            }else{
-                $this->session->set_userdata("extra_products_name", "");    
-            }
+			
+			if($this->input->post('search_extra_products_name')){
+			$this->session->set_userdata("extra_products_name", $this->input->post('search_extra_products_name'));
+			}else{
+				$this->session->set_userdata("extra_products_name", "");	
+			}
             if ($this->uri->segment(3) != "" AND !is_numeric($this->uri->segment(3))) {
                 $uri3 = $this->uri->segment(3);
                 $uri4 = $this->uri->segment(4);
@@ -85,46 +85,43 @@ class Extra_products extends MU_Controller {
             }
             $config['total_rows'] = MU_Model::count_all_data('extraproduct', array('ep_deleted' => 0));
             $config['per_page'] = 10;
-            $config['next_tag_open'] = '<li>';
-            $choice = $config["total_rows"] / $config["per_page"];
-            $config["num_links"] = round($choice);
-            $config['next_tag_close'] = '</li>';
-            $config['num_tag_open'] = '<li>';
-            $config['num_tag_close'] = '</li>';
-            $config['cur_tag_open'] = '<li class="active"><a>';
-            $config['cur_tag_close'] = '</a></li>';
-            $config['prev_tag_open'] = '<li>';
-            $config['prev_tag_close'] = '</li>';
-            $config['next_link'] = '&gt;&gt;';
-            $config['prev_link'] = '&lt;&lt;';
-            $this->pagination->initialize($config); //function to show all pages
-            $page = ($this->uri->segment($config['uri_segment']) && $this->uri->segment($config['uri_segment']) > 0) ? $this->uri->segment($config['uri_segment']) : 0;
-            $data['search_extra_products'] = $this->mod_extra_products->getSearchExtraproducts($config['per_page'], $page, $sortby, $data['sort'], $this->input->post('search_extra_products_name'));
-            $data['pagination'] = $this->pagination->create_links();
-            $this->load->view('munich_admin', $data);
-                // end of if condition
+			$config['next_tag_open'] = '<li>';
+			$choice = $config["total_rows"] / $config["per_page"];
+			$config["num_links"] = round($choice);
+			$config['next_tag_close'] = '</li>';
+			$config['num_tag_open'] = '<li>';
+			$config['num_tag_close'] = '</li>';
+			$config['cur_tag_open'] = '<li class="active"><a>';
+			$config['cur_tag_close'] = '</a></li>';
+			$config['prev_tag_open'] = '<li>';
+			$config['prev_tag_close'] = '</li>';
+			$config['next_link'] = '&gt;&gt;';
+			$config['prev_link'] = '&lt;&lt;';
+			$this->pagination->initialize($config); //function to show all pages
+			$page = ($this->uri->segment($config['uri_segment']) && $this->uri->segment($config['uri_segment']) > 0) ? $this->uri->segment($config['uri_segment']) : 0;
+			$data['search_extra_products'] = $this->mod_extra_products->getSearchExtraproducts($config['per_page'], $page, $sortby, $data['sort'], $this->input->post('search_extra_products_name'));
+			$data['pagination'] = $this->pagination->create_links();
+			$this->load->view('munich_admin', $data);
+				// end of if condition
         //}
     }
-  }  
+    
     public function view_extra_products() {
-    if ($this->check_user_session()) {
         $data['title'] = "View Extra Products";
         $data['dashboard'] = "management";
-            $data['txtPerperson'] = array( '1' => 'Yes', '0' => 'No');
-            $data['txtPerbooking'] = array( '1' => 'Yes', '0' => 'No');
-            $get_id = $this->uri->segment(3);
-            $data['view_extra_products'] = $this->mod_extra_products->view_extra_products($get_id);
-            $data['txtStatus'] = array('0' => 'Unpublished','1' => 'Published');
+    		$data['txtPerperson'] = array( '1' => 'Yes', '0' => 'No');
+    		$data['txtPerbooking'] = array( '1' => 'Yes', '0' => 'No');
+    		$get_id = $this->uri->segment(3);
+    		$data['view_extra_products'] = $this->mod_extra_products->view_extra_products($get_id);
+    		$data['txtStatus'] = array('0' => 'Unpublished','1' => 'Published');
         $this->load->view('munich_admin', $data);
     }
-  }
     public function add_extra_products() {
-    if ($this->check_user_session()) {
               $data['title'] = "Add New Extra Products";
               $data['dashboard'] = "management";
               $data['txtPerperson'] = array( '1' => 'Yes', '0' => 'No');
-                    $data['txtPerbooking'] = array( '1' => 'Yes', '0' => 'No');
-                    $data['txtPhotos'] = $this->mod_extra_products->getPhotos();
+			        $data['txtPerbooking'] = array( '1' => 'Yes', '0' => 'No');
+			        $data['txtPhotos'] = $this->mod_extra_products->getPhotos();
               $data['txtSupplier'] = $this->mod_extra_products->getSupplier();
               $data['txtStatus'] = array('0' => 'Unpublished','1' => 'Published');
               $data['spl']      = '';
@@ -157,7 +154,7 @@ class Extra_products extends MU_Controller {
                 //echo "error"; die();
 
                   $this->session->set_userdata('error', show_message('<p class="error">'.'Error format! Please check your data again'.'</p>', 'error'));
-                $this->load->view('munich_admin', $data);
+                  $this->load->view('munich_admin', $data);
               }else{
                   if($this->is_money($this->input->post('salePrice')) AND $this->is_money($this->input->post('purchasePrice')) AND $checkavailableday[0] != ""){
                     $ep_insert = $this->mod_extra_products->createActivities($insert_product);
@@ -179,10 +176,9 @@ class Extra_products extends MU_Controller {
             }else{ // else btn add
             $this->load->view('munich_admin', $data);
         } // btn add
-       }
+       
   }
   public function extract_products_config(){
-  if ($this->check_user_session()) {
        $config = array(
                           array('field' => 'txtFrom','label' => 'From Date', 'rules' => 'trim|required'),
                           array('field' => 'txtTo','label' => 'End Date','rules' => 'trim|required'),
@@ -210,9 +206,7 @@ class Extra_products extends MU_Controller {
       return $config;
 
   }
-}
    public function activities_variable(){
-   if ($this->check_user_session()) {
         $activities['ep_name']          = $this->input->post('txtName');
         $activities['ep_perperson']    = $this->input->post('txtPerperson');
         $activities['ep_perbooking']       = $this->input->post('txtPerbooking');
@@ -231,9 +225,7 @@ class Extra_products extends MU_Controller {
         $activities['ep_status']        = $this->input->post('txtStatus');
         return $activities;
     }
-  }
      public function activities_cal($checkavailableday){
-    if ($this->check_user_session()) {
         $calendar_selected['start_date']    = $this->input->post('txtFrom');
         $calendar_selected['end_date']      = $this->input->post('txtTo');
         $calendar_selected['start_time']    = $this->input->post('txtStartTime');
@@ -264,13 +256,12 @@ class Extra_products extends MU_Controller {
         }
         return $calendar_selected;
     }
-  }
+
     public function is_money($price) {
       return preg_match('/^[0-9]+(\.[0-9]{0,2})?$/', $price);
     }
 
     public function edit_extra_products($ep_id) {
-    if ($this->check_user_session()) {
         $get_id = $this->uri->segment(3);
         $data['title'] = "Add New Extra Products";
         $data['dashboard'] = "management";
@@ -327,26 +318,24 @@ class Extra_products extends MU_Controller {
             }else{ // else btn add
             $this->load->view('munich_admin', $data);
         } // btn add
-       }
+       
   }
 // end of exstrat product
     public function deleteExtraproductsById($extraproducts_id,$pagination = false){
-      if ($this->check_user_session()) {
-      $total_count = MU_Model::count_all_data('extraproduct',array('ep_deleted' => 0));
-      $delete_extraproducts = MU_Model::deleteRecordById('extraproduct',array("ep_deleted" => 1) ,array('ep_id' => $extraproducts_id));
-      if($delete_extraproducts){
-          redirect(strtolower(get_class()).'/list_record');
-     }
-   }     
-}
-    
+  	  $total_count = MU_Model::count_all_data('extraproduct',array('ep_deleted' => 0));
+  	  $delete_extraproducts = MU_Model::deleteRecordById('extraproduct',array("ep_deleted" => 1) ,array('ep_id' => $extraproducts_id));
+  	  if($delete_extraproducts){
+  		  redirect(strtolower(get_class()).'/list_record');
+  	 }
+   }	 
+
+	
 
    public function deleteMultiExtraproducts(){
-    if ($this->check_user_session()) {
-      $multiCheck = $this->input->post("check_checkbox");
-      $update['ep_deleted'] = 1;
-      $result = $this->mod_extra_products->deleteMultipleExtraproducts($update,$multiCheck);
-      if($result > 0){
+	  $multiCheck = $this->input->post("check_checkbox");
+	  $update['ep_deleted'] = 1;
+	  $result = $this->mod_extra_products->deleteMultipleExtraproducts($update,$multiCheck);
+	  if($result > 0){
             $this->session->set_userdata('msg_success', 'The activities have been deleted successfully.');
             echo "t";
         } else {
@@ -354,9 +343,8 @@ class Extra_products extends MU_Controller {
             echo "f";
         }
     }
-  }
+    
     public function deletePermenentExtraproducts() {
-    if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $result = $this->mod_extra_products->deletePermenentExtraproducts($multiCheck);
         if ($result > 0) {
@@ -367,59 +355,51 @@ class Extra_products extends MU_Controller {
             echo "f";
         }
     }
-}
+
+    
+
     //For print pdf  and excel
 
     public function exportPDF() {
-    if ($this->check_user_session()) {
         $this->load->helper('pdf_helper');
         $data['extraproduct'] = MU_Model::exportAllDatas('extraproduct');
         $this->load->view('include/BE/extra_products/pdfexport', $data);
     }
-  }
     public function exportExcel() {
-    if ($this->check_user_session()) {
         $data['extraproduct'] = MU_Model::exportAllDatas('extraproduct');
         $this->load->view('include/BE/extra_products/excelexport', $data);
     }
-  }
-    public function exportByPagePDF(){
-    if ($this->check_user_session()) {
-        $this->load->helper('pdf_helper');
-        $checkex = $this->input->post("check_checkbox");
-        
-        if($this->uri->segment(3) == "search_extra_products"){
-            $exportpage['extraproduct'] = $this->getRecordExtraproducts();
-        }else{
-            $exportpage['extraproduct'] = $this->mod_extra_products->exportDataPage($checkex);
-        }
-        $this->load->view('include/BE/extra_products/pdfexport', $exportpage);
-    }
-  }
-    public function exportByPageExcel(){
-    if ($this->check_user_session()) {
-        $checkex = $this->input->post("check_checkbox");
-        
-        if($this->uri->segment(3) == "search_extra_products"){
-            $exportpage['extraproduct'] = $this->getRecordExtraproducts();
-        }else{
-            $exportpage['extraproduct'] = $this->mod_extra_products->exportDataPage($checkex);
-        }
-        $this->load->view('include/BE/extra_products/excelexport', $exportpage);
-    }
-  }
-    public function getRecordExtraproducts(){
-    if ($this->check_user_session()) {
-        if($this->session->userdata("extra_products_name")){$name = $this->session->userdata("extra_products_name"); }else{ $name = ""; }
-        $record = $this->mod_extra_products->getSearchExtraproductsExport($name);
-        if ($record->num_rows() > 0) {
+	public function exportByPagePDF(){
+		$this->load->helper('pdf_helper');
+		$checkex = $this->input->post("check_checkbox");
+		
+		if($this->uri->segment(3) == "search_extra_products"){
+        	$exportpage['extraproduct'] = $this->getRecordExtraproducts();
+		}else{
+			$exportpage['extraproduct'] = $this->mod_extra_products->exportDataPage($checkex);
+		}
+		$this->load->view('include/BE/extra_products/pdfexport', $exportpage);
+	}
+	public function exportByPageExcel(){
+		$checkex = $this->input->post("check_checkbox");
+		
+		if($this->uri->segment(3) == "search_extra_products"){
+        	$exportpage['extraproduct'] = $this->getRecordExtraproducts();
+		}else{
+			$exportpage['extraproduct'] = $this->mod_extra_products->exportDataPage($checkex);
+		}
+		$this->load->view('include/BE/extra_products/excelexport', $exportpage);
+	}
+	public function getRecordExtraproducts(){
+		if($this->session->userdata("extra_products_name")){$name = $this->session->userdata("extra_products_name"); }else{ $name = ""; }
+		$record = $this->mod_extra_products->getSearchExtraproductsExport($name);
+		if ($record->num_rows() > 0) {
             foreach ($record->result() as $data) {
                 $datas[] = $data;
             }           
-            return $datas;
-        }   
-    }
-  }
+			return $datas;
+        }	
+	}
 }
 
 /* End of file welcome.php */

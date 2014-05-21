@@ -3,26 +3,13 @@
 */
 
 jQuery(function(){
-
-        var finalstd = jQuery('input[name="std"]').val();
-	var finalendd = jQuery('input[name="endd"]').val();
-	var curr =  new Date();
-	curr.setDate(curr.getDate()-1);
-	jQuery('.dpDatef, .rtDatef').datepicker({
-				weekStart: 1,
-			    startDate: curr,
-			    endDate: finalendd,
-			    autoclose: true
-			}).on('changeDate', function(ev){
-	});
-
 	var dps1 =  new Date();
 	dps1.setDate(dps1.getDate()-1);
 	jQuery('#d1').datepicker({
-		weekStart: 1,
-		startDate: dps1,
-		autoclose: true
-		}).on('changeDate', function(ev){
+				weekStart: 1,
+			    startDate: dps1,
+			    autoclose: true
+			}).on('changeDate', function(ev){
 	});
 
 	var dps2 = new Date();
@@ -112,14 +99,6 @@ jQuery(function(){
 			    autoclose: true
 			}).on('changeDate', function(ev){
 		}); 
-	var fb_date =  new Date();
-	fb_date.setDate(fb_date.getDate()+1);
-	jQuery('#fb_date')datepicker({
-		weekStart: 1,
-		startDate: fb_date,
-		autoclose: true
-		}).on('changeDate', function(ev){
-	});	
 });
 
 /*

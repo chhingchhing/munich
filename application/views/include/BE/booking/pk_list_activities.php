@@ -3,7 +3,7 @@
 	<?php 
 	if(isset($pg_activities)){ 
 	  $pg_activities = unserialize($pg_activities);
-	  if(isset($pg_activities['main-activities'])){
+	  if(isset($pg_activities['main_activities'])){
 	  foreach($pg_activities['main-activities'] as $main_activities){
 	  	$actID = $main_activities['act_id'];
 	?>

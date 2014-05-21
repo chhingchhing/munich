@@ -17,11 +17,12 @@
                 $passwith = $rows->pbk_pass_come_with;
                 $this->session->set_userdata('passid', $passid);
                 $passemail = $rows->pass_email;
+
                 $passphone = $rows->pass_phone;
                 $passaddress = $rows->pass_address;
                 $passcompany = $rows->pass_company;
                 $passgender = $rows->pass_gender;
-                // customize
+                // package
                 $pkID = $rows->cuscon_id;
                 $pkstartdate = $rows->cuscon_start_date;
                 $pkenddate = $rows->cuscon_end_date;
@@ -46,6 +47,7 @@
         $this->session->unset_userdata('create');
     } 
 ?>
+
 <ol class="breadcrumb">
   <li><?php echo anchor("munich_admin","Dashboard"); ?></li>
   <li><?php echo anchor("booking/list_record","Manage Booking"); ?></li>
@@ -114,7 +116,7 @@
                             $passengers[$value->pass_id] = $value->pass_email;
                         }
                     }
-                echo form_dropdown('bkpass', $passengers, $passid, 'class="ppname form-control"'); 
+                echo form_dropdown('bkpass', $passengers, $passemail, 'class="ppname form-control"'); 
             ?>
             <span style="color:red;"><?php echo form_error('bkpass'); ?></span>
         </div>
@@ -217,9 +219,6 @@
 </div>
 <!-- package -->
 <div id="package_booking" style="padding-right:15px;padding-left:15px;">
-
-
-
     <div id="packcontent" style="border:1px solid #cccccc;padding-left:15px;">
     <h3>Customize</h3>
     <table class="table table-striped table-hover table-bordered" style="font-size: 12px;width:99%;">
@@ -259,10 +258,6 @@
         <p>&nbsp;</p>
     </div>
 </div>
-
-
-
-
 <!-- extra service -->
 <div id="passenger" style="padding-right:15px;padding-left:15px;">
     <div id="passbooking" style="padding-right:15px;padding-left:15px;border:1px solid #cccccc;margin-bottom:8px;margin-top:8px;">

@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Activities extends MU_Controller {
+class Activities extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -21,7 +21,6 @@ class Activities extends MU_Controller {
     */
 
     public function list_record() {
-    if ($this->check_user_session()) {
         $data['title'] = "Activities";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
@@ -45,7 +44,7 @@ class Activities extends MU_Controller {
         }
         $config['total_rows'] = MU_Model::count_all_data('activities', array('act_deleted' => 0, 'act_subof'=> 0));
         $config['per_page'] = 10;
-    $config['next_tag_open'] = '<li>';
+	$config['next_tag_open'] = '<li>';
         $choice = $config["total_rows"] / $config["per_page"];
         $config["num_links"] = round($choice);
         $config['next_tag_close'] = '</li>';
@@ -63,20 +62,18 @@ class Activities extends MU_Controller {
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
     }
-}
     /*
     *   @: searching of from date, end date and name of activities
     */
 
     public function search_activities() {
-    if ($this->check_user_session()) {
             $data['title'] = "Search Activities";
             $data['dashboard'] = "management";
             $controller = $this->uri->segment(1);
             $function = 'search_activities';
-            if($this->input->post('search_from_date')){ $this->session->set_userdata('from_date', $this->input->post('search_from_date'));}else{$this->session->set_userdata('from_date', "");}
-            if($this->input->post('search_end_date')){ $this->session->set_userdata("end_date", $this->input->post('search_end_date')); }else{ $this->session->set_userdata("end_date", ""); }
-            if($this->input->post('search_activities_name')){$this->session->set_userdata("activities_name", $this->input->post('search_activities_name'));}else{ $this->session->set_userdata("activities_name", "");}
+			if($this->input->post('search_from_date')){ $this->session->set_userdata('from_date', $this->input->post('search_from_date'));}else{$this->session->set_userdata('from_date', "");}
+        	if($this->input->post('search_end_date')){ $this->session->set_userdata("end_date", $this->input->post('search_end_date')); }else{ $this->session->set_userdata("end_date", ""); }
+        	if($this->input->post('search_activities_name')){$this->session->set_userdata("activities_name", $this->input->post('search_activities_name'));}else{ $this->session->set_userdata("activities_name", "");}
             if ($this->uri->segment(3) != "" AND !is_numeric($this->uri->segment(3))) {
                 $uri3 = $this->uri->segment(3);
                 $uri4 = $this->uri->segment(4);
@@ -111,10 +108,10 @@ class Activities extends MU_Controller {
             $this->pagination->initialize($config); //function to show all pages
             $page = ($this->uri->segment($config['uri_segment']) && $this->uri->segment($config['uri_segment']) > 0) ? $this->uri->segment($config['uri_segment']) : 0;
             $data['search_activities'] = $this->mod_activities->getSearchActivities($config['per_page'],$page, $sortby, $data['sort'],$this->session->userdata("from_date"), $this->session->userdata("end_date"), $this->session->userdata("activities_name"));
-        $data['pagination'] = $this->pagination->create_links();
+	    $data['pagination'] = $this->pagination->create_links();
             $this->load->view('munich_admin', $data); 
     }
-}
+
     /*
     * public function detail_activities
     * @noparam
@@ -124,7 +121,6 @@ class Activities extends MU_Controller {
     */
 
     public function detail_activities() {
-    if ($this->check_user_session()) {
         $data['title'] = "View Activities";
         $data['dashboard'] = "management";
         if($this->uri->segment(3) == "temp"){
@@ -183,7 +179,6 @@ class Activities extends MU_Controller {
           echo $records;
         }
     }
-}
    /*
     * public function detail_extraproduct
     * @noparam
@@ -193,11 +188,10 @@ class Activities extends MU_Controller {
     */
 
     public function detail_extraproduct() {
-    if ($this->check_user_session()) {
         $data['title'] = "View Activities";
         $data['dashboard'] = "management";
         if($this->uri->segment(3) == "temp"){
-           $get_id = $this->uri->segment(4);
+    	   $get_id = $this->uri->segment(4);
         }else{
            $get_id = $this->uri->segment(3);
         }
@@ -237,7 +231,7 @@ class Activities extends MU_Controller {
             echo $records;
         }
     }
-}
+
     /*
     * pulic function status_acitivties
     * @param $act_status (int)
@@ -246,7 +240,6 @@ class Activities extends MU_Controller {
     * redirect to the current page
     */
     public function status_acitivties ($act_status, $act_id, $pagione = false, $pagitwo = false, $pagithree = false){
-        if ($this->check_user_session()) {
         $total_rows = MU_Model::count_all_data('activities', array('act_deleted' => 0));
         $act_status = ($act_status == 1) ? 0 : 1;
         $statuschaged = MU_Model::updateStatusById('activities', array("act_status" => $act_status), array('act_id' => $act_id));
@@ -265,7 +258,7 @@ class Activities extends MU_Controller {
             redirect($redirect);
         }
     }
-}
+
     /* 
     * public function is_money
     * @param $price
@@ -286,7 +279,6 @@ class Activities extends MU_Controller {
     */
 
     public function add_activities() {
-    if ($this->check_user_session()) {
         $data['title'] = "Add New Activities";
         $data['dashboard'] = "management";
         $data['txtchoiceItem'] = array(''=>"please select...",'1' => 'Yes', '0' => 'No');
@@ -321,7 +313,7 @@ class Activities extends MU_Controller {
             $data['ftv']        = $insert_activities['act_ftv_id'];
             $data['spl']        = $insert_activities['act_supplier_id'];
             $data['chosimg']    = $insert_activities['photo_id']; 
-            $data['orContract'] =  $insert_activities['act_organiserdate'];
+            $data['orContract'] = $insert_activities['act_organiserdate'];
             $data['payed']      = $insert_activities['act_payeddate'];
             $data['deadline']   = $insert_activities['act_deadline'];
             $data['status']     = $insert_activities['act_status'];
@@ -335,7 +327,7 @@ class Activities extends MU_Controller {
                 $this->session->set_userdata('create', show_message('<p class="error">'.'Error format! Please check your data again'.'</p>', 'error'));
                 $this->load->view('munich_admin', $data);
             }else{ // else form validation
-               if($this->is_money($this->input->post('salePrice')) AND $this->is_money($this->input->post('purchasePrice')) AND $checkavailableday[0] != ""){
+                if($this->is_money($this->input->post('salePrice')) AND $this->is_money($this->input->post('purchasePrice')) AND $checkavailableday[0] != ""){
                     $act_insert = $this->mod_activities->createActivities($insert_activities);
                     if($act_insert) $date_available =  $this->mod_activities->insertDateTime($insert_calendar);
                     if($date_available) $records_conjection =  $this->mod_activities->insertActDateTime($act_insert, $date_available);
@@ -347,7 +339,7 @@ class Activities extends MU_Controller {
                         $this->session->set_userdata('create', show_message('<p class="error">'.'Sorry ! You had made any mistake, please try again...'.'</p>', 'error'));
                         $this->load->view('munich_admin', $data);
                     }
-               }else{
+                }else{
                     $this->session->set_userdata('create', show_message('<p class="error">'.'Sorry ! You had made any mistake, please try again...'.'</p>', 'error'));
                     $this->load->view('munich_admin', $data);
                } // end check money and 
@@ -356,7 +348,7 @@ class Activities extends MU_Controller {
             $this->load->view('munich_admin', $data);
         } // btn add
     } // function add_activities
-}
+
     /* 
     * public function view_activities
     * @noparam
@@ -366,7 +358,6 @@ class Activities extends MU_Controller {
     * @saverecordback
     */
     public function view_activities($act_id) {
-    if ($this->check_user_session()) {
         $data['title'] = "View Activities";
         $data['dashboard'] = "management";
         $data['txtchoiceItem'] = array(''=>"please select...",'1' => 'Yes', '0' => 'No');
@@ -444,7 +435,7 @@ class Activities extends MU_Controller {
             $this->load->view('munich_admin', $data);
         } // btn savechange
     } // function view_activities
-}
+
     /*
     * public function add_sub_ep
     * @param $act_id (int)
@@ -452,7 +443,6 @@ class Activities extends MU_Controller {
     * return while success add
     */
     function add_sub_ep($act_id){
-    if ($this->check_user_session()) {
         if($this->session->userdata('have_sub')){
             $tempsub = $this->mod_activities->get_temp_activity($act_id);
             $tempsub = $tempsub->result();
@@ -480,7 +470,7 @@ class Activities extends MU_Controller {
         $this->session->unset_userdata('have_sub');
         $this->session->unset_userdata('have_extra');    
     }
-}
+
     /*
     * public function add_subactivities
     * @noparam 
@@ -490,7 +480,6 @@ class Activities extends MU_Controller {
     */
 
     function add_subactivities(){
-    if ($this->check_user_session()) {
         $sub_activities = $this->activities_variable(); // function return the valude variable of activities.
         $sub_activities['act_subof'] = $this->input->post('act_subof');
         $sub_activities['act_cherge_subact'] = $this->input->post('chergeby');
@@ -529,7 +518,7 @@ class Activities extends MU_Controller {
             }
         }
     }
-}
+
     /*
     *  public function delete_activities
     *  @noparam
@@ -537,7 +526,6 @@ class Activities extends MU_Controller {
     *  return true or false
     */
     public function delete_activities(){
-    if ($this->check_user_session()) {
         if($this->uri->segment(3) == "temp"){
             $id = $this->uri->segment(4);
             $result = MU_Model::deletedRecordById("temp_table",array("ID"=>$id));
@@ -547,7 +535,7 @@ class Activities extends MU_Controller {
         }
         if($result) echo 't';
     }
-}
+
     /*
     * public function add_extraproduct
     * @noparam
@@ -556,7 +544,6 @@ class Activities extends MU_Controller {
     * echo table row of table to append in front page
     */
     public function add_extraproduct(){
-    if ($this->check_user_session()) {
         $ep_id = $this->input->post('txtExtra');
         $expro = $this->mod_activities->getExproductById($ep_id);
         if($expro->num_rows() > 0){
@@ -587,7 +574,7 @@ class Activities extends MU_Controller {
             echo "no record was found.";
         }
     }
-}
+
     /*
     *  public function delete_extraproduct
     *  @noparam
@@ -595,7 +582,6 @@ class Activities extends MU_Controller {
     *  return true or false
     */
     public function delete_extraproduct(){
-    if ($this->check_user_session()) {
         if($this->uri->segment(3) == "temp"){
             $id = $this->uri->segment(4);
             $result = MU_Model::deletedRecordById("temp_table",array("ID" => $id));
@@ -605,7 +591,7 @@ class Activities extends MU_Controller {
         }
         if($result) echo 't';
     }
-}
+
     /*
     * public funciton deleted_sub
     * @noparam
@@ -614,7 +600,6 @@ class Activities extends MU_Controller {
     * deleted subactivities and extraproduct 
     */
     public function deleted_sub(){
-    if ($this->check_user_session()) {
         $act_id = $this->input->post('act_id');
         if(! $this->session->userdata('have_sub') OR ! $this->session->userdata('have_extra')){
             $result = MU_Model::deleted_sub($act_id);
@@ -625,14 +610,13 @@ class Activities extends MU_Controller {
         $this->session->unset_userdata('have_sub');
         $this->session->unset_userdata('have_extra');
     }
-}
+
     /*
     * public function activities_config
     * @noparam
     * return config (array)
     */
     public function activities_config(){
-    if ($this->check_user_session()) {
         $config = array(
             array('field' => 'activitiesName','label' => 'Activity Name','rules' => 'trim|required'),
             array('field' => 'txtchoiceItem','label' => 'Choice Item','rules' => 'trim|required'),
@@ -654,14 +638,13 @@ class Activities extends MU_Controller {
         );
         return $config;
     }
-}
+
     /*
     * public function activities_variable
     * @noparent
     * return $activities (array)
     */
     public function activities_variable(){
-    if ($this->check_user_session()) {
         $activities['act_name']          = $this->input->post('activitiesName');
         $activities['act_choiceitem']    = $this->input->post('txtchoiceItem');
         $activities['location_id']       = $this->input->post('txtLocation');
@@ -681,14 +664,12 @@ class Activities extends MU_Controller {
         $activities['act_status']        = $this->input->post('txtStatus');
         return $activities;
     }
-}
     /*
     * public function activities_cal
     * @param $checkavailableday (array)
     * return calendar_selected (array)
     */
     public function activities_cal($checkavailableday){
-    if ($this->check_user_session()) {
         $calendar_selected['start_date']    = $this->input->post('txtFrom');
         $calendar_selected['end_date']      = $this->input->post('txtTo');
         $calendar_selected['start_time']    = $this->input->post('txtStartTime');
@@ -719,26 +700,23 @@ class Activities extends MU_Controller {
         }
         return $calendar_selected;
     }
-}
+
     //delete activities by id
     public function deleteActivitiesById($activities_id,$pagination = false){
-    if ($this->check_user_session()) {
-      $total_count = MU_Model::count_all_data('activities',array('act_deleted' => 0));
-      $delete_activities = MU_Model::deleteRecordById('activities',array("act_deleted" => 1) ,array('act_id' => $activities_id));
-      if($delete_activities){
-          redirect(strtolower(get_class()).'/list_record');
-     }
-  }  
-}
+  	  $total_count = MU_Model::count_all_data('activities',array('act_deleted' => 0));
+  	  $delete_activities = MU_Model::deleteRecordById('activities',array("act_deleted" => 1) ,array('act_id' => $activities_id));
+  	  if($delete_activities){
+  		  redirect(strtolower(get_class()).'/list_record');
+  	 }
+  }	 
   //end delete activities by id
-    
+	
   //delete multiple activities
   public function deleteMultiActivities(){
-  if ($this->check_user_session()) {
-      $multiCheck = $this->input->post("check_checkbox");
-      $update['act_deleted'] = 1;
-      $result = $this->mod_activities->deleteMultipleActivities($update,$multiCheck);
-      if($result > 0){
+	  $multiCheck = $this->input->post("check_checkbox");
+	  $update['act_deleted'] = 1;
+	  $result = $this->mod_activities->deleteMultipleActivities($update,$multiCheck);
+	  if($result > 0){
             $this->session->set_userdata('msg_success', 'The activities have been deleted successfully.');
             echo "t";
         } else {
@@ -746,12 +724,10 @@ class Activities extends MU_Controller {
             echo "f";
         }
     }
-}
     //end of delete multiple activities
 
     /* delete permenent activities */
     public function deletePermenentActivities() {
-    if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $result = $this->mod_activities->deletePermenentActivities($multiCheck);
         if ($result > 0) {
@@ -762,25 +738,20 @@ class Activities extends MU_Controller {
             echo "f";
         }
     }
-}
+
     /* end delete permenent activities */
     //For print pdf  and excel
 
-    public function exportPDF() {   
-    if ($this->check_user_session()) {       
+    public function exportPDF() {          
         $this->load->helper('pdf_helper');
         $data['activities'] = $this->mod_activities->exportAllDatas('activities');
         $this->load->view('include/BE/activities/pdfexport', $data);
     }
-}
-    public function exportExcel() {
-    if ($this->check_user_session()) {           
+    public function exportExcel() {           
         $data['activities'] = $this->mod_activities->exportAllDatas('activities');
         $this->load->view('include/BE/activities/excelexport', $data);
     }
-}
     public function exportByPagePDF(){
-    if ($this->check_user_session()) {
         $this->load->helper('pdf_helper');
         $checkex = $this->input->post("check_checkbox");
         
@@ -791,9 +762,7 @@ class Activities extends MU_Controller {
         }
         $this->load->view('include/BE/activities/pdfexport', $exportpage);
         }
-    }
-    public function exportByPageExcel(){     
-    if ($this->check_user_session()) { 
+    public function exportByPageExcel(){      
         $checkex = $this->input->post("check_checkbox");
         
         if($this->uri->segment(3) == "search_activities"){
@@ -803,9 +772,7 @@ class Activities extends MU_Controller {
         }
         $this->load->view('include/BE/activities/excelexport', $exportpage);
     }
-}
     public function getRecordActivities(){
-    if ($this->check_user_session()) {
         if($this->session->userdata("from_date")){ $fromdate = $this->session->userdata("from_date"); }else{ $fromdate = ""; }
         if($this->session->userdata("end_date")){ $enddate = $this->session->userdata("end_date"); }else{ $enddate = ""; }
         if($this->session->userdata("activities_name")){$name = $this->session->userdata("activities_name"); }else{ $name = ""; }
@@ -817,9 +784,7 @@ class Activities extends MU_Controller {
             return $datas;
             }   
     }
-}
         public function exportDataPage(){
-        if ($this->check_user_session()) {
         $query = $this->db
                  ->select('*')
                 ->from('activities')
@@ -836,7 +801,6 @@ class Activities extends MU_Controller {
                     }
                 return FALSE;
         }
-    }
 }
 
 /* End of file welcome.php */

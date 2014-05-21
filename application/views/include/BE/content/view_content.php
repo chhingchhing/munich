@@ -67,8 +67,5 @@ if($viewContent->num_rows() > 0){
         <td> : </td>
         <td><?php echo $text; ?></td>
     </tr>
+    
 </table>
-
-<?php 
-    echo anchor('content/list_record', 'Close', "class='btn btn-primary'");
-?>

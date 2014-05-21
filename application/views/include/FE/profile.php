@@ -22,7 +22,7 @@
                                         <th>Email</th> <td><?php echo $row->pass_email; ?></td>
                                 </tr>
                                 <tr>
-                                        <th>Phone Number </th> <td><?php echo $row->pass_phone; ?></td>
+                                        <th>Phone number </th> <td><?php echo $row->pass_phone; ?></td>
                                 </tr>
                                 <tr>
                                         <th>Address</th> <td><?php echo $row->pass_address; ?></td>
@@ -38,8 +38,8 @@
                        </div>
                     <?php }?>
                 <?php }?>
-                 <!--  <?php $this->load->view(INCLUDE_FE_MODEL."updateprofile"); ?>
-                    <a href="#"><button class="btn btn-default" data-toggle="modal" data-target=".updateprofileuser">Edit Profile</button></a> -->
+                  <?php $this->load->view(INCLUDE_FE_MODEL."updateprofile"); ?>
+                    <a href="#"><button class="btn btn-default" data-toggle="modal" data-target=".updateprofileuser">Edit Profile</button></a>
                 </div>
           <div class="col-md-8">
              <?php $this->load->view(INCLUDE_FE_MODEL."morepassenger"); ?> 
@@ -50,12 +50,12 @@
                         <table class="table table-bordered">
                             <tr> 
                                 <!-- <th>Passenger come with</th> -->
-                                <th>No</th>
-                                <th>Booking Date</th>
-                                <th>Arrival Date</th>
-                                <th>Booking Total People</th>
-                                <th>Booking Pay Date</th>
-                                <th>Booking Pay Prices</th>
+                                <th>NO</th>
+                                <th>Booking date</th>
+                                <th>Arrival date</th>
+                                <th>Booking total people</th>
+                                <th>Booking pay date</th>
+                                <th>Booking pay prices</th>
                                 <th>Action</th>
 
                             </tr>
@@ -70,7 +70,7 @@
                                     <td><?php echo $row->bk_total_people; ?></td>
                                     <td><?php echo $row->bk_pay_date; ?></td>
                                     <td><?php echo $row->bk_pay_price; ?></td>
-                                    <td><?php echo anchor ('site/export_eticket/'.$row->bk_id,'Export E-ticket','title="Print"');?></td>
+                                    <td><?php echo anchor ('site/export_eticket/','Export E-tickit','title="Print"');?></td>
                             </tr>
                        <?php }?>
                 <?php }?>
@@ -79,7 +79,7 @@
                     </table>
                         <?php $this->load->view(INCLUDE_FE_MODEL."passenger_detailbookingform"); ?>
 
-                    <a href="#"><button class="btn btn-default" data-toggle="modal" data-target=".passenger_detailbookingform">Passenger Detail Booking</button></a>        
+                    <a href="#"><button class="btn btn-default" data-toggle="modal" data-target=".passenger_detailbookingform">Passenger Detail Booking</button></a>		
                      
                  </div>   
             </div>

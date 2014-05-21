@@ -1,8 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Package extends MU_Controller {
-    
-    public function __construct() {
+class Package extends CI_Controller {
+	
+	public function __construct() {
         parent::__construct();
         $this->load->model(array('mod_package'));
     }
@@ -12,7 +12,6 @@ class Package extends MU_Controller {
     * sort, pagination, load view
     */
     public function list_record(){
-    if ($this->check_user_session()) {
         $data['title'] = "Packages";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
@@ -54,18 +53,17 @@ class Package extends MU_Controller {
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
     }
-}   
+    
     /*
     * public function search_package
     * @noparam
     * sort, pagination, load view
     */
-    public function search_package(){
-    if ($this->check_user_session()) {
-        $data['title'] = "Search packages";
-        $data['dashboard'] = "management";
+	public function search_package(){
+		$data['title'] = "Search packages";
+		$data['dashboard'] = "management";
         if($this->input->post("search_package_name")) $this->session->set_userdata('search_package', $this->input->post("search_package_name")); // else exit();
-        $controller = $this->uri->segment(1);
+		$controller = $this->uri->segment(1);
         $function = $this->uri->segment(2);
         if ($this->uri->segment(3) != "" AND !is_numeric($this->uri->segment(3))) {
             $uri3 = $this->uri->segment(3);
@@ -86,7 +84,7 @@ class Package extends MU_Controller {
         }
         $config['total_rows'] = MU_Model::count_all_data('package_conjection', array('pkcon_deleted' => 0), array('pkcon_name'=> $this->session->userdata('search_package')));
         $config['per_page'] = 10;
-        $config['next_tag_open'] = '<li>';
+		$config['next_tag_open'] = '<li>';
         $choice = $config["total_rows"] / $config["per_page"];
         $config["num_links"] = round($choice);
         $config['next_tag_close'] = '</li>';
@@ -102,9 +100,9 @@ class Package extends MU_Controller {
         $page = ($this->uri->segment($config['uri_segment']) && $this->uri->segment($config['uri_segment']) > 0) ? $this->uri->segment($config['uri_segment']) : 0;
         $data['packages'] = $this->mod_package->getAllSearchPackage($this->session->userdata('search_package'), $config['per_page'], $page, $sortby, $data['sort']);
         $data['pagination'] = $this->pagination->create_links();
-        $this->load->view('munich_admin', $data);
-    }
-}
+		$this->load->view('munich_admin', $data);
+	}
+
     /*
     * public function add_package
     * @noparam
@@ -112,7 +110,6 @@ class Package extends MU_Controller {
     * redirect
     */
     public function add_package(){
-    if ($this->check_user_session()) {
         $data['title'] = "Add Packages";
         $data['dashboard'] = "management";
         $data['txtLocation'] = $this->mod_package->getLocation();
@@ -168,16 +165,15 @@ class Package extends MU_Controller {
             $this->load->view('munich_admin', $data); 
         }
     }
-}
-    // view package
-     public function view_package($pk_id, $date){
-    if ($this->check_user_session()) {
+
+	// view package
+	 public function view_package($pk_id, $date){
         $decrypted = base64_decode($date);
         $encrypted_id = base64_encode($decrypted);
         //echo $encrypted_id; die();
         $decrypted_date = explode(",", $decrypted);
         
-        $data['title'] = "View Packages";
+		$data['title'] = "View Packages";
         $data['dashboard'] = "management";
         $data['packageById'] = $this->mod_package->getPackageById($pk_id);
         $data['pkSelectedAct'] = $this->returnOptionAct($decrypted_date);
@@ -236,11 +232,9 @@ class Package extends MU_Controller {
         }else{  
             $this->load->view('munich_admin', $data); 
         }
-    }
-}
+	}
     // function to save change Activities
     public function saveUpdateActivities($pkID){
-    if ($this->check_user_session()) {
         $selectAct = $this->mod_package->getActivitiesPackage($pkID);        
         $activities = array();
         $newActivites = array();
@@ -252,7 +246,7 @@ class Package extends MU_Controller {
         $actRecordID = $this->input->post('act_checkbox');
         $subactRecordID = $this->input->post('subact_checkbox');
         $epactRecordID = $this->input->post('epact_checkbox');
-       // var_dump($epactRecordID);
+        var_dump($epactRecordID);
         foreach($actRecordID as $acts){
             if(array_key_exists($acts, $activities['main-activities'])){
                $newActivites['main-activities'][$acts] = $activities['main-activities'][$acts];
@@ -274,10 +268,9 @@ class Package extends MU_Controller {
         // var_dump($newActivites['extraproduct-pk']);
         return serialize($newActivites);
     }
-}
+
     // // function to save change Accommodation
     public function saveUpdateAccommodation($pkID){  
-    if ($this->check_user_session()) {
         $selectAcc = $this->mod_package->getAccommodationPackage($pkID);        
         $accommodations = array();
         $newAccommodations = array();
@@ -311,10 +304,9 @@ class Package extends MU_Controller {
         // var_dump($newAccommodations['extraproduct-pk']);
         return serialize($newAccommodations);
     }
-}
+
     // // function to save change Transport
     public function saveUpdateTransport($pkID){
-    if ($this->check_user_session()) {
         $selectTps = $this->mod_package->getTransportPackage($pkID); 
         $transportation = array();
         $newtransportation = array();
@@ -348,10 +340,9 @@ class Package extends MU_Controller {
         // var_dump($newtransportation['extraproduct-pk']);
         return serialize($newtransportation);
     }
-}
+
     // returnOptionAct
     public function returnOptionAct($date){
-    if ($this->check_user_session()) {
         $acts[''] = 'Please select';
         $activitiesObject = $this->mod_package->getPackageActivities();
         foreach($activitiesObject->result() as $row){
@@ -362,11 +353,9 @@ class Package extends MU_Controller {
         }
         return $acts;
     }
-}
 
     // returnOptionAcc
     public function returnOptionAcc($date){
-    if ($this->check_user_session()) {
         $accs[''] = 'Please select';
         $accommodationObject = $this->mod_package->getPackageAccommodation();
         foreach($accommodationObject->result() as $row){
@@ -377,10 +366,9 @@ class Package extends MU_Controller {
         }
         return $accs;
     }
-}
+
     // returnOptionAcc
     public function returnOptionTps($date){
-    if ($this->check_user_session()) {
         $tps[''] = 'Please select';
         $transportionObject = $this->mod_package->getPackageTransportation();
         foreach($transportionObject->result() as $row){
@@ -391,10 +379,9 @@ class Package extends MU_Controller {
         }
         return $tps;
     }
-}
+
     // function convertDateToRange
     function convertDateToRange($findDate, $start, $end, $step = '+1 day', $format = 'Y-m-d' ) {
-    if ($this->check_user_session()) {
         $dates = array();
         $current = strtotime($start);
         $last = strtotime($end);
@@ -409,10 +396,8 @@ class Package extends MU_Controller {
         } 
         return false;
     }
-}
     // view subactivities and extraproduct
     public function viewSubEp(){
-    if ($this->check_user_session()) {
         $tableSubAct = "";
         $tableSubEp = "";
         $actID = $this->input->post('pk_act_id');
@@ -484,10 +469,9 @@ class Package extends MU_Controller {
             '.$tableSubEp.'</table>';
         }
     }
-}
+
 // view subaccommodation and extraproduct
     public function viewSubEpAcc(){
-    if ($this->check_user_session()) {
         $tableSubAcc = "";
         $tableSubEp = "";
         $accID = $this->input->post('pk_acc_id');
@@ -559,10 +543,9 @@ class Package extends MU_Controller {
             '.$tableSubEp.'</table>';
         }
     }
-}
+
 // view subtransportation and extraproduct
     public function viewSubEpTps(){
-    if ($this->check_user_session()) {
         $tableSubAcc = "";
         $tableSubEp = "";
         $tpsID = $this->input->post('pk_tps_id');
@@ -634,10 +617,9 @@ class Package extends MU_Controller {
             '.$tableSubEp.'</table>';
         }
     }
-}
+
     // function add activities 
     public function add_activities($pkID, $date){
-    if ($this->check_user_session()) {
         $actID = $this->input->post('pkact');
         $epID  = $this->input->post('pkep');        
         $subAct = $this->input->post('pksubact');
@@ -673,10 +655,9 @@ class Package extends MU_Controller {
         $pk_result = $this->mod_package->updateActivitiesPackage($activities, $pkID);
         redirect('package/view_package/'.$pkID.'/'.$date);
     }
-}
+
     // function add accommodation 
     public function add_accommodation($pkID, $date){
-    if ($this->check_user_session()) {
         $accID = $this->input->post('pkacc');
         $epID  = $this->input->post('pkep');        
         $subAcc = $this->input->post('pksubacc');
@@ -713,10 +694,9 @@ class Package extends MU_Controller {
         $pk_result = $this->mod_package->updateAccommodationsPackage($accommodations, $pkID);
         redirect('package/view_package/'.$pkID.'/'.$date);
     }
-}
+
     // function add Transportation 
     public function add_transport($pkID, $date){
-    if ($this->check_user_session()) {
         $tpsID = $this->input->post('pktps');
         $epID  = $this->input->post('pkep');        
         $subTps = $this->input->post('pksubtps');
@@ -754,14 +734,13 @@ class Package extends MU_Controller {
         $pk_result = $this->mod_package->updateTransportationPackage($transportation, $pkID);
         redirect('package/view_package/'.$pkID.'/'.$date);
     }
-}
+
     /*
     * public function package_config
     * @noparam
     * return config (array)
     */
     public function package_config(){
-    if ($this->check_user_session()) {    
         $config = array(
             array('field' => 'pkName','label' => 'package name','rules' => 'trim|required'),
             array('field' => 'txtFrom','label' => 'from date', 'rules' => 'trim|required'),
@@ -776,14 +755,13 @@ class Package extends MU_Controller {
         );
         return $config;
     }
-}
+
     /*
     * public function package_variable
     * @noparent
     * return $packages (array)
     */
     public function package_variable(){
-    if ($this->check_user_session()) {
         $packages['pkcon_name']          = $this->input->post('pkName');
         $packages['pkcon_start_date']    = $this->input->post('txtFrom');
         $packages['pkcon_end_date']      = $this->input->post('txtTo');
@@ -798,10 +776,9 @@ class Package extends MU_Controller {
         $packages['pkcon_status']        = $this->input->post('txtStatus');
         return $packages;
     }
-}
+
     //delete multiple packages
     public function deleteMulti(){
-    if ($this->check_user_session()) {
       $multiCheck = $this->input->post("check_checkbox");
       $update['pkcon_deleted'] = 1;
       $result = $this->mod_package->deleteMultiple($update, $multiCheck);
@@ -813,10 +790,9 @@ class Package extends MU_Controller {
             echo "f";
         }
     }
-}
+
     /* delete permenent packages */
     public function deletePermanent() {
-    if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $result = $this->mod_package->deletePermenent($multiCheck);
         if ($result > 0) {
@@ -827,7 +803,6 @@ class Package extends MU_Controller {
             echo "f";
         }
     }
-}
 
     /* 
     * public function is_money
@@ -848,7 +823,6 @@ class Package extends MU_Controller {
     * redirect to the current page
     */
     public function status_package ($pk_status, $pk_id, $pagione = false, $pagitwo = false, $pagithree = false){
-    if ($this->check_user_session()) {
         $pk_status = ($pk_status == 1) ? 0 : 1;
         $statuschaged = MU_Model::updateStatusById('package_conjection', array("pkcon_status" => $pk_status), array('pkcon_id' => $pk_id));
         $pagi = "";
@@ -866,7 +840,7 @@ class Package extends MU_Controller {
             redirect($redirect);
         }
     }
-}
+
     /*
     * pulic function deletePackageById
     * @param $pk_id (int) 
@@ -874,7 +848,6 @@ class Package extends MU_Controller {
     * redirect to the current page
     */
     public function deletePackageById($pk_id, $pagione = false, $pagitwo = false,$pagithree = false){
-    if ($this->check_user_session()) {
         $total_rows = MU_Model::count_all_data('package_conjection', array('pkcon_deleted' => 0));
         $deleted = MU_Model::deleteRecordById('package_conjection', array("pkcon_deleted" => 1), array('pkcon_id' => $pk_id));
         $pagi = "";
@@ -897,10 +870,8 @@ class Package extends MU_Controller {
             redirect($redirect);
         }
     }
-}
     // function to view detial of activities
     public function actdetail($act_id, $pk_id){
-    if ($this->check_user_session()) {
         $selectAct = $this->mod_package->getActivitiesPackage($pk_id);        
         $activities = array();
         if($selectAct->num_rows() > 0){
@@ -910,10 +881,8 @@ class Package extends MU_Controller {
         }
         $this->showDetailsAct($activities['main-activities'][$act_id]);
     }
-}
     // function to view detial of accommodation
     public function accdetail($acc_id, $pk_id){
-    if ($this->check_user_session()) {
         $selectAcc = $this->mod_package->getAccommodationPackage($pk_id);        
         $accommodations = array();
         if($selectAcc->num_rows() > 0){
@@ -923,10 +892,9 @@ class Package extends MU_Controller {
         }
         $this->showDetailsAcc($accommodations['main-accommodation'][$acc_id]);
     }
-}
+
     // function to view detial of transportation
     public function tpdetail($tpsid, $pk_id){
-    if ($this->check_user_session()) {
         $selectTps = $this->mod_package->getTransportPackage($pk_id);        
         $transportation = array();
         if($selectTps->num_rows() > 0){
@@ -936,10 +904,9 @@ class Package extends MU_Controller {
         }
         $this->showDetailsTps($transportation['main-transport'][$tpsid]);
     }
-}
+
     // function to view detial of subactivities
     public function subactdetail($act_id, $pk_id, $subAct){
-    if ($this->check_user_session()) {
         $selectAct = $this->mod_package->getActivitiesPackage($pk_id);        
         $activities = array();
         if($selectAct->num_rows() > 0){
@@ -949,10 +916,8 @@ class Package extends MU_Controller {
         }
         $this->showDetailsAct($activities['sub-activities'][$act_id][$subAct]);
     }
-}
     // function to view detial of subaccommodation
     public function subaccdetail($acc_id, $pk_id, $subAcc){
-    if ($this->check_user_session()) {
         $selectAcc = $this->mod_package->getAccommodationPackage($pk_id);        
         $accommodations = array();
         if($selectAcc->num_rows() > 0){
@@ -962,11 +927,9 @@ class Package extends MU_Controller {
         }
         $this->showDetailsAcc($accommodations['sub-accommodation'][$acc_id][$subAcc]);
     }
-}
 
     // function to view detial of transportation
     public function subtpsdetail($tpsid, $pk_id, $subTps){
-    if ($this->check_user_session()) {
         $selectTps = $this->mod_package->getTransportPackage($pk_id);        
         $transportation = array();
         if($selectTps->num_rows() > 0){
@@ -976,10 +939,9 @@ class Package extends MU_Controller {
         }
         $this->showDetailsTps($transportation['sub-transport'][$tpsid][$subTps]);
     }
-}
+
     // function to displaydetail
     public function showDetailsAct($details){
-    if ($this->check_user_session()) {
         $date_available = "";
         $choiceItem = $details['act_choiceitem'] == 1 ? "Yes" : "No";
         $date_available = '<label class="checkbox-inline">'.form_checkbox(array('id' => 'inlineCheckbox2', 'value' => '1_monday','name' => 'check[]','class'=>"weekday","checked" => $details['monday'])).' Mon</label>
@@ -1017,10 +979,8 @@ class Package extends MU_Controller {
             </table>';
           echo $records;
     }
-}
     // function to displaydetail
     public function showDetailsAcc($details){
-    if ($this->check_user_session()) {
         $date_available = "";
         $date_available = '<label class="checkbox-inline">'.form_checkbox(array('id' => 'inlineCheckbox2', 'value' => '1_monday','name' => 'check[]','class'=>"weekday","checked" => $details['monday'])).' Mon</label>
                            <label class="checkbox-inline">'.form_checkbox(array('id' => 'inlineCheckbox3', 'value' => '1_tuesday','name' => 'check[]','class'=>"weekday","checked" => $details['tuesday'])).' Tue</label>
@@ -1061,10 +1021,9 @@ class Package extends MU_Controller {
         </table>';
         echo $records;
     }
-}
+
     // function to displaydetail
     public function showDetailsTps($details){
-    if ($this->check_user_session()) {
         $date_available = "";
         $date_available = '<label class="checkbox-inline">'.form_checkbox(array('id' => 'inlineCheckbox2', 'value' => '1_monday','name' => 'check[]','class'=>"weekday","checked" => $details['monday'])).' Mon</label>
         <label class="checkbox-inline">'.form_checkbox(array('id' => 'inlineCheckbox3', 'value' => '1_tuesday','name' => 'check[]','class'=>"weekday","checked" => $details['tuesday'])).' Tue</label>
@@ -1102,10 +1061,9 @@ class Package extends MU_Controller {
         </table>';
         echo $records;
     }
-}
+
     // function detail of extraproduct
     public function epdetail($feild ,$actacctps_id, $pk_id, $ep_id){
-    if ($this->check_user_session()) {
         if($feild == 'act'){
             $selectActAccTps = $this->mod_package->getActivitiesPackage($pk_id); 
             $dotVariable = 'pk_activities'; 
@@ -1124,10 +1082,9 @@ class Package extends MU_Controller {
         }
         $this->showDetailsep($sltActAccTps['extraproduct-pk'][$actacctps_id][$ep_id]);
     }
-}
+
     // function display extraproduct details
     function showDetailsep($detials){
-    if ($this->check_user_session()) {
         $date_available = "";
             $byperson = $detials['ep_perperson'] == 1 ? "Per Person" : "No";
             $bybooking = $detials['ep_perbooking'] == 1 ? "Per Booking" : "No";
@@ -1159,7 +1116,6 @@ class Package extends MU_Controller {
             </table>';
             echo $records;
     }
-}
 }
 
 /* End of file package.php */

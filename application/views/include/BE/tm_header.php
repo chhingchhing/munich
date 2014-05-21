@@ -17,7 +17,7 @@
 								 echo anchor('profile/detail_profile/'.$this->session->userdata('userid'), $this->session->userdata('full_username'));
                            ?>
                            &nbsp; &nbsp;|&nbsp; &nbsp;
-                           <?php echo anchor('login_admin/logout','<font color="#FFFFFF">Log out</font>','onclick="return confirm(\'Are you sure want to logout from the system?\');"'); ?>
+                           <?php echo anchor('login/sign_out','<font color="#FFFFFF">Log out</font>','onclick="return confirm(\'Are you sure want to logout from the system?\');"'); ?>
 					</span>
                 
 	        </div>

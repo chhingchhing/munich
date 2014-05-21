@@ -24,8 +24,8 @@ class Mod_feedback extends MU_model {
     		   ->db
     		   ->select('*')
     		   ->from('feedback')
-		   ->where("fb_deleted", 0)
-                  ->limit($perPage, $offSet)
+			   ->where("fb_deleted", 0)
+               ->limit($perPage, $offSet)
     		   ->order_by($sortby, $sort)
     		   ->get();
         return $query;

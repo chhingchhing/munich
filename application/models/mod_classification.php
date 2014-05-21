@@ -10,7 +10,7 @@
 			$getClassification = $this->db->select("*")
 							->where("clf_deleted",0)
 							->limit($perPage, $offSet)
-                 					->order_by($sortby, $sort)
+                 			->order_by($sortby, $sort)
 							->get("classification");
 			return $getClassification;
 		}

@@ -11,10 +11,10 @@ class Mod_booking extends MU_Model {
 	public function getAllsalePackage($perPage, $offSet, $sortby, $sort){
 		$sortby = "bk_".strtolower($sortby);
 		$getbooking = $this->db->select("*")
-			 ->where("bk_deleted",0)
-			 ->limit($perPage, $offSet)
-             		 ->order_by($sortby, $sort)
-			 ->get("booking");
+						->where("bk_deleted",0)
+						->limit($perPage, $offSet)
+             			->order_by($sortby, $sort)
+						->get("booking");
 		return $getbooking;
 	}
 	/*
@@ -26,8 +26,8 @@ class Mod_booking extends MU_Model {
 	public function getAllSearchsalePackage($searchID, $perPage, $offSet, $sortby, $sort){
 		$sortby = "bk_".strtolower($sortby);
 		$getbooking = $this->db->select("*")
-				->where("bk_deleted",0)
-				->limit($perPage, $offSet)
+						->where("bk_deleted",0)
+						->limit($perPage, $offSet)
              			->order_by($sortby, $sort)
              			->like('bk_id', $searchID)
 						->get("booking");
@@ -35,7 +35,7 @@ class Mod_booking extends MU_Model {
 	}
 	public function getAllCustomize(){
 		$query = $this->db->select("*")
-			->where("cuscon_deleted",0)
+						->where("cuscon_deleted",0)
 						->get("customize_conjection");
 		return $query;
 	}
@@ -95,11 +95,6 @@ class Mod_booking extends MU_Model {
 		$update = array('pbk_pass_come_with' => $accompany);
         if($this->db->update('passenger_booking',$update)){ return true; }else{ return false; }
 	}
-    public function updateAccompanyInBooking($newaccompany, $bkID){
-    	$this->db->where('bk_id', $bkID);
-		$update = array('bk_total_people' => $newaccompany);
-        if($this->db->update('booking',$update)){ return true; }else{ return false; }
-    }
 
 	/*
 	* public function updateBooking
@@ -222,6 +217,7 @@ class Mod_booking extends MU_Model {
 	* table (photo, location, festival)
 	* return object
 	*/
+
 	public function getFestival(){
 		$data = $this->db->select('*')
 				->join('photo','photo.photo_id = festival.ftv_photo_id','left')
@@ -232,18 +228,7 @@ class Mod_booking extends MU_Model {
 				->get('festival');
 		return $data;
 	}
-
-	/*public function getFestival(){
-		$data = $this->db->select('*')
-				->join('photo','photo.photo_id = festival.ftv_photo_id','left')
-				->join('location','location.lt_id = festival.ftv_lt_id','left')
-				->order_by('ftv_lt_id')
-				->where('ftv_deleted',0)
-				->where('ftv_status',1)
-				->get('festival');
-		return $data;
-	}
-	*/
+	
 
 	/*
 	* public function getLocation
@@ -321,5 +306,4 @@ class Mod_booking extends MU_Model {
 					->get('booking');
 		return $querybookingpk;
 	}
-
 }

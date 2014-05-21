@@ -48,7 +48,7 @@
       <th><?php echo anchor("ackage/list_record/start_date/" . $sort, "From Date"); ?></th>
       <th><?php echo anchor("ackage/list_record/end_date/" . $sort, "To Date"); ?></th>
       <th>Location</th>
-      <th>Festival</th>
+      <th>Fastival</th>
       <th>Purchase($)</th>
       <th>Sale($)</th>
       <th>Original Stock</th>

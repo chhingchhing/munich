@@ -64,7 +64,7 @@ $autoload['libraries'] = array('database','calendar','form_validation','paginati
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url', 'html', 'text', 'form','language','file','captcha','date','email','general','pdf','urlendcodedecode','cookie');
+$autoload['helper'] = array('url', 'html', 'text', 'form','language','file','captcha','date','email','general','pdf');
 
 
 /*

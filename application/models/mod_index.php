@@ -12,8 +12,8 @@ class Mod_index extends MU_Model{
                  ->where("menu_menu_id", NULL)
                  ->where('menu_delete', 0)
                  ->where('menu_status', 1)
-               // ->order_by("menu_id", "DESC")
-                ->order_by("menu_position","DESC")
+                // ->order_by("menu_id", "ASC")
+                ->order_by("menu_position","ASC")
                  ->get('menu');
         return $query;
     }
@@ -115,21 +115,10 @@ class Mod_index extends MU_Model{
       $this->db->insert("subscriber",$insert);
       return $this->db->insert_id('subscriber');
     }
-        public function exportAllEtichet($bkID){
+    public function exportAllEtichet($table){
         $query = $this->db->select('*')
-               ->join('passenger_booking', 'booking.bk_id = passenger_booking.pbk_bk_id','left')
-               ->join('passenger','passenger.pass_id = passenger_booking.pbk_pass_id','left')
-               ->join('sale_packages','booking.bk_id = sale_packages.salepk_bk_id','left')
-               ->join('package_conjection', 'sale_packages.salepk_pkcon_id = package_conjection.pkcon_id','left')
-               ->join('sale_customize','sale_customize.salecus_bk_id = booking.bk_id','left')
-               ->join('customize_conjection','customize_conjection.cuscon_id = sale_customize.salecus_cuscon_id','left')
-               ->join('festival','festival.ftv_id = customize_conjection.cuscon_ftv_id','left')
-               ->join('activities','activities.act_id = customize_conjection.cuscon_activities','left')
-               ->join('accommodation','accommodation.acc_id = customize_conjection.cuscon_accomodation','left')
-               ->join('location','location.lt_id = activities.act_id','left')
-               ->where('bk_deleted', 0)
-               ->where_in('bk_id', $bkID)
-               ->get('booking');
+                      ->where('user_deleted', 0)  
+                      ->get($table);
         if ($query->num_rows() > 0) {
             foreach ($query->result() as $record) {
                 $data[] = $record;
@@ -138,12 +127,6 @@ class Mod_index extends MU_Model{
         }
         return FALSE;
     }
-    public function getAccompany($passIDs){
-      $query = $this->db->select('*')
-              ->where_in('pass_id', $passIDs)
-              ->get('passenger');
-      return $query;
-   }
 }
 
 /* End of file mod_admin.php */

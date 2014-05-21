@@ -70,7 +70,25 @@
 <div class="form-group">
     <label class="col-sm-2 control-label">Content Photos:</label>
     <div class="col-sm-4">
-        <?php echo form_multiselect('cphoto[]', $all_photos, $con_photo, 'class="form-control"'); ?>
+        <?php //echo form_multiselect('cphoto[]', $all_photos, $con_photo, 'class="form-control"'); ?>
+    
+        <select id="demo-htmlselect-basic" style="width:400px;" name="festivalPhotos">
+                        <?php
+                            if($txtPhotos->num_rows() > 0){
+                                foreach($txtPhotos->result() as $values){ 
+                                    $exploded = explode('.', $values->pho_source);
+                                    $image = $exploded['0'].'_thumb.'.$exploded['1'];
+                                    if($pho_source == $image){
+                                        $photos[$values->photo_id]="<option selected='selected' value='".$values->photo_id."' id='demo-htmlselect-basic' data-imagesrc=".site_url('user_uploads/thumbnail/thumb/'.$image).">".$values->pho_name."</option>";                                   
+                                    }else{
+                                        $photos[$values->photo_id]="<option value='".$values->photo_id."' id='demo-htmlselect-basic' data-imagesrc=".site_url('user_uploads/thumbnail/thumb/'.$image).">".$values->pho_name."</option>";
+                                    }
+                                    echo $photos[$values->photo_id];
+                                } 
+                            }
+                        ?>
+                    </select>
+        
     </div>
 </div>
 <div class="form-group">

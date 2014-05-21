@@ -1,8 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Content extends MU_Controller {
-    
-    public function __construct() {
+class Content extends CI_Controller {
+	
+	public function __construct() {
         parent::__construct();
         $this->load->model(array('mod_menu','mod_content'));
     }
@@ -16,7 +16,6 @@ class Content extends MU_Controller {
     */
 
     public function list_record(){
-    if ($this->check_user_session()) {
         $this->session->unset_userdata('search');
         $data['title'] = "Management content";
         $data['dashboard'] = "management";
@@ -62,7 +61,7 @@ class Content extends MU_Controller {
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
     }
-}
+
     /*
     * function name search_content as public
     * Pagination each page 10 record
@@ -71,13 +70,12 @@ class Content extends MU_Controller {
     * return object record of menu
     */
 
-    public function search_content(){
-    if ($this->check_user_session()) {
-        $data['title'] = "Management content";
-        $data['dashboard'] = "management";
+	public function search_content(){
+		$data['title'] = "Management content";
+		$data['dashboard'] = "management";
         if($this->input->post("search_title")) $this->session->set_userdata('search', $this->input->post("search_title")) ;
-        $controller = $this->uri->segment(1);
-        $function = $this->uri->segment(2);
+		$controller = $this->uri->segment(1);
+    	$function = $this->uri->segment(2);
 
         if($this->uri->segment(3) != "" AND !is_numeric($this->uri->segment(3))){
             $uri3 = $this->uri->segment(3);
@@ -116,9 +114,9 @@ class Content extends MU_Controller {
         $page = ($this->uri->segment($config['uri_segment']) && $this->uri->segment($config['uri_segment']) > 0) ? $this->uri->segment($config['uri_segment']) : 0;
         $data['content_record'] = $this->mod_content->getSearchContent($this->session->userdata('search'),$config['per_page'], $page, $sortby, $data['sort']);
         $data['pagination'] = $this->pagination->create_links();
-        $this->load->view('munich_admin', $data);
-    }
-}
+		$this->load->view('munich_admin', $data);
+	}
+
     /*
     * public function getPerent menu as public
     * model mod_menu->getAllParentMenu();
@@ -127,7 +125,6 @@ class Content extends MU_Controller {
     * return as menu option
     */
     public function getParents(){
-    if ($this->check_user_session()) {
         $menu_parent = $this->mod_menu->getAllParentMenu();
         $option[''] = "--- select ---";
         foreach($menu_parent->result() as $menuname){
@@ -135,7 +132,6 @@ class Content extends MU_Controller {
         }
         return $option;
     }
-}
     /*
     * public function getphotos as public
     * model mod_content->getAllPhoto();
@@ -144,7 +140,6 @@ class Content extends MU_Controller {
     * return as photo option
     */
     public function getphotos(){
-    if ($this->check_user_session()) {
         $photos = $this->mod_content->getAllPhotos();
         // $option[''] = "--- select ---";
         foreach($photos->result() as $photo){
@@ -152,7 +147,7 @@ class Content extends MU_Controller {
         }
         return $option;
     }
-}
+
     /*
     * public function add_content
     * load view munich admin
@@ -160,7 +155,6 @@ class Content extends MU_Controller {
     * @noparam
     */
     public function add_content(){
-    if ($this->check_user_session()) {
         if($this->input->post("content_add")){
             $insert["con_title"] = trim($this->input->post('ctitle'));
             $insert["con_text"] = trim($this->input->post('cText'));
@@ -197,7 +191,7 @@ class Content extends MU_Controller {
             $this->load->view('munich_admin', $data);
         }
     }
-}
+
     /*
     * public function edit_content
     * load view munich admin
@@ -206,7 +200,6 @@ class Content extends MU_Controller {
     * @param $con_menu_id (int)
     */
     public function edit_content($con_id, $con_menu_id){
-    if ($this->check_user_session()) {
         if($this->input->post("content_edit")){
             $update["con_title"] = trim($this->input->post('ctitle'));
             $update["con_text"] = trim($this->input->post('cText'));
@@ -245,7 +238,7 @@ class Content extends MU_Controller {
             $this->load->view('munich_admin', $data);
         }
     }
-}
+
     /*
     * pulic function deleteById
     * @param $con_id (int) 
@@ -253,7 +246,6 @@ class Content extends MU_Controller {
     * redirect to the current page
     */
     public function deleteById($con_id, $pagione = false, $pagitwo = false,$pagithree = false){
-    if ($this->check_user_session()) {
         $total_rows = MU_Model::count_all_data('content', array('con_delete' => 0));
         $deleted = MU_Model::deleteRecordById('content', array("con_delete" => 1), array('con_id' => $con_id));
         $pagi = "";
@@ -276,7 +268,7 @@ class Content extends MU_Controller {
             redirect($redirect);
         }
     }
-}
+
     /*
     * public function delete_multi
     * @noparam
@@ -284,7 +276,6 @@ class Content extends MU_Controller {
     * return string success of false
     */
     public function delete_multi(){
-    if ($this->check_user_session()) {
         $multiCheckbox = $this->input->post("check_checkbox");
         $update['con_delete'] = 1;
         $result = $this->mod_content->deleteMultiple($update, $multiCheckbox);
@@ -296,7 +287,7 @@ class Content extends MU_Controller {
             echo "f";
         }
     }
-}
+
     /*
     * public function delete_permanent
     * @noparam
@@ -304,7 +295,6 @@ class Content extends MU_Controller {
     * return string success of false
     */
     public function delete_permanent(){
-    if ($this->check_user_session()) {
         $multiCheckbox = $this->input->post("check_checkbox");
         $result = $this->mod_content->deleteMultiplePermanent($multiCheckbox);
         if($result > 0){
@@ -315,7 +305,7 @@ class Content extends MU_Controller {
             echo "f";
         }
     }
-}
+
     /*
     * pulic function status_content
     * @param $con_status (int)
@@ -324,7 +314,6 @@ class Content extends MU_Controller {
     * redirect to the current page
     */
     public function status_content($con_status, $con_id, $pagione = false, $pagitwo = false, $pagithree = false){
-    if ($this->check_user_session()) {
         $total_rows = MU_Model::count_all_data('content', array('con_delete' => 0));
         $con_status = ($con_status == 1) ? 0 : 1;
         $statuschaged = MU_Model::updateStatusById('content', array("con_status" => $con_status), array('con_id' => $con_id));
@@ -350,7 +339,7 @@ class Content extends MU_Controller {
             redirect($redirect);
         }
     }
-}
+
     /*
     * pulic function view_content
     * @param $con_id (int)  
@@ -358,13 +347,12 @@ class Content extends MU_Controller {
     * redirect to the current page
     */
     public function view_content($con_id){
-    if ($this->check_user_session()) {
         $data['title'] = "Management content";
         $data['dashboard'] = "management";
         $data['viewContent'] = $this->mod_content->getContentView($con_id);
         $this->load->view('munich_admin', $data);
     }
-}
+
 }
 
 /* End of file content.php */

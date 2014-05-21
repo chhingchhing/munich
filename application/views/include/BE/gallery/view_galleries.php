@@ -1,7 +1,7 @@
 <ol class="breadcrumb">
       <li><?php echo anchor("munich_admin","Dashboard"); ?></li>
       <li><?php echo anchor("gallery/list_record","Manage"); ?></li>
-      <li>View</li>
+      <li>View Gallery</li>
 </ol>
 <h1 class="action_page_header">View Gallery</h1>
 <?php  echo form_open('gallery/view_galleries/'.$this->uri->segment(3), 'class="form-horizontal"'); ?>

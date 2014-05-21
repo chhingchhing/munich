@@ -1,15 +1,8 @@
-<div class="row txtTitleChoose" style="border-bottom: 1px solid #ccc; margin-bottom:10px;">
-	<h2>Booking Tours</h2>
-	<h3>Your Package Details</h3>
-</div>
 <div class="row clearfix">
-<div class="col-lg-10" style="padding-left:0px;">
+<div class="col-lg-10">
 	<?php 
 		if($packagesdetail->num_rows > 0){
 			foreach($packagesdetail->result() as $rows){
-				$this->session->set_userdata('pkprice', $rows->pkcon_saleprice);
-				$this->session->set_userdata('pkstartdate', $rows->pkcon_start_date);
-				$this->session->set_userdata('pkenddate', $rows->pkcon_end_date);
 	?>
 		<div class="media col-lg-12" style="">
 		  <div class="col-lg-4 pk_img">
@@ -30,7 +23,7 @@
 		    	</tr>
 		    	<tr>
 		    		<td><b>Price: </b></td>
-		    		<td><?php echo $rows->pkcon_saleprice; ?> $</td>
+		    		<td><?php echo $rows->pkcon_saleprice;?> $</td>
 		    		<td><b>Location:</b></td>
 		    		<td><?php echo $rows->lt_name;?></td>
 		    	</tr>
@@ -336,8 +329,7 @@
 	?>
 
 	<?php
-		echo '<br />'.anchor('site/packages/showservice/','Continue', 'class="btn btn-primary"').nbs(5);
-		echo anchor('site/packages/','Back', 'class="btn btn-default"');
+		echo '<br />'.anchor('site/packages/booknow'.$rows->pkcon_id,'Book Now', 'class="btn btn-primary"');
 		}
 	}else{
 		echo "No record was found...";
@@ -345,7 +337,6 @@
 	?>
 	</div>
 	<div class="col-lg-2">
-	<!-- <div class="col-lg-2" id="sticky" style="background: blue;position:fixed; right:0"> -->
-		<?php echo $this->session->userdata('pkprice'); ?>
+		list
 	</div>
 </div>

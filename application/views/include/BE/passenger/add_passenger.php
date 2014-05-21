@@ -79,7 +79,7 @@
             <span style="color:red;"><?php echo form_error('password'); ?></span>
         </div>
     </div>
-    <div class="form-group">
+   <div class="form-group">
         <label class="col-sm-2 control-label">Gender<span class="require">*</span> :</label>
         <div class="col-sm-4">
             <?php echo form_dropdown('gender', $gender, set_value('gender'),'class="form-control"'); ?>

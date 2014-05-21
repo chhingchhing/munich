@@ -1,8 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Menu extends MU_Controller {
-    
-    public function __construct() {
+	
+	public function __construct() {
         parent::__construct();
         $this->load->model(array('mod_menu'));
     }
@@ -16,7 +16,6 @@ class Menu extends MU_Controller {
     */
 
     public function list_record(){
-    if ($this->check_user_session()) {
         $data['title'] = "Management Menu";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
@@ -61,7 +60,7 @@ class Menu extends MU_Controller {
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
     }
-}
+
     /*
     * function name search_menu as public
     * Pagination each page 10 record
@@ -70,13 +69,12 @@ class Menu extends MU_Controller {
     * return object record of menu
     */
 
-    public function search_menu(){
-    if ($this->check_user_session()) {
-        $data['title'] = "Management Menu";
-        $data['dashboard'] = "management";
+	public function search_menu(){
+		$data['title'] = "Management Menu";
+		$data['dashboard'] = "management";
         if($this->input->post("search_title")) $this->session->set_userdata('searchMenu', $this->input->post("search_title")) ;
-        $controller = $this->uri->segment(1);
-        $function = $this->uri->segment(2);
+		$controller = $this->uri->segment(1);
+    	$function = $this->uri->segment(2);
 
         if($this->uri->segment(3) != "" AND !is_numeric($this->uri->segment(3))){
             $uri3 = $this->uri->segment(3);
@@ -116,9 +114,9 @@ class Menu extends MU_Controller {
         $page = ($this->uri->segment($config['uri_segment']) && $this->uri->segment($config['uri_segment']) > 0) ? $this->uri->segment($config['uri_segment']) : 0;
         $data['menu_record'] = $this->mod_menu->getSearchMenu($this->session->userdata('searchMenu'),$config['per_page'], $page, $sortby, $data['sort']);
         $data['pagination'] = $this->pagination->create_links();
-        $this->load->view('munich_admin', $data);
-    }
-}
+		$this->load->view('munich_admin', $data);
+	}
+
     /*
     * public function getPerent menu as public
     * model mod_menu->getAllParentMenu();
@@ -127,7 +125,6 @@ class Menu extends MU_Controller {
     * return as menu option
     */
     public function getParents(){
-    if ($this->check_user_session()) {
         $menu_parent = $this->mod_menu->getAllParentMenu();
         $option[''] = "--- select ---";
         foreach($menu_parent->result() as $menuname){
@@ -135,7 +132,6 @@ class Menu extends MU_Controller {
         }
         return $option;
     }
-}
     /*
     * public function add_menu
     * load view munich admin
@@ -143,7 +139,6 @@ class Menu extends MU_Controller {
     * @noparam
     */
     public function add_menu(){
-    if ($this->check_user_session()) {
         $data['title'] = "Management Menu";
         $data['dashboard'] = "management";
         $data['parent_menu'] = $this->getParents();
@@ -171,7 +166,7 @@ class Menu extends MU_Controller {
             $this->load->view('munich_admin', $data);
         }
     }
-}
+
     /*
     * public function edit_menu
     * load view munich admin
@@ -179,7 +174,6 @@ class Menu extends MU_Controller {
     * @param $menu_id
     */
     public function edit_menu($menu_id){
-    if ($this->check_user_session()) {
         $data['title'] = "Management Menu";
         $data['dashboard'] = "management";
         $data['parent_menu'] = $this->getParents();
@@ -211,7 +205,7 @@ class Menu extends MU_Controller {
             $this->load->view('munich_admin', $data);
         }
     }
-}
+
     /*
     * pulic function deleteById
     * @param $menu_id (int) 
@@ -219,7 +213,6 @@ class Menu extends MU_Controller {
     * redirect to the current page
     */
     public function deleteById($menu_id, $pagione = false, $pagitwo = false,$pagithree = false){
-    if ($this->check_user_session()) {
         $total_rows = MU_Model::count_all_data('menu', array('menu_delete' => 0));
         $deleted = MU_Model::deleteRecordById('menu', array("menu_delete" => 1), array('menu_id' => $menu_id));
         $pagi = "";
@@ -242,7 +235,7 @@ class Menu extends MU_Controller {
             redirect($redirect);
         }
     }
-}
+
     /*
     * public function delete_multi
     * @noparam
@@ -250,7 +243,6 @@ class Menu extends MU_Controller {
     * return string success of false
     */
     public function delete_multi(){
-    if ($this->check_user_session()) {
         $multiCheckbox = $this->input->post("check_checkbox");
         $update['menu_delete'] = 1;
         $result = $this->mod_menu->deleteMultiple($update, $multiCheckbox);
@@ -262,7 +254,7 @@ class Menu extends MU_Controller {
             echo "f";
         }
     }
-}
+
     /*
     * public function delete_permanent
     * @noparam
@@ -270,7 +262,6 @@ class Menu extends MU_Controller {
     * return string success of false
     */
     public function delete_permanent(){
-    if ($this->check_user_session()) {
         $multiCheckbox = $this->input->post("check_checkbox");
         $result = $this->mod_menu->deleteMultiplePermanent($multiCheckbox);
         if($result > 0){
@@ -281,7 +272,7 @@ class Menu extends MU_Controller {
             echo "f";
         }
     }
-}
+
     /*
     * pulic function status_menu
     * @param $menu_status (int)
@@ -290,7 +281,6 @@ class Menu extends MU_Controller {
     * redirect to the current page
     */
     public function status_menu($menu_status, $menu_id, $pagione = false, $pagitwo = false, $pagithree = false){
-    if ($this->check_user_session()) {
         $total_rows = MU_Model::count_all_data('menu', array('menu_delete' => 0));
         $menu_status = ($menu_status == 1) ? 0 : 1;
         $statuschaged = MU_Model::updateStatusById('menu', array("menu_status" => $menu_status), array('menu_id' => $menu_id));
@@ -316,7 +306,7 @@ class Menu extends MU_Controller {
             redirect($redirect);
         }
     }
-}
+
 }
 /* End of file menu.php */
 /* Location: ./application/controllers/menu.php */

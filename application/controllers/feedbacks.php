@@ -10,49 +10,46 @@ if (!defined('BASEPATH'))
         $this->load->model(array('mod_feedback','mod_user'));
      }
     public function add_feedback(){
-    if ($this->check_user_session()) {
-    $data['title'] = "Add New Passenger";
-    $data['dashboard'] = "management";
-    $data['txtStatus'] = array('' =>'--Select--','0' => 'Unpublished','1' => 'Published');
-  $session = $this->session->set_userdata($data);
-  if ($this->input->post('add_feedback')) {
-      $config = array(
-              array('field' => 'name', 'label' => 'Name','rules' => 'trim|required'),
+    	$data['title'] = "Add New Passenger";
+		$data['dashboard'] = "management";
+		$data['txtStatus'] = array('' =>'--Select--','0' => 'Unpublished','1' => 'Published');
+	$session = $this->session->set_userdata($data);
+	if ($this->input->post('add_feedback')) {
+			$config = array(
+						  array('field' => 'name', 'label' => 'Name','rules' => 'trim|required'),
                           array('field' => 'email','label' => 'Email','rules' => 'trim|required'),
                           array('field' => 'txtStatus','label' => 'Status','rules' => 'trim|required'),
                           array('field' => 'date', 'label' => 'Date','rules' => 'trim|required'),
                           array('field' => 'subject','label' => 'Subject','rules' => 'trim|required'),
                           array('field' => 'text','label' => 'Text','rules' => 'trim|required'),
-      );
-      $this->form_validation->set_rules($config);
-      $this->session->set_userdata('create',$data);
-      if($this->form_validation->run() == FALSE){
-      $this->session->set_userdata('create', show_message('Please check your completed form!', 'error'));
-      $this->load->view('munich_admin', $data);
-      }else{
-            $username =   $this->input->post('name');
+			);
+			$this->form_validation->set_rules($config);
+			$this->session->set_userdata('create',$data);
+			if($this->form_validation->run() == FALSE){
+			$this->session->set_userdata('create', show_message('Please check your completed form!', 'error'));
+			$this->load->view('munich_admin', $data);
+			}else{
+						$username =   $this->input->post('name');
                         $email  =   $this->input->post('email');
                         $txtStatus = $this->input->post('txtStatus');
                         $date = $this->input->post('date');
-            $subject   =   $this->input->post('subject');
-            $text   =   $this->input->post('text');
-        $resulf = $this->mod_feedback->getDataFeedback($username,$email,$txtStatus,$date,$subject,$text); 
-      if($resulf > 0){
-      $this->session->set_userdata('create', show_message('Your data input was successfully.', 'success'));
-      //redirect('feedbacks/list_record');
-      redirect('feedbacks/view_feedback/'.$resulf);
-      }else{
-        echo "can not insert";
-      }
-    }
-  }
-    $this->load->view('munich_admin', $data);
+						$subject   =   $this->input->post('subject');
+						$text   =   $this->input->post('text');
+			  $resulf = $this->mod_feedback->getDataFeedback($username,$email,$txtStatus,$date,$subject,$text); 
+			if($resulf > 0){
+    			$this->session->set_userdata('create', show_message('Your data input was successfully.', 'success'));
+    			// redirect('feedbacks/list_record');
+                redirect('feedbacks/view_feedback/'.$resulf);
+			}else{
+				echo "can not insert";
+			}
+		}
+	}
+		$this->load->view('munich_admin', $data);
 
     }
-}
 public function list_record(){
-if ($this->check_user_session()) {
-      $data['title'] = "Feedback";
+    	$data['title'] = "Feedback";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
         $function = $this->uri->segment(2);
@@ -75,7 +72,7 @@ if ($this->check_user_session()) {
         }
         $config['total_rows'] = MU_Model::count_all_data('feedback', array('fb_deleted' => 0));
         $config['per_page'] = 10;
-    $config['next_tag_open'] = '<li>';
+		$config['next_tag_open'] = '<li>';
         $choice = $config["total_rows"] / $config["per_page"];
         $config["num_links"] = round($choice);
         $config['next_tag_close'] = '</li>';
@@ -94,10 +91,8 @@ if ($this->check_user_session()) {
         $this->load->view('munich_admin', $data);
 
     }
-}
     // eidt function
     public function edit_feedback(){
-    if ($this->check_user_session()) {
         $data['title'] = "Add New Passenger";
         $data['dashboard'] = "management";
         $get_id = $this->uri->segment(3);
@@ -128,7 +123,7 @@ if ($this->check_user_session()) {
             $resulf = $this->mod_feedback->editDataFeedback($get_id,$get_username,$get_email,$get_txtStatus,$get_date,$get_subject,$get_text); 
             if($resulf > 0){
             $this->session->set_userdata('create', show_message('Your data update was successfully.', 'success'));
-            //redirect('feedbacks/list_record');
+            // redirect('feedbacks/list_record');
             redirect('feedbacks/view_feedback/'.$get_id);
             }else{
                 echo "can not insert";
@@ -138,17 +133,15 @@ if ($this->check_user_session()) {
         $this->load->view('munich_admin', $data);
 
     }
-}
     public function search_feedback(){
-    if ($this->check_user_session()) {
-    $data['title'] = "search feedback";
-    $data['dashboard'] = "management";
+		$data['title'] = "search feedback";
+		$data['dashboard'] = "management";
         $data['search_feedback_name'] = $this->input->post("search_name");
-      if($this->input->post('search_name')){
-     $data['search_feedback_name'] = $this->input->post("search_name");
+	    if($this->input->post('search_name')){
+		 $data['search_feedback_name'] = $this->input->post("search_name");
 
-    }
-    $controller = $this->uri->segment(1);
+		}
+		$controller = $this->uri->segment(1);
         $function = $this->uri->segment(2);
         if ($this->uri->segment(3) != "" AND !is_numeric($this->uri->segment(3))) {
             $uri3 = $this->uri->segment(3);
@@ -169,7 +162,7 @@ if ($this->check_user_session()) {
         }
         $config['total_rows'] = MU_Model::count_all_data('feedback', array('fb_deleted' => 0));
         $config['per_page'] = 10;
-    $config['next_tag_open'] = '<li>';
+		$config['next_tag_open'] = '<li>';
         $choice = $config["total_rows"] / $config["per_page"];
         $config["num_links"] = round($choice);
         $config['next_tag_close'] = '</li>';
@@ -186,22 +179,18 @@ if ($this->check_user_session()) {
         $data['feedbacks'] = $this->mod_feedback->getSearchFeedback($data['search_feedback_name'],$config['per_page'], $page, $sortby, $data['sort']);
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
-  }
-}
-  public function view_feedback(){
-if ($this->check_user_session()) {
-    $data['title'] = "View Feedback";
-    $data['dashboard'] = "management";
-    $get_id = $this->uri->segment(3);
-    $data['view_feedback'] = $this->mod_feedback->view_feedback($get_id);
-    $data['txtStatus'] = array('0' => 'Unpublished','1' => 'Published');
+	}
+	public function view_feedback(){
+		$data['title'] = "View Feedback";
+		$data['dashboard'] = "management";
+		$get_id = $this->uri->segment(3);
+		$data['view_feedback'] = $this->mod_feedback->view_feedback($get_id);
+		$data['txtStatus'] = array('0' => 'Unpublished','1' => 'Published');
         $this->load->view('munich_admin', $data);
 
-  // edit activities
+	// edit activities
     }
-}
-  public function deleteFeedbackMultiple(){
-if ($this->check_user_session()) {
+	public function deleteFeedbackMultiple(){
         $multiCheck = $this->input->post("check_checkbox");
         $update['fb_deleted'] = 1;
         $result = $this->mod_feedback->deleteFeedbackMultiple($update,$multiCheck);
@@ -213,9 +202,7 @@ if ($this->check_user_session()) {
             echo "f";
         }
     }
-}
     public function deletePermenentFeedback() {
-    if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $result = $this->mod_feedback->deletePermenentFeedback($multiCheck);
         if ($result > 0) {
@@ -226,15 +213,12 @@ if ($this->check_user_session()) {
             echo "f";
         }
     }
-}
     public function deleteFeedbackByID($feedback_id,$pagination = false){
-    if ($this->check_user_session()) {
         $total_count = MU_Model::count_all_data('feedback',array('fb_deleted' => 0));
         $delete_feedback = MU_Model::deleteRecordById('feedback',array("fb_deleted" => 1) ,array('fb_id' => $feedback_id));
             if($delete_feedback){
             redirect(strtolower(get_class()).'/list_record');
             }
    }
-}
 }   
 

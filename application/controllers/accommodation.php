@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Accommodation extends MU_Controller {
+class Accommodation extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -20,7 +20,6 @@ class Accommodation extends MU_Controller {
     * show the list of the accommodation
     */
     public function list_record() {
-    if ($this->check_user_session()) {
         $data['title'] = "Accommodation";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
@@ -62,7 +61,7 @@ class Accommodation extends MU_Controller {
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
     }
-}
+
     /*
     *public function search_accommodation
     *@: searching of from date, end date and name of accommodation
@@ -73,7 +72,6 @@ class Accommodation extends MU_Controller {
     *show the list of search the accommodation 
     */
     public function search_accommodation() {
-    if ($this->check_user_session()) {
         $data['title'] = "Search Accommodation";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
@@ -118,7 +116,7 @@ class Accommodation extends MU_Controller {
 		$data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data); 
     }
-}
+
     /*
     * public function detail_accommodation
     * @noparam
@@ -127,7 +125,6 @@ class Accommodation extends MU_Controller {
     * mod_accommodation.php {detail_accommodation(@param)}
     */
     public function detail_accommodation() {
-    if ($this->check_user_session()) {
         $data['title'] = "View Accommodation";
         $data['dashboard'] = "management";
         $data['get_facility'] = $this->mod_accommodation->getFacility();
@@ -200,7 +197,7 @@ class Accommodation extends MU_Controller {
           echo $records;
         }
     }
-}
+
     /*
     * public function detail_extraproduct
     * @noparam
@@ -209,7 +206,6 @@ class Accommodation extends MU_Controller {
     * mod_accommodation.php {detail_extraproduct(@param)}
     */
     public function detail_extraproduct() {
-    if ($this->check_user_session()) {
         $data['title'] = "View Accommodation";
         $data['dashboard'] = "management";
         if($this->uri->segment(3) == "temp"){
@@ -253,7 +249,7 @@ class Accommodation extends MU_Controller {
             echo $records;
         }
     }
-}
+
     /*
     * pulic function status_accommodation
     * @param $acc_status (int)
@@ -262,7 +258,6 @@ class Accommodation extends MU_Controller {
     * redirect to the current page
     */
     public function status_accommodation ($acc_status, $acc_id, $pagione = false, $pagitwo = false, $pagithree = false){
-    if ($this->check_user_session()) {
         $total_rows = MU_Model::count_all_data('accommodation', array('acc_deleted' => 0));
         $acc_status = ($acc_status == 1) ? 0 : 1;
         $statuschaged = MU_Model::updateStatusById('accommodation', array("acc_status" => $acc_status), array('acc_id' => $acc_id));
@@ -281,7 +276,7 @@ class Accommodation extends MU_Controller {
             redirect($redirect);
         }
     }
-}
+
     /* 
     * public function is_money
     * @param $price
@@ -300,7 +295,6 @@ class Accommodation extends MU_Controller {
     * @insert record.
     */
     public function add_accommodation() {
-    if ($this->check_user_session()) {
         $data['title'] = "Add New Accommodation";
         $data['dashboard'] = "management";
         // $data['txtchoiceItem'] = array(''=>"please select...",'1' => 'Yes', '0' => 'No');
@@ -382,7 +376,7 @@ class Accommodation extends MU_Controller {
             $this->load->view('munich_admin', $data);
         } // btn add
     } // function add_accommodation
-}
+
     /* 
     * public function view_accommodation
     * @noparam
@@ -392,7 +386,6 @@ class Accommodation extends MU_Controller {
     * @saverecordback
     */
     public function view_accommodation($acc_id) {
-    if ($this->check_user_session()) {
         $data['title'] = "View Accommodation";
         $data['dashboard'] = "management";
         // $data['txtchoiceItem'] = array(''=>"please select...",'1' => 'Yes', '0' => 'No');
@@ -484,7 +477,7 @@ class Accommodation extends MU_Controller {
             $this->load->view('munich_admin', $data);
         } // btn savechange
     } // function view_accommodation
-}
+
     /*
     * public function add_sub_ep
     * @param $acc_id (int)
@@ -492,7 +485,6 @@ class Accommodation extends MU_Controller {
     * return while success add
     */
     function add_sub_ep($acc_id){
-    if ($this->check_user_session()) {
         if($this->session->userdata('have_sub')){
             $tempsub = $this->mod_accommodation->get_temp_accommodation($acc_id);
             $tempsub = $tempsub->result();
@@ -520,7 +512,7 @@ class Accommodation extends MU_Controller {
         $this->session->unset_userdata('have_sub');
         $this->session->unset_userdata('have_extra');    
     }
-}
+
     /*
     * public function add_subaccommodation
     * @noparam 
@@ -529,7 +521,6 @@ class Accommodation extends MU_Controller {
     * echo boolean
     */
     function add_subaccommodation(){
-    if ($this->check_user_session()) {
         $sub_accommodation = $this->accommodation_variable(); // function return the valude variable of accommodation.
         $sub_accommodation['acc_subof'] = $this->input->post('acc_subof');
         $sub_accommodation['acc_cherge_subacc'] = $this->input->post('chergeby');
@@ -569,7 +560,7 @@ class Accommodation extends MU_Controller {
             }
         }
     }
-}
+
     /*
     *  public function delete_accommodation
     *  @noparam
@@ -577,7 +568,6 @@ class Accommodation extends MU_Controller {
     *  return true or false
     */
     public function delete_accommodation(){
-    if ($this->check_user_session()) {
         if($this->uri->segment(3) == "temp"){
             $id = $this->uri->segment(4);
             $result = MU_Model::deletedRecordById("temp_table",array("ID"=>$id));
@@ -587,7 +577,7 @@ class Accommodation extends MU_Controller {
         }
         if($result) echo 't';
     }
-}
+
     /*
     * public function add_extraproduct
     * @noparam
@@ -596,7 +586,6 @@ class Accommodation extends MU_Controller {
     * echo table row of table to append in front page
     */
     public function add_extraproduct(){
-    if ($this->check_user_session()) {
         $ep_id = $this->input->post('txtExtra');
         $expro = $this->mod_accommodation->getExproductById($ep_id);
         if($expro->num_rows() > 0){
@@ -627,7 +616,7 @@ class Accommodation extends MU_Controller {
             echo "no record was found.";
         }
     }
-}
+
     /*
     *  public function delete_extraproduct
     *  @noparam
@@ -635,7 +624,6 @@ class Accommodation extends MU_Controller {
     *  return true or false
     */
     public function delete_extraproduct(){
-    if ($this->check_user_session()) {
         if($this->uri->segment(3) == "temp"){
             $id = $this->uri->segment(4);
             $result = MU_Model::deletedRecordById("temp_table",array("ID" => $id));
@@ -645,7 +633,7 @@ class Accommodation extends MU_Controller {
         }
         if($result) echo 't';
     }
-}
+
     /*
     * public funciton deleted_sub
     * @noparam
@@ -654,7 +642,6 @@ class Accommodation extends MU_Controller {
     * deleted subaccommodation and extraproduct 
     */
     public function deleted_sub(){
-    if ($this->check_user_session()) {
         $acc_id = $this->input->post('acc_id');
         if(! $this->session->userdata('have_sub') OR ! $this->session->userdata('have_extra')){
             $result = MU_Model::deleted_sub($acc_id);
@@ -665,14 +652,13 @@ class Accommodation extends MU_Controller {
         $this->session->unset_userdata('have_sub');
         $this->session->unset_userdata('have_extra');
     }
-}
+
     /*
     * public function accommodation_config
     * @noparam
     * return config (array)
     */
     public function accommodation_config(){
-    if ($this->check_user_session()) {
         $config = array(
             array('field' => 'accommodationName','label' => 'Accommodation Name','rules' => 'trim|required'),
             // array('field' => 'txtchoiceItem','label' => 'Choice Item','rules' => 'trim|required'),
@@ -696,14 +682,13 @@ class Accommodation extends MU_Controller {
         );
         return $config;
     }
-}
+
     /*
     * public function accommodation_variable
     * @noparent
     * return $accommodation (array)
     */
     public function accommodation_variable(){
-    if ($this->check_user_session()) {
         $accommodation['acc_name']          = $this->input->post('accommodationName');
         // $accommodation['acc_choiceitem']    = $this->input->post('txtchoiceItem');
         $accommodation['acc_rt_id']       = $this->input->post('txtRoom');
@@ -725,14 +710,13 @@ class Accommodation extends MU_Controller {
         $accommodation['acc_status']        = $this->input->post('txtStatus');
         return $accommodation;
     }
-}
+
     /*
     * public function accommodation_cal
     * @param $checkavailableday (array)
     * return calendar_selected (array)
     */
     public function accommodation_cal($checkavailableday){
-    if ($this->check_user_session()) {
         $calendar_selected['start_date']    = $this->input->post('txtFrom');
         $calendar_selected['end_date']      = $this->input->post('txtTo');
         $calendar_selected['start_time']    = $this->input->post('txtStartTime');
@@ -763,7 +747,7 @@ class Accommodation extends MU_Controller {
         }
         return $calendar_selected;
     }
-}
+
     /*
     *public function deleteAccommodationById
     *@param $accommodation (int)
@@ -771,15 +755,12 @@ class Accommodation extends MU_Controller {
     */
     //delete accommodation by id
     public function deleteAccommodationById($accommodation_id,$pagination = false){
-    if ($this->check_user_session()) {
- 
   	    $total_count = MU_Model::count_all_data('accommodation',array('acc_deleted' => 0));
   	    $delete_accommodation = MU_Model::deleteRecordById('accommodation',array("acc_deleted" => 1) ,array('acc_id' => $accommodation_id));
   	    if($delete_accommodation){
   		    redirect(strtolower(get_class()).'/list_record');
   	    }
-    }	
-    } 
+    }	 
     //end delete accommodation by id
     
     /*
@@ -788,7 +769,6 @@ class Accommodation extends MU_Controller {
     */
     //delete multiple accommodation
     public function deleteMultiAccommodation(){
-    if ($this->check_user_session()) {
 	    $multiCheck = $this->input->post("check_checkbox");
 	    $update['acc_deleted'] = 1;
 	    $result = $this->mod_accommodation->deleteMultipleAccommodation($update,$multiCheck);
@@ -800,7 +780,6 @@ class Accommodation extends MU_Controller {
             echo "f";
         }
     }
-    }
     //end of delete multiple accommodation
 
     /*
@@ -809,7 +788,6 @@ class Accommodation extends MU_Controller {
     */
     /* delete permenent accommodation */
     public function deletePermenentAccommodation() {
-    if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $result = $this->mod_accommodation->deletePermenentAcc($multiCheck);
         if ($result > 0) {
@@ -820,7 +798,7 @@ class Accommodation extends MU_Controller {
             echo "f";
         }
     }
-}
+
     /* end delete permenent accommodation */
 
     //For print pdf  and excel
@@ -828,29 +806,26 @@ class Accommodation extends MU_Controller {
     *public function exportPDF
     *noparam
     */
-    public function exportPDF() {  
-    if ($this->check_user_session()) {        
+    public function exportPDF() {          
         $this->load->helper('pdf_helper');
         $data['accommodation'] = $this->mod_accommodation->exportAllDatas('accommodation');
         $this->load->view('include/BE/accommodation/pdfexport', $data);
     }
-}
+
     /*
     *public function exportExcel
     *noparamm
     */
-    public function exportExcel() {
-    if ($this->check_user_session()) {           
+    public function exportExcel() {           
         $data['accommodation'] = $this->mod_accommodation->exportAllDatas('accommodation');
         $this->load->view('include/BE/accommodation/excelexport', $data);
     }
-}
+
     /*
     *public function exportByPagePDF
     *noparam
     */
     public function exportByPagePDF(){
-    if ($this->check_user_session()) {
         $this->load->helper('pdf_helper');
         $checkex = $this->input->post("check_checkbox");
         
@@ -861,13 +836,12 @@ class Accommodation extends MU_Controller {
         }
         $this->load->view('include/BE/accommodation/pdfexport', $exportpage);
         }
-}
+
     /*
     *public function exportByPageExcel
     *noparam
     */
-    public function exportByPageExcel(){ 
-    if ($this->check_user_session()) {     
+    public function exportByPageExcel(){      
         $checkex = $this->input->post("check_checkbox");
         
         if($this->uri->segment(3) == "search_accommodation"){
@@ -877,13 +851,12 @@ class Accommodation extends MU_Controller {
         }
         $this->load->view('include/BE/accommodation/excelexport', $exportpage);
     }
-}
+
     /*
     *public function getRecordAccommodation
     *noparam
     */
     public function getRecordAccommodation(){
-    if ($this->check_user_session()) {
         if($this->session->userdata("from_date")){ $fromdate = $this->session->userdata("from_date"); }else{ $fromdate = ""; }
         if($this->session->userdata("end_date")){ $enddate = $this->session->userdata("end_date"); }else{ $enddate = ""; }
         if($this->session->userdata("accommodation_name")){$name = $this->session->userdata("accommodation_name"); }else{ $name = ""; }
@@ -895,13 +868,12 @@ class Accommodation extends MU_Controller {
             return $datas;
         }   
     }
-}
+
     /*
     *public function exportDataPage
     *noparam
     */
     public function exportDataPage(){
-    if ($this->check_user_session()) {
     $query = $this->db
         ->select('*')
         ->from('accommodation')
@@ -919,7 +891,6 @@ class Accommodation extends MU_Controller {
             return $data;
         }
         return FALSE;
-    }
     }
 }
 

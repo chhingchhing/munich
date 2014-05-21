@@ -41,8 +41,8 @@
 							'pass_deleted' => 0,
 							);
 			 $this->db->insert('passenger',$insert);
-			 // return $this->db->affected_rows() > 0;
 			 return $this->db->insert_id('passenger');
+			 // return $this->db->affected_rows() > 0;
 			 
 			 }
 		 public function deleteMultiplePassenger($update,$whereID){
@@ -64,8 +64,8 @@
 							->get();
 		
 					return $query;
-			 }
-		 public function edit_passenger($get_id,$get_firstname,$get_lastname,$get_email,$get_phone,$get_address,$get_company,$get_password,$get_gender,$get_txtStatus) {
+		}
+		public function edit_passenger($get_id,$get_firstname,$get_lastname,$get_email,$get_phone,$get_address,$get_company,$get_password,$get_gender,$get_txtStatus) {
 					$data = array(
 							'pass_fname' => $get_firstname,
 							'pass_lname' => $get_lastname,

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Passenger extends MU_Controller {
+class Passenger extends CI_Controller {
     
      public function __construct() {
         parent::__construct();
@@ -8,7 +8,6 @@ class Passenger extends MU_Controller {
     }
 
     public function list_record(){
-    if ($this->check_user_session()) {
         $data['title'] = "Passenger";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
@@ -52,9 +51,9 @@ class Passenger extends MU_Controller {
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
     }
-  }
+
+
     public function view_passenger() {
-    if ($this->check_user_session()) {
         $data['title'] = "View Passenger";
         $data['dashboard'] = "management";
         $get_id = $this->uri->segment(3);
@@ -62,9 +61,8 @@ class Passenger extends MU_Controller {
         $data['txtStatus'] = array('0' => 'Unpublished','1' => 'Published');
         $this->load->view('munich_admin', $data);
     }
- }
+
     public function add_passenger(){
-    if ($this->check_user_session()) {
           $data['title'] = "Add New Passenger";
           $data['dashboard'] = "management";
           $data['gender'] = array('' => '-- Select --', 'F' => 'Female', 'M' => 'Male');
@@ -105,9 +103,8 @@ class Passenger extends MU_Controller {
                   }
                    $this->load->view('munich_admin', $data);
     }
-}
+
      public function edit_passenger() {
-     if ($this->check_user_session()) {
         $data['title'] = "Edit Passenger";
         $data['dashboard'] = "management";
         $get_id = $this->uri->segment(3);
@@ -129,38 +126,34 @@ class Passenger extends MU_Controller {
               if ($this->form_validation->run() == FALSE) {
                 $this->session->set_userdata('create', show_message('Your input was not success! Please check your data again', 'error'));
               }else{
-                       $get_firstname =   $this->input->post('old_firstname');
-                       $get_lastname  =   $this->input->post('old_lastname');
-                       $get_email     =   $this->input->post('old_email');
-                       $get_phone     =   $this->input->post('old_phone');
-                       $get_address   =   $this->input->post('old_address');
-                       $get_company   =   $this->input->post('old_company');
-                       $get_password  =   $this->input->post('old_password');
-                       $get_gender    =   $this->input->post('old_gender');
-                       $get_txtStatus      = $this->input->post('old_txtStatus');
-                       $passengerupdate = $this->mod_passenger->edit_passenger($get_id,$get_firstname,$get_lastname,$get_email,$get_phone,$get_address,$get_company,$get_password,$get_gender,$get_txtStatus);
-                       if($passengerupdate > 0){
-                           $this->session->set_userdata('create', show_message('Your data update was successfully.', 'success'));
-                           // redirect('passenger/list_record');
-                           redirect('passenger/view_passenger/'.$get_id);
-                        }   
+                    $get_firstname =   $this->input->post('old_firstname');
+                    $get_lastname  =   $this->input->post('old_lastname');
+                    $get_email     =   $this->input->post('old_email');
+                    $get_phone     =   $this->input->post('old_phone');
+                    $get_address   =   $this->input->post('old_address');
+                    $get_company   =   $this->input->post('old_company');
+                    $get_password  =   $this->input->post('old_password');
+                    $get_gender    =   $this->input->post('old_gender');
+                    $get_txtStatus      = $this->input->post('old_txtStatus');
+                    $passengerupdate = $this->mod_passenger->edit_passenger($get_id,$get_firstname,$get_lastname,$get_email,$get_phone,$get_address,$get_company,$get_password,$get_gender,$get_txtStatus);
+                    if($passengerupdate > 0){
+                        $this->session->set_userdata('create', show_message('Your data update was successfully.', 'success'));
+                        // redirect('passenger/list_record');
+                        redirect('passenger/view_passenger/'.$get_id);
+                    }   
                }
           }
 
         $this->load->view('munich_admin', $data);
     }
-  }
      public function deletePassengerById($passenger_id,$pagination = false){
-     if ($this->check_user_session()) {
-      $total_count = MU_Model::count_all_data('passenger',array('pass_deleted' => 0));
+      $total_count = MU_Model::count_all_datapassenger('passenger',array('pass_deleted' => 0));
       $delete_passenger = MU_Model::deleteRecordById('passenger',array("pass_deleted" => 1) ,array('pass_id' => $passenger_id));
           if($delete_passenger){
-              redirect(strtolower(get_class()).'/list_record');
+              redirect(strtolower(get_class()).'/show_passenger');
          }
-    }  
-    } 
+    }   
     public function deletePassengerMultiple(){
-    if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $update['pass_deleted'] = 1;
         $result = $this->mod_passenger->deleteMultiplePassenger($update,$multiCheck);
@@ -172,9 +165,7 @@ class Passenger extends MU_Controller {
             echo "f";
         }
     }
-  }
     public function deletePassengerPermenent(){
-    if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $result = $this->mod_passenger->deletePermenentPassenger($multiCheck);
         if ($result > 0) {
@@ -184,11 +175,9 @@ class Passenger extends MU_Controller {
             $this->session->set_userdata('msg_success', 'The passenger record can not delete from table');
             echo "f";
         }
-      }
     } 
     
     public function search_passenger(){
-    if ($this->check_user_session()) {
         $data['title'] = "Search Passenger";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
@@ -237,7 +226,7 @@ class Passenger extends MU_Controller {
         $this->load->view('munich_admin', $data);
     }
     
-    }
+    
 }
 
 /* End of file welcome.php */

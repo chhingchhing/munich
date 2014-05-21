@@ -17,7 +17,6 @@
 						echo '<p>'.form_input(array("name"=>"fb_name", "value"=>"", "class"=>"fb_name form-control", "placeholder"=>"Your name...")).'</p>';
 						echo '<p>'.form_input(array("name"=>"fb_email", "value"=>"", "class"=>"fb_email form-control", "placeholder"=>"Your email...","type"=>"email")).'</p>';
 						echo '<p>'.form_input(array("name"=>"fb_subject", "value"=>"", "class"=>"fb_subject form-control", "placeholder"=>"Subject...")).'</p>';
-						echo '<p>'.form_hidden(array("name"=>"fb_date", "value"=>date('Y-m-d'), "class"=>"fb_date form-control","id"=>"fb_date")).'</p>';
 						echo '<p>'.form_textarea(array("name"=>"fb_text", "value"=>"", "class"=>"fb_text form-control", "placeholder"=>"Your message...")).'</p>';
 					?>
 				</td>

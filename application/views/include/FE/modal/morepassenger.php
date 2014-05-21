@@ -71,7 +71,7 @@
                                 </div>
                              </div>
                              <div class="form-group">
-                                <label class="col-sm-4 control-label">Mobile Phone<span class="require">*</span> :</label>
+                                <label class="col-sm-4 control-label">Phone number <span class="require">*</span> :</label>
                                 <div class="col-sm-6">
                                     <?php
                                         $phonepass = array('name' => 'phone','value'=> set_value('phone'),'class' => 'form-control');
@@ -80,21 +80,8 @@
                                     <span style="color:red;"><?php echo form_error('phone'); ?></span>
                                 </div>
                              </div>
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Telephone<span class="require">*</span> :</label>
-                                <div class="col-sm-6">
-                                    <?php
-                                        $telephone = array('name' => 'telephone','value'=> set_value('telephone'),'class' => 'form-control');
-                                        echo form_input($telephone); 
-                                        ?>
-                                </div>
-                             </div>
-
-
-
                               <div class="form-group">
-                                <label class="col-sm-4 control-label">Address<span class="require">*</span> :</label>
+                                <label class="col-sm-4 control-label">Address <span class="require">*</span> :</label>
                                 <div class="col-sm-6">
                                     <?php
                                         $addresspass = array('name' => 'address','value'=> set_value('address'),'class' => 'form-control');
@@ -117,8 +104,8 @@
                             <label class="col-sm-4 control-label">Gender<span class="require">*</span> :</label>
                                 <div class="col-sm-6">
                                     <?php 
-                                    //$txtGender = array('' => '-- Select --', 'F' => 'Female', 'M' => 'Male');
-                                    echo form_dropdown('gender',$old_gender,set_value('gender') ,'class="form-control"'); ?>
+                                    $txtGender = array('' => '-- Select --', 'F' => 'Female', 'M' => 'Male');
+                                    echo form_dropdown('gender',$txtGender,set_value('gender') ,'class="form-control"'); ?>
                                     <span style="color:red;"><?php echo form_error('gender'); ?></span>
                                 </div>
                             </div>
@@ -131,13 +118,12 @@
                                 <span style="color:red;"><?php echo form_error('txtStatus'); ?></span>
                             </div>
                            </div>
-                          </div>
-                            <div class="modal-footer">
+                            
+      </div>
+      <div class="btn_popup">
                             <?php echo form_submit(array("name"=>"addmore_profile","class"=>"frm_profile","id"=>"frm_profile","value"=>set_value("frm_profile","submit"),"class"=>"btn btn-primary")); ?>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             </div>
-         
-      
       <?php 
           echo form_close();
         ?>

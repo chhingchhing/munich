@@ -1,3 +1,4 @@
+
     <ol class="breadcrumb">
       <li><?php echo anchor("munich_admin","Dashboard"); ?></li>
       <li><?php echo anchor("subscribers/list_record","Manage"); ?></li>

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Customize extends MU_Controller {
+class Customize extends CI_Controller {
     
     public function __construct() {
         parent::__construct();
@@ -12,7 +12,6 @@ class Customize extends MU_Controller {
     * sort, pagination, load view
     */
     public function list_record(){
-    if ($this->check_user_session()) {
         $data['title'] = "Customize";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
@@ -54,14 +53,13 @@ class Customize extends MU_Controller {
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
     }
-}
+    
     /*
     * public function search_customize
     * @noparam
     * sort, pagination, load view
     */
     public function search_customize(){
-    if ($this->check_user_session()) {
         $data['title'] = "Search Customize";
         $data['dashboard'] = "management";
         if($this->input->post("search_customize_name")) $this->session->set_userdata('search_customize', $this->input->post("search_customize_name")); // else exit();
@@ -104,7 +102,7 @@ class Customize extends MU_Controller {
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
     }
-}
+
     /*
     * public function add_customize
     * @noparam
@@ -112,7 +110,6 @@ class Customize extends MU_Controller {
     * redirect
     */
     public function add_customize(){
-    if ($this->check_user_session()) {
         $data['title'] = "Add Customize";
         $data['dashboard'] = "management";
         $data['txtLocation'] = $this->mod_customize->getLocation();
@@ -168,10 +165,9 @@ class Customize extends MU_Controller {
             $this->load->view('munich_admin', $data); 
         }
     }
-}
+
     // view customize
     public function view_customize($cuscon_id, $date){
-    if ($this->check_user_session()) {
         $decrypted = base64_decode($date);
         $encrypted_id = base64_encode($decrypted);
         $decrypted_date = explode(",", $decrypted);
@@ -236,10 +232,8 @@ class Customize extends MU_Controller {
             $this->load->view('munich_admin', $data); 
         }
     }
-}
     // function to save change Activities
     public function saveUpdateActivities($cusconID){
-    if ($this->check_user_session()) {
         $selectAct = $this->mod_customize->getActivitiesCustomize($cusconID);        
         $activities = array();
         $newActivites = array();
@@ -273,10 +267,9 @@ class Customize extends MU_Controller {
         // var_dump($newActivites); die();
         return serialize($newActivites);
     }
-}
+
     // // function to save change Accommodation
     public function saveUpdateAccommodation($cusconID){  
-    if ($this->check_user_session()) {
         $selectAcc = $this->mod_customize->getAccommodationCustomize($cusconID);        
         $accommodations = array();
         $newAccommodations = array();
@@ -310,10 +303,9 @@ class Customize extends MU_Controller {
         // var_dump($newAccommodations['extraproduct-cuscon']);
         return serialize($newAccommodations);
     }
-}
+
     // // function to save change Transport
     public function saveUpdateTransport($cusconID){
-    if ($this->check_user_session()) {
         $selectTps = $this->mod_customize->getTransportCustomize($cusconID); 
         $transportation = array();
         $newtransportation = array();
@@ -347,10 +339,9 @@ class Customize extends MU_Controller {
         // var_dump($newtransportation['extraproduct-cuscon']);
         return serialize($newtransportation);
     }
-}
+
     // returnOptionAct
     public function returnOptionAct($date){
-    if ($this->check_user_session()) {
         $acts[''] = 'Please select';
         $activitiesObject = $this->mod_customize->getCustomizeActivities();
         foreach($activitiesObject->result() as $row){
@@ -361,10 +352,9 @@ class Customize extends MU_Controller {
         }
         return $acts;
     }
-}
+
     // returnOptionAcc
     public function returnOptionAcc($date){
-    if ($this->check_user_session()) {
         $accs[''] = 'Please select';
         $accommodationObject = $this->mod_customize->getCustomizeAccommodation();
         foreach($accommodationObject->result() as $row){
@@ -375,10 +365,9 @@ class Customize extends MU_Controller {
         }
         return $accs;
     }
-}
+
     // returnOptionAcc
     public function returnOptionTps($date){
-    if ($this->check_user_session()) {
         $tps[''] = 'Please select';
         $transportionObject = $this->mod_customize->getCustomizeTransportation();
         foreach($transportionObject->result() as $row){
@@ -389,10 +378,9 @@ class Customize extends MU_Controller {
         }
         return $tps;
     }
-}
+
     // function convertDateToRange
     function convertDateToRange($findDate, $start, $end, $step = '+1 day', $format = 'Y-m-d' ) {
-    if ($this->check_user_session()) {
         $dates = array();
         $current = strtotime($start);
         $last = strtotime($end);
@@ -407,10 +395,8 @@ class Customize extends MU_Controller {
         } 
         return false;
     }
-}
     // view subactivities and extraproduct
     public function viewSubEp(){
-    if ($this->check_user_session()) {
         $tableSubAct = "";
         $tableSubEp = "";
         $actID = $this->input->post('cuscon_act_id');
@@ -482,10 +468,9 @@ class Customize extends MU_Controller {
             '.$tableSubEp.'</table>';
         }
     }
-}
+
 // view subaccommodation and extraproduct
     public function viewSubEpAcc(){
-    if ($this->check_user_session()) {
         $tableSubAcc = "";
         $tableSubEp = "";
         $accID = $this->input->post('cuscon_acc_id');
@@ -557,10 +542,9 @@ class Customize extends MU_Controller {
             '.$tableSubEp.'</table>';
         }
     }
-}
+
 // view subtransportation and extraproduct
     public function viewSubEpTps(){
-    if ($this->check_user_session()) {
         $tableSubAcc = "";
         $tableSubEp = "";
         $tpsID = $this->input->post('cuscon_tps_id');
@@ -632,10 +616,9 @@ class Customize extends MU_Controller {
             '.$tableSubEp.'</table>';
         }
     }
-}
+
     //  function add activities 
     public function add_activities($cusconID, $date){
-    if ($this->check_user_session()) {
         $actID = $this->input->post('cusconact');
         $epID  = $this->input->post('cusconep');        
         $subAct = $this->input->post('cusconsubact');
@@ -674,10 +657,9 @@ class Customize extends MU_Controller {
         $cuscon_result = $this->mod_customize->updateActivitiesCustomize($activities, $cusconID);
         redirect('customize/view_customize/'.$cusconID.'/'.$date);
     }
-}
+
     // function add accommodation 
     public function add_accommodation($cusconID, $date){
-    if ($this->check_user_session()) {
         $accID = $this->input->post('cusconacc');
         $epID  = $this->input->post('cusconep');        
         $subAcc = $this->input->post('cusconsubacc');
@@ -714,10 +696,9 @@ class Customize extends MU_Controller {
         $cuscon_result = $this->mod_customize->updateAccommodationsCustomize($accommodations, $cusconID);
         redirect('customize/view_customize/'.$cusconID.'/'.$date);
     }
-}
+
     // function add Transportation 
     public function add_transport($cusconID, $date){
-    if ($this->check_user_session()) {
         $tpsID = $this->input->post('cuscontps');
         $epID  = $this->input->post('cusconep');        
         $subTps = $this->input->post('cusconsubtps');
@@ -755,14 +736,13 @@ class Customize extends MU_Controller {
         $cuscon_result = $this->mod_customize->updateTransportationCustomize($transportation, $cusconID);
         redirect('customize/view_customize/'.$cusconID.'/'.$date);
     }
-}
+
     /*
     * public function customize_config
     * @noparam
     * return config (array)
     */
     public function customize_config(){
-    if ($this->check_user_session()) {
         $config = array(
             array('field' => 'cusconName','label' => 'customize name','rules' => 'trim|required'),
             array('field' => 'txtFrom','label' => 'from date', 'rules' => 'trim|required'),
@@ -777,14 +757,13 @@ class Customize extends MU_Controller {
         );
         return $config;
     }
-}
+
     /*
     * public function customize_variable
     * @noparent
     * return $customize (array)
     */
     public function customize_variable(){
-    if ($this->check_user_session()) {
         $customize['cuscon_name']          = $this->input->post('cusconName');
         $customize['cuscon_start_date']    = $this->input->post('txtFrom');
         $customize['cuscon_end_date']      = $this->input->post('txtTo');
@@ -799,10 +778,9 @@ class Customize extends MU_Controller {
         $customize['cuscon_status']        = $this->input->post('txtStatus');
         return $customize;
     }
-}
+
     //delete multiple customize
     public function deleteMulti(){
-    if ($this->check_user_session()) {
       $multiCheck = $this->input->post("check_checkbox");
       $update['cuscon_deleted'] = 1;
       $result = $this->mod_customize->deleteMultiple($update, $multiCheck);
@@ -814,10 +792,9 @@ class Customize extends MU_Controller {
             echo "f";
         }
     }
-}
+
     /* delete permenent customize */
     public function deletePermanent() {
-    if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $result = $this->mod_customize->deletePermenent($multiCheck);
         if ($result > 0) {
@@ -828,7 +805,7 @@ class Customize extends MU_Controller {
             echo "f";
         }
     }
-}
+
     /* 
     * public function is_money
     * @param $price
@@ -848,7 +825,6 @@ class Customize extends MU_Controller {
     * redirect to the current page
     */
     public function status_customize ($cuscon_status, $cuscon_id, $pagione = false, $pagitwo = false, $pagithree = false){
-    if ($this->check_user_session()) {
         $cuscon_status = ($cuscon_status == 1) ? 0 : 1;
         $statuschaged = MU_Model::updateStatusById('customize_conjection', array("cuscon_status" => $cuscon_status), array('cuscon_id' => $cuscon_id));
         $pagi = "";
@@ -866,7 +842,7 @@ class Customize extends MU_Controller {
             redirect($redirect);
         }
     }
-}
+
     /*
     * pulic function deleteCustomizeById
     * @param $cuscon_id (int) 
@@ -874,7 +850,6 @@ class Customize extends MU_Controller {
     * redirect to the current page
     */
     public function deleteCustomizeById($cuscon_id, $pagione = false, $pagitwo = false,$pagithree = false){
-    if ($this->check_user_session()) {
         $total_rows = MU_Model::count_all_data('customize_conjection', array('cuscon_deleted' => 0));
         $deleted = MU_Model::deleteRecordById('customize_conjection', array("cuscon_deleted" => 1), array('cuscon_id' => $cuscon_id));
         $pagi = "";
@@ -897,10 +872,8 @@ class Customize extends MU_Controller {
             redirect($redirect);
         }
     }
-}
     // function to view detial of activities
     public function actdetail($act_id, $cuscon_id){
-    if ($this->check_user_session()) {
         $selectAct = $this->mod_customize->getActivitiesCustomize($cuscon_id);        
         $activities = array();
         if($selectAct->num_rows() > 0){
@@ -910,10 +883,8 @@ class Customize extends MU_Controller {
         }
         $this->showDetailsAct($activities['main-activities'][$act_id]);
     }
-}
     // function to view detial of accommodation
     public function accdetail($acc_id, $cuscon_id){
-    if ($this->check_user_session()) {
         $selectAcc = $this->mod_customize->getAccommodationCustomize($cuscon_id);        
         $accommodations = array();
         if($selectAcc->num_rows() > 0){
@@ -923,10 +894,9 @@ class Customize extends MU_Controller {
         }
         $this->showDetailsAcc($accommodations['main-accommodation'][$acc_id]);
     }
-}
+
     // function to view detial of transportation
     public function tpdetail($tpsid, $cuscon_id){
-    if ($this->check_user_session()) {
         $selectTps = $this->mod_customize->getTransportCustomize($cuscon_id);        
         $transportation = array();
         if($selectTps->num_rows() > 0){
@@ -936,10 +906,9 @@ class Customize extends MU_Controller {
         }
         $this->showDetailsTps($transportation['main-transport'][$tpsid]);
     }
-}
+
     // function to view detial of subactivities
     public function subactdetail($act_id, $cuscon_id, $subAct){
-    if ($this->check_user_session()) {
         $selectAct = $this->mod_customize->getActivitiesCustomize($cuscon_id);        
         $activities = array();
         if($selectAct->num_rows() > 0){
@@ -949,10 +918,8 @@ class Customize extends MU_Controller {
         }
         $this->showDetailsAct($activities['sub-activities'][$act_id][$subAct]);
     }
-}
     // function to view detial of subaccommodation
     public function subaccdetail($acc_id, $cuscon_id, $subAcc){
-    if ($this->check_user_session()) {
         $selectAcc = $this->mod_customize->getAccommodationCustomize($cuscon_id);        
         $accommodations = array();
         if($selectAcc->num_rows() > 0){
@@ -962,10 +929,9 @@ class Customize extends MU_Controller {
         }
         $this->showDetailsAcc($accommodations['sub-accommodation'][$acc_id][$subAcc]);
     }
-}
+
     // function to view detial of transportation
     public function subtpsdetail($tpsid, $cuscon_id, $subTps){
-    if ($this->check_user_session()) {
         $selectTps = $this->mod_customize->getTransportCustomize($cuscon_id);        
         $transportation = array();
         if($selectTps->num_rows() > 0){
@@ -975,10 +941,9 @@ class Customize extends MU_Controller {
         }
         $this->showDetailsTps($transportation['sub-transport'][$tpsid][$subTps]);
     }
-}
+
     // function to displaydetail
     public function showDetailsAct($details){
-    if ($this->check_user_session()) {
         $date_available = "";
         $choiceItem = $details['act_choiceitem'] == 1 ? "Yes" : "No";
         $date_available = '<label class="checkbox-inline">'.form_checkbox(array('id' => 'inlineCheckbox2', 'value' => '1_monday','name' => 'check[]','class'=>"weekday","checked" => $details['monday'])).' Mon</label>
@@ -1016,10 +981,8 @@ class Customize extends MU_Controller {
             </table>';
           echo $records;
     }
-}
     // function to displaydetail
     public function showDetailsAcc($details){
-    if ($this->check_user_session()) {
         $date_available = "";
         $date_available = '<label class="checkbox-inline">'.form_checkbox(array('id' => 'inlineCheckbox2', 'value' => '1_monday','name' => 'check[]','class'=>"weekday","checked" => $details['monday'])).' Mon</label>
                            <label class="checkbox-inline">'.form_checkbox(array('id' => 'inlineCheckbox3', 'value' => '1_tuesday','name' => 'check[]','class'=>"weekday","checked" => $details['tuesday'])).' Tue</label>
@@ -1060,10 +1023,9 @@ class Customize extends MU_Controller {
         </table>';
         echo $records;
     }
-}
+
     // function to displaydetail
     public function showDetailsTps($details){
-    if ($this->check_user_session()) {
         $date_available = "";
         $date_available = '<label class="checkbox-inline">'.form_checkbox(array('id' => 'inlineCheckbox2', 'value' => '1_monday','name' => 'check[]','class'=>"weekday","checked" => $details['monday'])).' Mon</label>
         <label class="checkbox-inline">'.form_checkbox(array('id' => 'inlineCheckbox3', 'value' => '1_tuesday','name' => 'check[]','class'=>"weekday","checked" => $details['tuesday'])).' Tue</label>
@@ -1101,10 +1063,9 @@ class Customize extends MU_Controller {
         </table>';
         echo $records;
     }
-}
+
     // function detail of extraproduct
     public function epdetail($feild ,$actacctps_id, $cuscon_id, $ep_id){
-    if ($this->check_user_session()) {
         if($feild == 'act'){
             $selectActAccTps = $this->mod_customize->getActivitiesCustomize($cuscon_id); 
             $dotVariable = 'cuscon_activities'; 
@@ -1123,10 +1084,9 @@ class Customize extends MU_Controller {
         }
         $this->showDetailsep($sltActAccTps['extraproduct-cuscon'][$actacctps_id][$ep_id]);
     }
-}
+
     // function display extraproduct details
     function showDetailsep($detials){
-    if ($this->check_user_session()) {
         $date_available = "";
             $byperson = $detials['ep_perperson'] == 1 ? "Per Person" : "No";
             $bybooking = $detials['ep_perbooking'] == 1 ? "Per Booking" : "No";
@@ -1159,6 +1119,6 @@ class Customize extends MU_Controller {
             echo $records;
     }
 }
-}
+
 /* End of file customize.php */
 /* Location: ./application/controllers/customize.php */

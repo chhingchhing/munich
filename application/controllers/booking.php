@@ -1,34 +1,33 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Booking extends MU_Controller {
-    
-    public function __construct() {
+	
+	public function __construct() {
         parent::__construct();
          $this->load->model(array('mod_booking','mod_index'));
     }
-        
-    // // show of fettival
-    //  public function booking(){
-    //      $fe_data['title'] = "festival";
-    //  $fe_data['booking'] = "Default Font End";
-    //  $fe_data['show_festival'] = $this->mod_booking->getFestival();
-    //  $this->load->view('index', $fe_data);
-    // }
-    
-    // // edit booking
-    // public function detail(){
-    //  $fe_data['menu_fe'] = $this->mod_index->getAllMenu();
-    //  $fe_data['title'] = "detail";
-    //  $fe_data['booking'] = "Default Font End";
-    //  $fe_data['detail'] = $this->
-    //  $this->load->view('index', $fe_data);
-    // }    
+    	
+	// // show of fettival
+	//  public function booking(){
+	//  	$fe_data['title'] = "festival";
+	// 	$fe_data['booking'] = "Default Font End";
+	// 	$fe_data['show_festival'] = $this->mod_booking->getFestival();
+	// 	$this->load->view('index', $fe_data);
+	// }
+	
+	// // edit booking
+	// public function detail(){
+	// 	$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
+	// 	$fe_data['title'] = "detail";
+	// 	$fe_data['booking'] = "Default Font End";
+	// 	$fe_data['detail'] = $this->
+	// 	$this->load->view('index', $fe_data);
+	// }	
 
-    public function list_record(){
-    if ($this->check_user_session()) {
-        $data['title'] = "Booking Management";
-        $data['dashboard'] = "management";
-        $controller = $this->uri->segment(1);
+	public function list_record(){
+		$data['title'] = "Booking Management";
+		$data['dashboard'] = "management";
+		$controller = $this->uri->segment(1);
         $function = $this->uri->segment(2);
         $data['option_ftvstatus'] = array('0' => 'Unpublished','1' => 'Published');
         if($this->uri->segment(3) != "" AND !is_numeric($this->uri->segment(3))){
@@ -67,15 +66,13 @@ class Booking extends MU_Controller {
         $config['prev_link'] = '&lt;&lt;';
         $this->pagination->initialize($config); //function to show all pages
         $page = ($this->uri->segment($config['uri_segment']) && $this->uri->segment($config['uri_segment']) > 0) ? $this->uri->segment($config['uri_segment']) : 0;
-
-        $data['getbooking'] = $this->mod_booking->getAllsalePackage($config['per_page'], $page, $sortby, $data['sort']);
-        $data['pagination'] = $this->pagination->create_links();
-        $this->load->view('munich_admin', $data);
-    }
-}  
+		$data['getbooking'] = $this->mod_booking->getAllsalePackage($config['per_page'], $page, $sortby, $data['sort']);
+		$data['pagination'] = $this->pagination->create_links();
+		$this->load->view('munich_admin', $data);
+	}
+    
     // search booking ID
     public function search_booking(){
-    if ($this->check_user_session()) {
         $data['title'] = "Booking Management";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
@@ -123,7 +120,7 @@ class Booking extends MU_Controller {
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
     }
-}
+
 
     /*
     * pulic function add_booking
@@ -132,7 +129,6 @@ class Booking extends MU_Controller {
     * redirect to the view page
     */
     public function add_booking(){
-    if ($this->check_user_session()) {
         $data['title'] = "Booking Management";
         $data['dashboard'] = "management";
         $data['passenger'] = $this->mod_booking->getPassenger();        
@@ -173,7 +169,7 @@ class Booking extends MU_Controller {
         }
         $this->load->view('munich_admin', $data);
     }
-}
+
     /*
     * pulic function view_booking
     * @param   
@@ -183,7 +179,6 @@ class Booking extends MU_Controller {
 
     // private $priceBooking = 0;
     public function view_booking_package($bkID, $bkType){
-    if ($this->check_user_session()) {
         $data['title'] = "Booking Management";
         $data['dashboard'] = "management";
         $data['passenger'] = $this->mod_booking->getPassenger();
@@ -231,14 +226,13 @@ class Booking extends MU_Controller {
         }
         $this->load->view('munich_admin', $data);
     }
-}
+
     /*
     * public function booking_config
     * @noparam
     * return config (array)
     */
     public function booking_config(){
-    if ($this->check_user_session()) {
         $config = array(
             array('field' => 'bkDate','label' => 'booking date','rules' => 'trim|required'),
             array('field' => 'bkArrivalDate','label' => 'arrival date', 'rules' => 'trim|required'),
@@ -252,15 +246,14 @@ class Booking extends MU_Controller {
         );
         return $config;
     }
-}
-    /*
+
+	/*
     * pulic function deleteById
     * @param $bk_id (int) 
     * return boolean
     * redirect to the current page
     */
     public function deleteBookingById($bk_id, $pagione = false, $pagitwo = false,$pagithree = false){
-    if ($this->check_user_session()) {
         $deleted = MU_Model::deleteRecordById('booking', array("bk_deleted" => 1), array('bk_id' => $bk_id));
         $total_rows = MU_Model::count_all_data('booking', array('bk_deleted' => 0));
         $pagi = "";
@@ -283,8 +276,7 @@ class Booking extends MU_Controller {
             redirect($redirect);
         }
     }
-}
-    /*
+	/*
     * pulic function status_booking
     * @param $bk_status (int)
     * @param $bk_id (int)  
@@ -292,7 +284,6 @@ class Booking extends MU_Controller {
     * redirect to the current page
     */
     public function status_booking($bk_status, $bk_id, $pagione = false, $pagitwo = false, $pagithree = false){
-    if ($this->check_user_session()) {
         $total_rows = MU_Model::count_all_data('booking', array('bk_deleted' => 0));
         $bk_status = ($bk_status == 1) ? 0 : 1;
         $statuschaged = MU_Model::updateStatusById('booking', array("bk_status" => $bk_status), array('bk_id' => $bk_id));
@@ -318,7 +309,7 @@ class Booking extends MU_Controller {
             redirect($redirect);
         }
     }
-}
+
     /* 
     * public function is_money
     * @param $price
@@ -332,7 +323,6 @@ class Booking extends MU_Controller {
 
     /************/
     public function add_morepassenger($bkID, $passID, $bkType){
-    if ($this->check_user_session()) {
         $accompany = MU_Model::getForiegnTableName("passenger_booking", array('pbk_bk_id' => $bkID, 'pbk_pass_id' => $passID), 'pbk_pass_come_with');
         $accompany = unserialize($accompany);
         $pID = $this->input->post('bkmodalpass');
@@ -344,10 +334,9 @@ class Booking extends MU_Controller {
             redirect('booking/view_booking_'.$bkType.'/'.$bkID.'/'.$bkType);
         }
     }
-}
+
     /***********/
     public function add_extraservice($bkID, $bkType){
-    if ($this->check_user_session()) {
         $extraservices = array();
         $extraservices = MU_Model::getForiegnTableName("booking", array('bk_id' => $bkID), 'bk_addmoreservice');
         $extraservices = unserialize($extraservices);
@@ -365,10 +354,8 @@ class Booking extends MU_Controller {
             redirect('booking/view_booking_'.$bkType.'/'.$bkID.'/'.$bkType);
         }
     }
-}
     // delete multiple booking
     public function deleteMultipleBooking(){
-    if ($this->check_user_session()) {
       $multiCheck = $this->input->post("check_checkbox");
       $update['bk_deleted'] = 1;
       $result = $this->mod_booking->deleteMultiplebk($update, $multiCheck);
@@ -380,12 +367,10 @@ class Booking extends MU_Controller {
             echo "f";
         }
     }
-}
     // end of delete multiple booking
 
     /* delete permenent booking */
     public function deletePermenentBooking() {
-    if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $result = $this->mod_booking->deletePermenentbk($multiCheck);
         if ($result > 0) {
@@ -396,7 +381,7 @@ class Booking extends MU_Controller {
             echo "f";
         }
     }
-}
+
    ////////////// customize ////////////////
 
     /*
@@ -408,7 +393,6 @@ class Booking extends MU_Controller {
 
     // private $priceBooking = 0;
     public function view_booking_customize($bkID, $bkType){
-    if ($this->check_user_session()) {
         $data['title'] = "Booking Management";
         $data['dashboard'] = "management";
         $data['passenger'] = $this->mod_booking->getPassenger();
@@ -455,10 +439,9 @@ class Booking extends MU_Controller {
         }
         $this->load->view('munich_admin', $data);
     }
-}
+
     /************/
     public function saveChangePassengers($passengercheckbox, $bkID, $passID){
-    if ($this->check_user_session()) {
         $accompany = MU_Model::getForiegnTableName("passenger_booking", array('pbk_bk_id' => $bkID, 'pbk_pass_id' => $passID), 'pbk_pass_come_with');
         $accompany = unserialize($accompany);
         $newaccompany = array();
@@ -476,10 +459,9 @@ class Booking extends MU_Controller {
             return 0;
         }      
     }
-}
+
     /****************/
     public function saveChangeExtraservices($bkID,$extraservicecheckbox){
-    if ($this->check_user_session()) {
         $extraservices = array();
         $extraservices = MU_Model::getForiegnTableName("booking", array('bk_id' => $bkID), 'bk_addmoreservice');
         $extraservices = unserialize($extraservices);
@@ -500,6 +482,6 @@ class Booking extends MU_Controller {
         }
     }
 }
-}
+
 /* End of file welcome.php */
 /* Location: ./application/controllers/welcome.php */

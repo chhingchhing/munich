@@ -3,20 +3,22 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class Mod_FeCustomize extends MU_model {
- 	
+    
     // select join with table photo, location, festival, by session and where lcID and ftvID
- 	public function trip_information($ftvID, $lcId){    
- 		$query = $this->db->select('*')
-		 ->join('acti_calendar','activities.act_id = acti_calendar.activities_id')
-		 ->join('calendar_available','calendar_available.ca_id = acti_calendar.calendar_available_id')
-		 ->join('photo','photo.photo_id = activities.photo_id')			
+    public function trip_information($ftvID, $lcId){   
+        $query = $this->db->select('*')
+         ->join('acti_calendar','activities.act_id = acti_calendar.activities_id', 'left')
+         ->join('calendar_available','calendar_available.ca_id = acti_calendar.calendar_available_id', 'left')
+         ->join('extra_acti','activities.act_id = extra_acti.activities_id', 'left')    
+         ->join('extraproduct','extraproduct.ep_id = extra_acti.extraproduct_id','left')        
+         ->join('photo','photo.photo_id = activities.photo_id') 
          ->where("activities.act_deleted", 0)
          ->where('activities.act_ftv_id', $ftvID)
          ->where('activities.location_id', $lcId)
          ->where('activities.act_subof',0)
          ->get('activities');
-    	return $query;
- 	}
+        return $query;
+    }
     /*
     * public function select sub activity
     * @param parameter $ftvID, $lcId, $subAct
@@ -25,13 +27,30 @@ class Mod_FeCustomize extends MU_model {
         $sub_activity = $this->db->select('*')
              ->join('acti_calendar','activities.act_id = acti_calendar.activities_id')
              ->join('calendar_available','calendar_available.ca_id = acti_calendar.calendar_available_id') 
-             ->join('photo','photo.photo_id = activities.photo_id')      
+             ->join('photo','photo.photo_id = activities.photo_id')     
              ->where("activities.act_deleted", 0)
              ->where('activities.act_ftv_id', $ftvID)
              ->where('activities.location_id', $lcId)
              ->where('activities.act_subof', $subAct)
              ->get('activities');
             return $sub_activity;
+    }
+    /* public function select extra products
+    * @param parameter  
+    */
+    public function selectExtraProductActivity($ftvID, $lcId, $ActID){
+        $select_extraProductsActivity = $this->db->select('*')
+        ->join('extraproduct_calendar','extraproduct.ep_id = extraproduct_calendar.extraproduct_id')
+        ->join('calendar_available','calendar_available.ca_id = extraproduct_calendar.calendar_available_id')
+        ->join('extra_acti','extraproduct.ep_id = extra_acti.extraproduct_id')
+        ->join('activities','activities.act_id = extra_acti.activities_id')
+        ->join('photo','photo.photo_id = extraproduct.photo_id')
+        ->where('ep_deleted',0)
+        ->where('extra_acti.activities_id',$ActID)
+        ->where('activities.location_id', $lcId)
+        ->where('activities.act_ftv_id', $ftvID)
+        ->get('extraproduct');
+        return $select_extraProductsActivity;
     }
 
     /*
@@ -43,14 +62,32 @@ class Mod_FeCustomize extends MU_model {
             ->join('acc_calendar','accommodation.acc_id = acc_calendar.accomodations_id')
             ->join('calendar_available', 'calendar_available.ca_id = acc_calendar.calendar_available_id')
             ->join('photo','photo.photo_id = accommodation.photo_id')
+            ->join('extra_acc','accommodation.acc_id = extra_acc.accomodations_ad_id','left')
+            ->join('extraproduct','extraproduct.ep_id = extra_acc.extraproduct_ep_id','left')
             ->where('accommodation.acc_deleted',0)
+            ->where('accommodation.acc_subof', 0)
             ->where('accommodation.acc_ftv_id', $ftvID)
             ->where('accommodation.location_id', $lcId)
             ->get('accommodation');
             return $accommodation;
     }
-    /*
-    * public function select transportation
+
+    /* * public function select sub accommodation
+    * @param parameter $ftvID, $lcId
+    */
+    public function selectSubAccommodation($ftvID, $lcId, $subAcc){
+        $subAccommodation = $this->db->select('*')
+            ->join('acc_calendar','accommodation.acc_id = acc_calendar.accomodations_id')
+            ->join('calendar_available', 'calendar_available.ca_id = acc_calendar.calendar_available_id')
+            ->join('photo','photo.photo_id = accommodation.photo_id')
+            ->where('accommodation.acc_deleted',0)
+            ->where('accommodation.acc_subof', $subAcc)
+            ->where('accommodation.acc_ftv_id', $ftvID)
+            ->where('accommodation.location_id', $lcId)
+            ->get('accommodation');
+            return $subAccommodation;
+    }
+    /* * public function select transportation
     * @param parameter $ftvID, $lcId, $subAct
     */
     public function transportation($ftvID, $lcId){
@@ -84,18 +121,6 @@ class Mod_FeCustomize extends MU_model {
             return $subtransportation;
     }
     /*
-    * public function select extra products
-    * @param parameter  
-    */
-    public function select_extraProducts(){
-        $extra_product = $this->db->select('*')
-            ->join('extra_acti','extraproduct.ep_id = activities.act_id')
-            ->join('extra_acc','')
-            ->where('extraproduct.ep_deleted',0)
-            ->get('extraproduct');
-            return $extra_product;
-    }
-    /*
     * public function add information of passenger to table passenger
     * @param parameter $pfname, $plname, $pgender, $pdob, $pmobile, $phphone, $paddress, $pcode, $pcity, $pcountry, $pnumber
     */
@@ -114,4 +139,5 @@ class Mod_FeCustomize extends MU_model {
         );
         $this->db->insert('passenger', $passenger);
     }
+    
 }

@@ -11,8 +11,7 @@ if (!defined('BASEPATH'))
     }
 
     public function list_record(){
-    if ($this->check_user_session()) {
-        $data['title'] = "Gallery";
+		$data['title'] = "Gallery";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
         $function = $this->uri->segment(2);
@@ -36,7 +35,7 @@ if (!defined('BASEPATH'))
         }
         $config['total_rows'] = MU_Model::count_all_data('photo', array('pho_delete' => 0));
         $config['per_page'] = 10;
-        $config['next_tag_open'] = '<li>';
+		$config['next_tag_open'] = '<li>';
         $choice = $config["total_rows"] / $config["per_page"];
         $config["num_links"] = round($choice);
         $config['next_tag_close'] = '</li>';
@@ -55,10 +54,9 @@ if (!defined('BASEPATH'))
        // var_dump($data['galleries']); die();
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
-}
-    }
+
+	}
     public function add_galleries(){
-    if ($this->check_user_session()) {
         $data['title'] = "Add New Gallery";
         $data['dashboard'] = "management";
         $session = $this->session->set_userdata($data);
@@ -146,18 +144,16 @@ if (!defined('BASEPATH'))
                  $result = $this->mod_gallery->add_galleries($get_name,$image,$get_status,$get_detail,$get_phototype);
                 // var_dump($result); die();
 
-              if ($result>0) { //show message, already exist  
-              $this->session->set_userdata('create', show_message('Your data input was successfully.', 'success'));
-              //redirect('gallery/list_record');
-              redirect('gallery/view_galleries/'.$result);
-                        }
+                if ($result>0) { //show message, already exist  
+                    $this->session->set_userdata('create', show_message('Your data input was successfully.', 'success'));
+                    // redirect('gallery/list_record');
+                    redirect('gallery/view_galleries/'.$result);
+                }
             }
          }
          $this->load->view('munich_admin', $data);
      }
- }
     public function search_galleries(){
-    if ($this->check_user_session()) {
         $data['title'] = "search username";
         $data['dashboard'] = "management";
         $data['search_photo_name'] = $this->input->post("search_name");
@@ -205,7 +201,6 @@ if (!defined('BASEPATH'))
         $this->load->view('munich_admin', $data);
 
      }
- }
      // public function edit_galleries(){
      //    $data['title'] = "Add New Gallery";
      //    $data['dashboard'] = "management";
@@ -304,7 +299,6 @@ if (!defined('BASEPATH'))
 
      // }
      public function view_galleries(){
-     if ($this->check_user_session()) {
         $data['title'] = "View galleries";
         $data['dashboard'] = "management";
         $get_id = $this->uri->segment(3);
@@ -312,9 +306,7 @@ if (!defined('BASEPATH'))
         $data['txtStatus'] = array('0' => 'Unpublished','1' => 'Published');
         $this->load->view('munich_admin', $data);
     }
-}
       public function deletePhotoMultiple(){
-      if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $update['pho_delete'] = 1;
         $result = $this->mod_gallery->deleteMultiplePhoto($update,$multiCheck);
@@ -327,9 +319,7 @@ if (!defined('BASEPATH'))
             echo "f";
         }
     }
-}
     public function deletePhotoPermenent() {
-    if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $result = $this->mod_gallery->deletePermenentPhoto($multiCheck);
         if ($result > 0) {
@@ -340,10 +330,8 @@ if (!defined('BASEPATH'))
             echo "f";
         }
     }
-}
      //delete activities by id
    public function deletePhotoById($photo_id,$pagination = false){
-   if ($this->check_user_session()) {
     $total_count = MU_Model::count_all_data('photo',array('pho_delete' => 0));
     $delete_photo = MU_Model::deleteRecordById('photo',array("pho_delete" => 1) ,array('photo_id' => $photo_id));
     if($delete_photo){
@@ -351,9 +339,8 @@ if (!defined('BASEPATH'))
     }
   //end delete activities by id
     }
-}
+
    public function status_gallery($gal_status, $gal_id, $pagione = false, $pagitwo = false, $pagithree = false){
-   if ($this->check_user_session()) {
         $total_rows = MU_Model::count_all_data('photo', array('pho_delete' => 0));
         $gal_status = ($gal_status == 1) ? 0 : 1;
         $statuschaged = MU_Model::updateStatusById('photo', array("pho_status" => $gal_status), array('photo_id' => $gal_id));
@@ -380,7 +367,7 @@ if (!defined('BASEPATH'))
         }
     }
   
-}
+
 
 
 }// the end of big function

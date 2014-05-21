@@ -11,7 +11,7 @@
 		  <div class="col-lg-4 pk_img">
 			    <?php 
 			    $key = "90408752631";
-                $pk_id = base64url_encode($key.$rows->pkcon_id);
+                $pk_id = base64_encode($key.$rows->pkcon_id);
 			    echo anchor('site/packages/details/'.$pk_id, img(array('src'=>'assets/img/FE/package.jpg','alt'=>'packages','class'=>'img-responsive img-thumbnail'))); 
 			    ?>
 			  <div class="pricepackages"><?php echo $rows->pkcon_saleprice; ?> USD</div>

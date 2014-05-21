@@ -11,7 +11,15 @@
     <!-- table detail responsive -->
     	<div class="table-responsive">
               <table class="table table-bordered">
-              	<tr>
+                <tr>
+                    <th>First Name</th> 
+                    <td><?php echo $row->user_fname; ?></td>
+                </tr>                   
+                <tr>
+                    <th>Last Name</th> 
+                    <td><?php echo $row->user_lname; ?></td>
+                </tr>               
+               	<tr>
                 	<th>User Name</th> 
                 	<td><?php echo $row->user_name; ?></td>
                 </tr>
@@ -41,7 +49,7 @@
                     <th>Address</th>
                     <td><?php echo $row->user_address; ?></td>
                 </tr>
-                 <tr>
+                <tr>
                     <th>Company</th>
                     <td><?php echo $row->user_company; ?></td>
                 </tr>

@@ -1,6 +1,6 @@
 <ol class="breadcrumb">
       <li><?php echo anchor("munich_admin","Dashboard"); ?></li>
-      <li><?php echo anchor("feedbacks/list_record","Manage"); ?></li>
+      <li><?php echo anchor("feedback/list_record","Manage"); ?></li>
       <li>View</li>
 </ol>
 <h1 class="action_page_header">View Feedback</h1>

@@ -2,10 +2,10 @@
 <div class="panel-group" id="accordion">
 	<?php 
 	if(isset($package_transportation)){ 
-	  $package_transportation = unserialize($package_transportation); 
-	  if(isset($package_transportation['main-transport'])){
-	  foreach($package_transportation['main-transport'] as $main_transport){
-	  	$tpsID = $main_transport['tp_id'];
+	  	$package_transportation = unserialize($package_transportation); 
+	  	if(isset($package_transportation['main-transport'])){
+	  		foreach($package_transportation['main-transport'] as $main_transport){
+	  		$tpsID = $main_transport['tp_id'];
 	?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -34,7 +34,7 @@
 	      </div>
 	    </div>
 	</div>
-	<?php 	
+	<?php 
 			}
 		}
 	}

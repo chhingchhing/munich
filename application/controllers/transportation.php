@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Transportation extends MU_Controller {
+class Transportation extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -21,7 +21,6 @@ class Transportation extends MU_Controller {
     */
 
     public function list_record() {
-    if ($this->check_user_session()) {
         $data['title'] = "Transportation";
         $data['dashboard'] = "management";
         $controller = $this->uri->segment(1);
@@ -45,7 +44,7 @@ class Transportation extends MU_Controller {
         }
         $config['total_rows'] = MU_Model::count_all_data('transportation', array('tp_deleted' => 0,'tp_subof'=> 0));
         $config['per_page'] = 10;
-    $config['next_tag_open'] = '<li>';
+		$config['next_tag_open'] = '<li>';
         $choice = $config["total_rows"] / $config["per_page"];
         $config["num_links"] = round($choice);
         $config['next_tag_close'] = '</li>';
@@ -63,20 +62,18 @@ class Transportation extends MU_Controller {
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('munich_admin', $data);
     }
-}
     /*
     *   @: searching of from date, end date and name of transportation
     */
 
     public function search_transportation() {
-    if ($this->check_user_session()) {
             $data['title'] = "Search Transportation";
             $data['dashboard'] = "management";
             $controller = $this->uri->segment(1);
             $function = 'search_transportation';
-      if($this->input->post('search_from_date')){ $this->session->set_userdata('from_date', $this->input->post('search_from_date'));}else{$this->session->set_userdata('from_date', "");}
-          if($this->input->post('search_end_date')){ $this->session->set_userdata("end_date", $this->input->post('search_end_date')); }else{ $this->session->set_userdata("end_date", ""); }
-          if($this->input->post('search_transportation_name')){$this->session->set_userdata("transportation_name", $this->input->post('search_transportation_name'));}else{ $this->session->set_userdata("transportation_name", "");}
+			if($this->input->post('search_from_date')){ $this->session->set_userdata('from_date', $this->input->post('search_from_date'));}else{$this->session->set_userdata('from_date', "");}
+        	if($this->input->post('search_end_date')){ $this->session->set_userdata("end_date", $this->input->post('search_end_date')); }else{ $this->session->set_userdata("end_date", ""); }
+        	if($this->input->post('search_transportation_name')){$this->session->set_userdata("transportation_name", $this->input->post('search_transportation_name'));}else{ $this->session->set_userdata("transportation_name", "");}
             if ($this->uri->segment(3) != "" AND !is_numeric($this->uri->segment(3))) {
                 $uri3 = $this->uri->segment(3);
                 $uri4 = $this->uri->segment(4);
@@ -111,10 +108,10 @@ class Transportation extends MU_Controller {
             $this->pagination->initialize($config); //function to show all pages
             $page = ($this->uri->segment($config['uri_segment']) && $this->uri->segment($config['uri_segment']) > 0) ? $this->uri->segment($config['uri_segment']) : 0;
             $data['search_transportation'] = $this->mod_transportation->getSearchTransportation($config['per_page'],$page, $sortby, $data['sort'],$this->session->userdata("from_date"), $this->session->userdata("end_date"), $this->session->userdata("transportation_name"));
-      $data['pagination'] = $this->pagination->create_links();
+			$data['pagination'] = $this->pagination->create_links();
             $this->load->view('munich_admin', $data); 
     }
-}
+
     /*
     * public function detail_transportation
     * @noparam
@@ -124,7 +121,6 @@ class Transportation extends MU_Controller {
     */
 
     public function detail_transportation() {
-    if ($this->check_user_session()) {
         $data['title'] = "View Transportation";
         $data['dashboard'] = "management";
         if($this->uri->segment(3) == "temp"){
@@ -182,7 +178,6 @@ class Transportation extends MU_Controller {
           echo $records;
         }
     }
-}
    /*
     * public function detail_extraproduct
     * @noparam
@@ -192,11 +187,10 @@ class Transportation extends MU_Controller {
     */
 
     public function detail_extraproduct() {
-    if ($this->check_user_session()) {
         $data['title'] = "View Transportation";
         $data['dashboard'] = "management";
         if($this->uri->segment(3) == "temp"){
-         $get_id = $this->uri->segment(4);
+    	   $get_id = $this->uri->segment(4);
         }else{
            $get_id = $this->uri->segment(3);
         }
@@ -236,7 +230,7 @@ class Transportation extends MU_Controller {
             echo $records;
         }
     }
-}
+
     /*
     * pulic function status_transportation
     * @param $tp_status (int)
@@ -245,7 +239,6 @@ class Transportation extends MU_Controller {
     * redirect to the current page
     */
     public function status_transportation ($tp_status, $tp_id, $pagione = false, $pagitwo = false, $pagithree = false){
-    if ($this->check_user_session()) {
         $total_rows = MU_Model::count_all_data('transportation', array('tp_deleted' => 0));
         $tp_status = ($tp_status == 1) ? 0 : 1;
         $statuschaged = MU_Model::updateStatusById('transportation', array("tp_status" => $tp_status), array('tp_id' => $tp_id));
@@ -264,7 +257,7 @@ class Transportation extends MU_Controller {
             redirect($redirect);
         }
     }
-}
+
     /* 
     * public function is_money
     * @param $price
@@ -285,7 +278,6 @@ class Transportation extends MU_Controller {
     */
 
     public function add_transportation() {
-    if ($this->check_user_session()) {
         $data['title'] = "Add New Transportation";
         $data['dashboard'] = "management";
         // $data['txtchoiceItem'] = array(''=>"please select...",'1' => 'Yes', '0' => 'No');
@@ -358,7 +350,7 @@ class Transportation extends MU_Controller {
             $this->load->view('munich_admin', $data);
         } // btn add
     } // function add_transportation
-}
+
     /* 
     * public function view_transportation
     * @noparam
@@ -368,7 +360,6 @@ class Transportation extends MU_Controller {
     * @saverecordback
     */
     public function view_transportation($tp_id) {
-    if ($this->check_user_session()) {
         $data['title'] = "View Transportation";
         $data['dashboard'] = "management";
         // $data['txtchoiceItem'] = array(''=>"please select...",'1' => 'Yes', '0' => 'No');
@@ -448,7 +439,7 @@ class Transportation extends MU_Controller {
             $this->load->view('munich_admin', $data);
         } // btn savechange
     } // function view_transportation
-}
+
     /*
     * public function add_sub_ep
     * @param $tp_id (int)
@@ -456,7 +447,6 @@ class Transportation extends MU_Controller {
     * return while success add
     */
     function add_sub_ep($tp_id){
-    if ($this->check_user_session()) {
         if($this->session->userdata('have_sub')){
             $tempsub = $this->mod_transportation->get_temp_transportation($tp_id);
             $tempsub = $tempsub->result();
@@ -484,7 +474,7 @@ class Transportation extends MU_Controller {
         $this->session->unset_userdata('have_sub');
         $this->session->unset_userdata('have_extra');    
     }
-}
+
     /*
     * public function add_subtransportation
     * @noparam 
@@ -494,7 +484,6 @@ class Transportation extends MU_Controller {
     */
 
     function add_subtransportation(){
-    if ($this->check_user_session()) {
         $sub_transportation = $this->transportation_variable(); // function return the valude variable of transportation.
         $sub_transportation['tp_subof'] = $this->input->post('tp_subof');
         $sub_transportation['tp_cherge_subtp'] = $this->input->post('chergeby');
@@ -533,7 +522,7 @@ class Transportation extends MU_Controller {
             }
         }
     }
-}
+
     /*
     *  public function delete_transportation
     *  @noparam
@@ -541,7 +530,6 @@ class Transportation extends MU_Controller {
     *  return true or false
     */
     public function delete_transportation(){
-    if ($this->check_user_session()) {
         if($this->uri->segment(3) == "temp"){
             $id = $this->uri->segment(4);
             $result = MU_Model::deletedRecordById("temp_table",array("ID"=>$id));
@@ -551,7 +539,6 @@ class Transportation extends MU_Controller {
         }
         if($result) echo 't';
     }
-}
 
     /*
     * public function add_extraproduct
@@ -561,7 +548,6 @@ class Transportation extends MU_Controller {
     * echo table row of table to append in front page
     */
     public function add_extraproduct(){
-    if ($this->check_user_session()) {
         $ep_id = $this->input->post('txtExtra');
         $expro = $this->mod_transportation->getExproductById($ep_id);
         if($expro->num_rows() > 0){
@@ -592,7 +578,7 @@ class Transportation extends MU_Controller {
             echo "no record was found.";
         }
     }
-}
+
     /*
     *  public function delete_extraproduct
     *  @noparam
@@ -600,7 +586,6 @@ class Transportation extends MU_Controller {
     *  return true or false
     */
     public function delete_extraproduct(){
-    if ($this->check_user_session()) {
         if($this->uri->segment(3) == "temp"){
             $id = $this->uri->segment(4);
             $result = MU_Model::deletedRecordById("temp_table",array("ID" => $id));
@@ -610,7 +595,7 @@ class Transportation extends MU_Controller {
         }
         if($result) echo 't';
     }
-}
+
     /*
     * public funciton deleted_sub
     * @noparam
@@ -619,7 +604,6 @@ class Transportation extends MU_Controller {
     * deleted subtransportation and extraproduct 
     */
     public function deleted_sub(){
-    if ($this->check_user_session()) {
         $tp_id = $this->input->post('tp_id');
         if(! $this->session->userdata('have_sub') OR ! $this->session->userdata('have_extra')){
             $result = MU_Model::deleted_sub($tp_id);
@@ -630,14 +614,13 @@ class Transportation extends MU_Controller {
         $this->session->unset_userdata('have_sub');
         $this->session->unset_userdata('have_extra');
     }
-}
+
     /*
     * public function transportation_config
     * @noparam
     * return config (array)
     */
     public function transportation_config(){
-    if ($this->check_user_session()) {
         $config = array(
             array('field' => 'transportationName','label' => 'Transportation Name','rules' => 'trim|required'),
             // array('field' => 'txtchoiceItem','label' => 'Choice Item','rules' => 'trim|required'),
@@ -660,14 +643,13 @@ class Transportation extends MU_Controller {
         );
         return $config;
     }
-}
+
     /*
     * public function transportation_variable
     * @noparent
     * return $transportation (array)
     */
     public function transportation_variable(){
-    if ($this->check_user_session()) {
         $transportation['tp_name']          = $this->input->post('transportationName');
         // $transportation['tp_choiceitem']    = $this->input->post('txtchoiceItem');
         $transportation['tp_pickuplocation']       = $this->input->post('txtLocation');
@@ -689,14 +671,12 @@ class Transportation extends MU_Controller {
         $transportation['tp_status']        = $this->input->post('txtStatus');
         return $transportation;
     }
-}
     /*
     * public function transportation_cal
     * @param $checkavailableday (array)
     * return calendar_selected (array)
     */
     public function transportation_cal($checkavailableday){
-    if ($this->check_user_session()) {
         $calendar_selected['start_date']    = $this->input->post('txtFrom');
         $calendar_selected['end_date']      = $this->input->post('txtTo');
         $calendar_selected['start_time']    = $this->input->post('txtStartTime');
@@ -727,26 +707,23 @@ class Transportation extends MU_Controller {
         }
         return $calendar_selected;
     }
-}
+
     //delete transportation by id
     public function deleteTransportationById($transportation_id,$pagination = false){
-    if ($this->check_user_session()) {
-      $total_count = MU_Model::count_all_data('transportation',array('tp_deleted' => 0));
-      $delete_transportation = MU_Model::deleteRecordById('transportation',array("tp_deleted" => 1) ,array('tp_id' => $transportation_id));
-      if($delete_transportation){
-        redirect(strtolower(get_class()).'/list_record');
-     }
- }
-  }  
+  	  $total_count = MU_Model::count_all_data('transportation',array('tp_deleted' => 0));
+  	  $delete_transportation = MU_Model::deleteRecordById('transportation',array("tp_deleted" => 1) ,array('tp_id' => $transportation_id));
+  	  if($delete_transportation){
+  		  redirect(strtolower(get_class()).'/list_record');
+  	 }
+  }	 
   //end delete transportation by id
-  
+	
   //delete multiple transportation
     public function deleteMultiTransportation(){
-    if ($this->check_user_session()) {
-      $multiCheck = $this->input->post("check_checkbox");
-      $update['tp_deleted'] = 1;
-      $result = $this->mod_transportation->deleteMultipleTransportation($update,$multiCheck);
-      if($result > 0){
+	    $multiCheck = $this->input->post("check_checkbox");
+	    $update['tp_deleted'] = 1;
+	    $result = $this->mod_transportation->deleteMultipleTransportation($update,$multiCheck);
+	    if($result > 0){
             $this->session->set_userdata('msg_success', 'The transportation have been deleted successfully.');
             echo "t";
         } else {
@@ -754,12 +731,10 @@ class Transportation extends MU_Controller {
             echo "f";
         }
     }
-    }
     //end of delete multiple transportation
 
     /* delete permenent transportation */
     public function deletePermenentTransportation() {
-    if ($this->check_user_session()) {
         $multiCheck = $this->input->post("check_checkbox");
         $result = $this->mod_transportation->deletePermenentTp($multiCheck);
         if ($result > 0) {
@@ -770,27 +745,21 @@ class Transportation extends MU_Controller {
             echo "f";
         }
     }
-    }
 
     /* end delete permenent transportation */
 
     //For print pdf  and excel
 
-    public function exportPDF() {       
-    if ($this->check_user_session()) {  
+    public function exportPDF() {          
         $this->load->helper('pdf_helper');
         $data['transportation'] = $this->mod_transportation->exportAllDatas(' transportation');
         $this->load->view('include/BE/transportation/pdfexport', $data);
     }
-}
-    public function exportExcel() {         
-    if ($this->check_user_session()) {  
+    public function exportExcel() {           
         $data['transportation'] = $this->mod_transportation->exportAllDatas('transportation');
         $this->load->view('include/BE/transportation/excelexport', $data);
     }
-}
     public function exportByPagePDF(){
-    if ($this->check_user_session()) {
         $this->load->helper('pdf_helper');
         $checkex = $this->input->post("check_checkbox");
         
@@ -801,9 +770,7 @@ class Transportation extends MU_Controller {
         }
         $this->load->view('include/BE/transportation/pdfexport', $exportpage);
         }
-    }
     public function exportByPageExcel(){      
-    if ($this->check_user_session()) {
         $checkex = $this->input->post("check_checkbox");
         
         if($this->uri->segment(3) == "search_transportation"){
@@ -813,9 +780,7 @@ class Transportation extends MU_Controller {
         }
         $this->load->view('include/BE/transportation/excelexport', $exportpage);
     }
-}
     public function getRecordTransportation(){
-    if ($this->check_user_session()) {
         if($this->session->userdata("from_date")){ $fromdate = $this->session->userdata("from_date"); }else{ $fromdate = ""; }
         if($this->session->userdata("end_date")){ $enddate = $this->session->userdata("end_date"); }else{ $enddate = ""; }
         if($this->session->userdata("transportation_name")){$name = $this->session->userdata("transportation_name"); }else{ $name = ""; }
@@ -826,10 +791,8 @@ class Transportation extends MU_Controller {
             }           
             return $datas;
             }   
-        }
     }
         public function exportDataPage(){
-        if ($this->check_user_session()) {
         $query = $this->db
                  ->select('*')
                  ->from('transportation')
@@ -848,7 +811,6 @@ class Transportation extends MU_Controller {
                     }
                 return FALSE;
         }
-    }
 }
 
 /* End of file welcome.php */

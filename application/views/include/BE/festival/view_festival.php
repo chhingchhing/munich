@@ -25,9 +25,10 @@
                     ?>
                   <td><?php echo img($image_properties); ?></td> 
                 </tr> 
-              	<tr>
-                	<th>Festival Location</th> <td><?php echo $row->lt_name; ?></td>
-                </tr>                              
+                <tr>
+                  <td>Festival Location</td>
+                  <td><?php echo $row->lt_name; ?></td>
+                </tr>              
               </table>
         </div>
     

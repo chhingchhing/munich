@@ -64,7 +64,7 @@
                 <td><?php echo $data->bk_pay_price; ?></td>
                 <td><?php echo $data->bk_total_people; ?></td>
                 <td><?php echo $data->bk_type; ?></td>
-                <td><?php echo $data->bk_pay_status; ?></td>
+                <td><?php echo $data->bk_pay_status == 1 ? "paid" : "un-paid";?></td>
                 <td>
                 <?php
                     $status = '';

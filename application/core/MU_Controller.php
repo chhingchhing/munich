@@ -30,17 +30,7 @@ class MU_Controller extends CI_Controller {
 	        $this->image_lib->initialize($img_cfg_thumb);
 	        $this->image_lib->resize();
     }
-    
-     public function check_user_session() {
-    	 if (!$this->session->userdata("admin")) {
-    	 	redirect("login_admin");
-    	 	//echo "can not redirct page";
-        } else {
-        	return true;
-        }
-    }
-    
-
+	
 }
 
 /* End of file CT_Controller.php */

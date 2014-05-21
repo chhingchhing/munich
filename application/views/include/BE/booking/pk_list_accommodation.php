@@ -3,7 +3,7 @@
 	<?php 
 	if(isset($package_accomodation)){ 
 	  $package_accomodation = unserialize($package_accomodation); 
-	  if(isset($package_accomodation['main-accommodation'])){
+	  if (isset($package_accomodation)) {
 	  foreach($package_accomodation['main-accommodation'] as $main_accommodation){
 	  	$accID = $main_accommodation['acc_id'];
 	?>
