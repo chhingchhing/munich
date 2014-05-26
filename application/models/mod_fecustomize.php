@@ -43,10 +43,10 @@ class Mod_FeCustomize extends MU_model {
         ->join('extra_acti','extraproduct.ep_id = extra_acti.extraproduct_id')
         ->join('activities','activities.act_id = extra_acti.activities_id')
         ->join('photo','photo.photo_id = extraproduct.photo_id')
-        ->where('ep_deleted',0)
         ->where('extra_acti.activities_id',$ActID)
         ->where('activities.location_id', $lcId)
         ->where('activities.act_ftv_id', $ftvID)
+        ->where('ep_deleted',0)
         ->get('extraproduct');
         return $select_extraProductsActivity;
     }
@@ -83,6 +83,24 @@ class Mod_FeCustomize extends MU_model {
             ->get('accommodation');
             return $subAccommodation;
     }
+    /*
+    * select extra products of Accommodation
+    * @param parameter $ftvID, $lcID, $accID
+    */
+    public function selectExtraProductAccommodation($ftvID, $lID, $accID){
+        $extra_acc = $this->db->select('*')
+        ->join('extraproduct_calendar','extraproduct.ep_id = extraproduct_calendar.extraproduct_id')
+        ->join('calendar_available','calendar_available.ca_id = extraproduct_calendar.calendar_available_id')
+        ->join('extra_acc','extraproduct.ep_id = extra_acc.extraproduct_ep_id')
+        ->join('accommodation','accommodation.acc_id = extra_acc.accomodations_ad_id')
+        ->join('photo','photo.photo_id = extraproduct.photo_id')
+        ->where('extra_acc.accomodations_ad_id',$accID)
+        ->where('accommodation.location_id', $lID)
+        ->where('accommodation.acc_ftv_id', $ftvID)     
+        ->where('ep_deleted',0)
+        ->get('extraproduct');
+        return $extra_acc;
+    }
     /* * public function select transportation
     * @param parameter $ftvID, $lcId, $subAct
     */
@@ -94,7 +112,6 @@ class Mod_FeCustomize extends MU_model {
             ->join('supplier','supplier.sup_id = transportation.tp_supplier_id')
             ->where('transportation.tp_deleted',0)
             ->where('transportation.tp_ftv_id', $ftvID)
-            //->where('transportation.location_id', $lcId)
             ->where('transportation.tp_subof',0)
             ->get('transportation');
             return $transportation;
@@ -111,29 +128,62 @@ class Mod_FeCustomize extends MU_model {
             ->join('supplier','supplier.sup_id = transportation.tp_supplier_id')
             ->where('transportation.tp_deleted',0)
             ->where('transportation.tp_ftv_id', $ftvID)
-            //->where('transportation.location_id', $lcId)
             ->where('transportation.tp_subof', $subAct)
             ->get('transportation');
             return $subtransportation;
     }
     /*
+    * public function select extra product of Transportation
+    * @param parameter $ftvID, $tpID
+    */
+    public function selectExtraProductTransportation($ftvID, $tpID){
+        $tp_extra = $this->db->select('*')
+                    ->join('extraproduct_calendar', 'extraproduct.ep_id = extraproduct_calendar.extraproduct_id')
+                    ->join('calendar_available','calendar_available.ca_id = extraproduct_calendar.calendar_available_id')
+                    ->join('extra_transport','extraproduct.ep_id = extra_transport.extraproduct_id')
+                    ->join('transportation','transportation.tp_id = extra_transport.transport_id')
+                    ->join('photo','photo.photo_id = extraproduct.photo_id')
+                    ->where('extra_transport.transport_id', $tpID)
+                    ->where('transportation.tp_ftv_id', $ftvID)
+                    ->where('tp_deleted',0)
+                    ->where('ep_deleted',0)
+                    ->get('extraproduct');
+        return $tp_extra;
+    }
+
+    /* 
+    * select all extra products
+    * @param paremeter 
+    */
+    public function selectExtraProdcuts(){
+        $extraProducts = $this->db->select('*')
+            ->join('extraproduct_calendar','extraproduct.ep_id = extraproduct_calendar.extraproduct_id')
+            ->join('calendar_available','calendar_available.ca_id = extraproduct_calendar.calendar_available_id')
+            ->join('photo','photo.photo_id = extraproduct.photo_id')
+            ->where('extraproduct.ep_deleted',0)
+            ->get('extraproduct');
+        return $extraProducts;
+    }  
+    /*
     * public function add information of passenger to table passenger
     * @param parameter $pfname, $plname, $pgender, $pdob, $pmobile, $phphone, $paddress, $pcode, $pcity, $pcountry, $pnumber
     */
-    public function personal_information($pnumber, $pfname, $plname, $pemail, $phphone, $paddress, $pcompany, $pgender){
+    public function personal_information($pfname, $plname, $pemail, $phphone, $pmobile, $pcountry, $paddress, $pcompany, $pgender){
         $passenger = array(
-            'pass_addby' => $pnumber,
-            'pass_fname' => $pfname,
-            'pass_lname' => $plname,
-            'pass_email' => $pemail,
-            'pass_phone' => $phphone,
-            'pass_address' => $paddress,
-            'pass_company' => $pcompany,
-            'pass_gender' => $pgender,
-            'pass_status' => 1,
-            'pass_deleted' => 0,
+            'pass_fname'        => $pfname,
+            'pass_lname'        => $plname,
+            'pass_email'        => $pemail,
+            'pass_phone'        => $phphone,
+            'pass_mobile'       => $pmobile,
+            'pass_country'      => $pcountry,
+            'pass_address'      => $paddress,
+            'pass_company'      => $pcompany,
+            'pass_gender'       => $pgender,
+            'pass_status'       => 1,
+            'pass_deleted'      => 0,
         );
         $this->db->insert('passenger', $passenger);
     }
     
 }
+
