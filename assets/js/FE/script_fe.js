@@ -189,19 +189,44 @@ jQuery(document).ready(function(){
 });
 
 // Checked box for Customize FE
-// $('input.check_sub_element, input.people_sub_activity, input.amount_extras').prop('disabled', true);
 
-if ( $('input.check_main_element').is(':checked') )
-    $('input.check_sub_element, input.people_sub_activity,input.amount_extras').prop('disabled', false);
-else
-    $('input.check_sub_element, input.people_sub_activity, input.amount_extras').prop('disabled', true);
+if ( $('input.check_main_element').is(':checked') ) {
+    $('input.check_sub_element').prop('disabled', false);
+} else {
+    $('input.check_sub_element').prop('disabled', true);
+    $('input.check_sub_element').prop('checked', false);
+}
+if ( $('input.check_sub_element').is(':checked') ) {
+    $('select.people_sub_activity, input.amount_extras').prop('disabled', false);
+} else {
+    $('select.people_sub_activity, input.amount_extras').prop('disabled', true);
+}
 
 $(function () {
     $('input.check_main_element').click(function(){
-        if ( $(this).is(':checked') )
-            // $('input.check_sub_element').prop('checked', true);
-            $('input.check_sub_element, input.people_sub_activity,input.amount_extras').prop('disabled', false);
-        else
-            $('input.check_sub_element, input.people_sub_activity, input.amount_extras').prop('disabled', true);
-    })
+    	var order = $(this).parent().attr("order");
+        if ( $(this).is(':checked') ) {
+            $(this).parent().siblings().nextUntil("#main_act_order_'"+order+"'").find('input.check_sub_element').prop('disabled', false);
+        } else {
+        	$(this).parent().siblings().nextUntil("#main_act_order_'"+order+"'").find('input.check_sub_element').prop('disabled', true);
+        	$(this).parent().siblings().nextUntil("#main_act_order_'"+order+"'").find('input.check_sub_element').prop('checked', false);
+        	$(this).parent().siblings().nextUntil("#main_act_order_'"+order+"'").find('select.people_sub_activity').prop('disabled', true).val(0);
+        }
+    });
+
+	$('input.check_sub_element').click(function(){
+        if ( $(this).is(':checked') ) {
+            $(this).parent().parent().parent().next().find('select.people_sub_activity').prop('disabled', false);
+            $(this).parent().parent().next().find('input.amount_extras').prop('disabled', false);
+        } else {
+        	$(this).parent().parent().parent().next().find('select.people_sub_activity').prop('disabled', true).val(0);
+        	$(this).parent().parent().next().find('input.amount_extras').prop('disabled', true).val("");
+        }
+    });
+
+    /*$("select.people_sub_activity").change(function() {
+    	var amountPeopleMainActivity = $(this).parent().parent().siblings().children().find("select").val();
+    	var amountPeopleSubActivity = $(this).parent().parent().siblings().children().find("select#subPeople").val();
+    	alert(amountPeopleSubActivity);
+    });*/
 });

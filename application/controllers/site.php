@@ -233,6 +233,24 @@ class Site extends MU_Controller {
         $array[$index] = $new_element;
         return $array;
      }
+
+     /*function arraySubActivityPeople($array, $sub_activity, $amount_people, $index) {
+        $array[$index] = array(
+        	'sub_activity' => $sub_activity,
+        	'amount_people' => $amount_people
+        	);
+        return $array;
+     }*/
+
+     /**
+	 * Clear all session of storing array
+     */
+     public function clear_all() {
+     	$this->general_lib->empty_main_activities();
+     	$this->general_lib->empty_sub_activities();
+     	$this->general_lib->empty_extra_activities();
+     	$this->general_lib->empty_amount_extra();
+     }
         
         /*
 	* public function customize
@@ -246,19 +264,46 @@ class Site extends MU_Controller {
 		}
 		if ($display_page == "activities") {
 			if($this->input->post('btnActivity')){
-
-				foreach ($this->input->post('checkbox_activity') as $element) {
-					$arr_mainactivity = $this->general_lib->get_main_activities();
-			        $new_arr_mainactivity = $this->insertArrayIndex($arr_mainactivity, $element, $element);
-			        $this->general_lib->set_main_activities($new_arr_mainactivity);
+				$this->clear_all();
+				if ($this->input->post('checkbox_activity')) {
+					foreach ($this->input->post('checkbox_activity') as $element) {
+						$arr_mainactivity = $this->general_lib->get_main_activities();
+				        $new_arr_mainactivity = $this->insertArrayIndex($arr_mainactivity, $element, $element);
+				        $this->general_lib->set_main_activities($new_arr_mainactivity);
+					}
+				}
+				
+				if ($this->input->post('checkbox_subactivity')) {
+					foreach ($this->input->post('checkbox_subactivity') as $element) {
+						$arr_subactivity = $this->general_lib->get_sub_activities();
+				        $new_arr_subactivity = $this->insertArrayIndex($arr_subactivity, $element, $element);
+				        $this->general_lib->set_sub_activities($new_arr_subactivity);
+					}
 				}
 
-				$this->session->set_userdata('mainactivity', $this->input->post('checkbox_activity'));
-				$this->session->set_userdata('subactivity', $this->input->post('checkbox_subactivity'));
-				$this->session->set_userdata('extraactivity', $this->input->post('checkbox_extra'));
+				if ($this->input->post('checkbox_extra')) {
+					foreach ($this->input->post('checkbox_extra') as $element) {
+						$arr_extra_activity = $this->general_lib->get_extra_activities();
+				        $new_arr_extra_activity = $this->insertArrayIndex($arr_extra_activity, $element, $element);
+				        $this->general_lib->set_extra_activities($new_arr_extra_activity);
+					}
+				}
+				/*if ($this->input->post('checkbox_extra')) {
+					$people = $this->input->post('actPeopleSubActivity');
+					$i = 0;
+					foreach ($this->input->post('checkbox_extra') as $element) {
+						$i++;
+						$arr_extra_activity = $this->general_lib->get_extra_activities();
+				        $new_arr_extra_activity = $this->arraySubActivityPeople($arr_extra_activity, $element, $people[$i-1], $element);
+				        $this->general_lib->set_extra_activities($new_arr_extra_activity);
+					}
+				}*/
+				$this->general_lib->set_amount_extra($this->input->post('amountextras'));
+				$this->general_lib->set_people_sub_activity($this->input->post('actPeopleSubActivity'));
+				$this->general_lib->set_people_main_activity($this->input->post('actPeopleMainActivity'));
+
 				$this->session->set_userdata('actDate', $this->input->post('actTxtDate'));
-				$this->session->set_userdata('peopleAmount', $this->input->post('actPeople'));
-				$this->session->set_userdata('amountextras', $this->input->post('amountextras'));
+				// $this->session->set_userdata('peopleAmount', $this->input->post('actPeopleMainActivity'));
 				redirect('site/customizes/accommodation');
 			}else{
 				$fe_data['recordActivities'] = $this->customizeActivity();
@@ -433,6 +478,7 @@ class Site extends MU_Controller {
 				}
 			}
 		}
+		// var_dump($records); die();
 		return $records;
 	}
 	public function selectSubActivity($sub_act){

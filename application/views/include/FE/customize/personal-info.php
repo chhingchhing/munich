@@ -64,8 +64,7 @@
 				    </div>
 	   			</div>
 	   		</div>
-	   		<!--<input type="button" class="btn btn-primary btn-sm" name="back" value="Back" />-->
-	   		<button type="button" class="btn btn-primary btn-sm"><?php echo anchor("site/customizes/extra-service","Previous "); ?></button>
+	   		<?php echo anchor("site/customizes/extra-service","Previous", array('role'=>'button', 'class'=>'btn btn-info btn-sm')); ?>
 			<?php $input = array('name' => 'btnExtraService', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
 <p></p>
 <?php echo form_close(); ?>
