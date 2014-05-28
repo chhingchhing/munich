@@ -21,8 +21,6 @@ class Site extends MU_Controller {
 		$fe_data['site_setting'] = "default";
 		$this->load->view('index',$fe_data);
 	}
-
-
 	/*
 	* function redirect from route.php in folder config
 	* public function page
@@ -30,9 +28,7 @@ class Site extends MU_Controller {
 	* used table content and menu
 	* load view index.php
 	*/
-
-	public function page()
-	{
+	public function page(){
 		if($this->uri->segment(4)){ $menu_id = $this->uri->segment(4); }elseif($this->uri->segment(3)){ $menu_id = $this->uri->segment(3); }else{ $menu_id = $this->uri->segment(2); }
 		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
 		$fe_data['content_fe'] = $this->mod_index->getContentById($menu_id);
@@ -46,15 +42,51 @@ class Site extends MU_Controller {
 		if ($this->input->post('addmore_profile')) {
 			// var_dump($this->input->post()); die();
 			$config = array(
-						  array('field' => 'fname', 'label' => 'First Name','rules' => 'trim|required'),
-                          array('field' => 'lname','label' => 'Last Name','rules' => 'trim|required'),
-                          array('field' => 'password','label' => 'Password','rules' => 'trim|required'),
-                          array('field' => 'email','label' => 'Email','rules' => 'trim|required'),
-                          array('field' => 'phone', 'label' => 'Phone Number','rules' => 'trim|required'),
-                          array('field' => 'address','label' => 'Address','rules' => 'trim|required'),
-                          array('field' => 'company','label' => 'Company','rules' => 'trim|required'),
-                          array('field' => 'gender','label' => 'Gener','rules' => 'trim|required'),
-                          array('field' => 'txtStatus','label' => 'Status','rules' => 'trim|required'),
+			  array(
+			  	'field' => 'fname',
+			  	'label' => 'First Name',
+			  	'rules' => 'trim|required'
+			  ),
+              array(
+              	'field' => 'lname',
+              	'label' => 'Last Name',
+              	'rules' => 'trim|required'
+              ),
+              array(
+              	'field' => 'password',
+              	'label' => 'Password',
+              	'rules' => 'trim|required'
+              ),
+              array(
+              	'field' => 'email',
+              	'label' => 'Email',
+              	'rules' => 'trim|required'
+              ),
+              array(
+              	'field' => 'phone', 
+              	'label' => 'Phone Number',
+              	'rules' => 'trim|required'
+              ),
+              array(
+              	'field' => 'address',
+              	'label' => 'Address',
+              	'rules' => 'trim|required'
+              ),
+              array(
+              	'field' => 'company',
+              	'label' => 'Company',
+              	'rules' => 'trim|required'
+              ),
+              array(
+              	'field' => 'gender',
+              	'label' => 'Gener',
+              	'rules' => 'trim|required'
+              ),
+              array(
+              	'field' => 'txtStatus',
+              	'label' => 'Status',
+              	'rules' => 'trim|required'
+              ),
 			);
 			$this->form_validation->set_rules($config);
 			if($this->form_validation->run() == FALSE){
@@ -344,29 +376,37 @@ class Site extends MU_Controller {
 			if($this->input->post('btnExtraService')){
 				redirect('site/customizes/personal-info');
 			}else{
-				$fe_data['recordAccommodation'] = $this->customizeExtra_service();
+				$fe_data['recordExtraProducts'] = $this->customizeExtra_service();
 			}
 		}
 		if ($display_page == "personal-info") {
 			if($this->input->post('btnExtraService')){	
 				$addpassenger  = array(
-					array('field' => 'pfname','label' => 'Passenger firstname','rules' => 'trim|required'),
-					array('field' => 'plname','label' => 'Passenger lastname','rules' => 'trim|required'), 
+					array(
+						'field' => 'pfname',
+						'label' => 'Passenger firstname',
+						'rules' => 'trim|required'
+					),
+					array(
+						'field' => 'plname',
+						'label' => 'Passenger lastname',
+						'rules' => 'trim|required'
+					), 
 					);	
 				$this->form_validation->set_rules($addpassenger);
 				if($this->form_validation->run() == FALSE){
-					 echo "sorry you are wrong.";
+					 echo "sorry you are wrong."   ;
 				}else{	
-					$pnumber =  $this->input->post('pnumber');
 					$pfname = $this->input->post('pfname');
 					$plname = $this->input->post('plname');
 					$pemail =  $this->input->post('pemail');
 					$phphone =  $this->input->post('phphone');
+					$pmobile = $this->input->post('pmobile');
+					$pcountry =  $this->input->post('pcountry');
 					$paddress =  $this->input->post('paddress');
 					$pcompany =  $this->input->post('pcompany');
-					$ppassword =  $this->input->post('ppassword');
 					$pgender =  $this->input->post('pgender');
-					$this->mod_fecustomize->personal_information($pnumber, $pfname, $plname, $pemail, $phphone, $paddress, $pcompany, $ppassword, $pgender);				
+					$this->mod_fecustomize->personal_information($pfname, $plname, $pemail, $phphone, $pmobile, $pcountry, $paddress, $pcompany, $pgender);				
 					redirect('site/customizes/payments');					
 				}
 
@@ -376,9 +416,7 @@ class Site extends MU_Controller {
 		}
 		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
 		$fe_data['site_setting'] = "customizes";
-		// if($display_page != false){
-		// 	$fe_data['customize_page_show'] = $display_page;
-		// }
+
 		$this->load->view('index', $fe_data);
 	}
 	/*
@@ -388,9 +426,21 @@ class Site extends MU_Controller {
 	*/
 	public function customizeTrip(){
 		if($this->input->post('btnTripInfo')){
-			if($this->input->post('people')){$this->session->set_userdata('people', $this->input->post('people'));}else{$this->session->set_userdata('people', "");}
-			if($this->input->post('txtFrom')){$this->session->set_userdata('txtFrom', $this->input->post('txtFrom'));}else{$this->session->set_userdata('txtFrom', "");}
-			if($this->input->post('txtTo')){$this->session->set_userdata('txtTo', $this->input->post('txtTo'));}else{$this->session->set_userdata('txtTo', "");}	
+			if($this->input->post('people')){
+				$this->session->set_userdata('people', $this->input->post('people'));
+			}else{
+				$this->session->set_userdata('people', "");
+			}
+			if($this->input->post('txtFrom')){
+				$this->session->set_userdata('txtFrom', $this->input->post('txtFrom'));
+			}else{
+				$this->session->set_userdata('txtFrom', "");
+			}
+			if($this->input->post('txtTo')){
+				$this->session->set_userdata('txtTo', $this->input->post('txtTo'));
+			}else{
+				$this->session->set_userdata('txtTo', "");
+			}	
 		}
 		return true;	
 	} 
@@ -486,7 +536,6 @@ class Site extends MU_Controller {
 		$activites = $this->mod_fecustomize->trip_information($this->session->userdata('ftvID'), $this->session->userdata('lcID'));
 		$records = array();
 		if($activites->num_rows() > 0){
-			// var_dump($activites->result()); die();
 			foreach($activites->result() as $act){
 				$recodeavaliable = $this->convertDateToRange($findate, $act->start_date, $act->end_date);				
 				if($recodeavaliable){
@@ -578,7 +627,20 @@ class Site extends MU_Controller {
 		return $tp_data;
 	}
 	public function customizeExtra_service(){
-	 }
+		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
+		$ext_records = $this->mod_fecustomize->selectExtraProdcuts();
+		$extra_data = array();
+		if ($ext_records->num_rows() > 0) {
+			foreach ($ext_records->result() as $exp) {
+				$recodeavaliable = $this->convertDateToRange($findate, $exp->start_date, $exp->end_date);
+				if ($recodeavaliable) {
+					$avRecord = json_decode(json_encode($exp), true);
+					array_push($extra_data, $avRecord);
+				}
+			}
+		}
+		return $extra_data;
+	}
 	public function customizePersonal_info(){ }
 	
 	/*

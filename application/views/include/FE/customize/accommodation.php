@@ -203,7 +203,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				        	?>
 				        </div>
 			    	</div>
-			    	
+			    	<h3>Sub Accommodations</h3>
 			    	<?php
 			    		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 						$subAccommodation = mod_fecustomize::selectSubAccommodation($this->session->userdata('ftvID'), $this->session->userdata('lcID'), $acc['acc_id']);
@@ -246,10 +246,50 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				    	</div>
 			    	<?php }?>
 				    	
+				    	<h3>Extra Products</h3>
+				    	<?php
+				    		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
+							$extraproduct = mod_feCustomize::selectExtraProductAccommodation($this->session->userdata('ftvID'), $this->session->userdata('lcID'), $acc['acc_id']);
+							$extra = array();
+							if($extraproduct->num_rows() > 0){
+								foreach($extraproduct->result() as $ep_acc){
+									$recodeavaliable = site::convertDateToRangeSub($findate, $ep_acc->start_date, $ep_acc->end_date);				
+									if($recodeavaliable){
+										$avRecord = json_decode(json_encode($ep_acc), true); 
+										array_push($extra, $avRecord);
+									}
+								}
+							}
+					    ?>
+					    <?php foreach ($extra as $ep_result) {?>
+						    <div class="col-sm-12">
+					    		<div class="col-sm-3">
+					   				<?php $extras = array('src' => 'user_uploads/thumbnail/original/'.$ep_result['pho_source'],'alt' => 'customize','class' => 'img-thumbnail images-dashboard','title' => 'Customize');?>
+						    		<?php echo img($extras).br(1);?>
+					   			</div>
+					   			<div class="col-sm-7">
+					   				<label>
+					   					<?php 
+					   					$checked = $this->session->userdata('extraactivity');
+					   					$checkbox_extra = array('value' => $ep_result['ep_id'], 'checked' => !$checked ? false : true, 'class' => 'check_sub_element', 'name' => 'checkbox_extra[]', 'id' => 'checkbox_extra');
+					   					echo form_checkbox($checkbox_extra);
+					   					?>
+					   					<?php echo $ep_result['ep_name'];?>
+					   				</label>
+					   				<p><?php echo $ep_result['ep_bookingtext']; ?></p>
+					   			</div>
+					   			<div class="col-sm-2">
+					   				<label>Amount of Extra Product</label>
+					   				<input type="text" name="amountextras[]" class="form-control amount_extras" />
+					   				<?php ?>
+					   			</div>
+					   			<div class="clear_both"></div>
+							</div>
+						<?php } ?>
 	   			</div>
 	   			<?php }?>	
 	   		</div> 			
-	   		<?php echo anchor("site/customizes/activities","Previous", array('role'=>'button', 'class'=>'btn btn-info btn-sm')); ?>
+	   		<?php echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-info btn-sm')); ?>
 			<?php $input = array('name' => 'btnAccommodation', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
 			<p></p>
 	   </div>

@@ -17,16 +17,6 @@
 	   			if ($recordActivities[$actOrder-1]['thursday'] == 0) $daysOfWeekDisabled .= "4, ";
 	   			if ($recordActivities[$actOrder-1]['friday'] == 0) $daysOfWeekDisabled .= "5, ";
 	   			if ($recordActivities[$actOrder-1]['saturday'] == 0) $daysOfWeekDisabled .= "6";
-
-	   			$day_avaliable['monday'] 	= $rows['monday'];
-                $day_avaliable['tuesday'] 	= $rows['tuesday'];
-                $day_avaliable['wednesday'] = $rows['wednesday'];
-                $day_avaliable['thursday'] 	= $rows['thursday'];
-                $day_avaliable['friday'] 	= $rows['friday'];
-                $day_avaliable['saturday'] 	= $rows['saturday'];
-                $day_avaliable['sunday'] 	= $rows['sunday'];
-            	$new = site::convertDateToRangeFromFE($day_avaliable, $rows['start_date'], $rows['end_date']);
-
 	   			?> 				
 	   			<div class="col-sm-3">
 	   				<?php $customize_img = array(
@@ -221,7 +211,6 @@
 				    <?php
 			    		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 						$extraproduct = mod_feCustomize::selectExtraProductActivity($this->session->userdata('ftvID'), $this->session->userdata('lcID'), $rows['act_id']);
-
 						$extra = array();
 						if($extraproduct->num_rows() > 0){
 							foreach($extraproduct->result() as $ep_result){
