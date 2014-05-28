@@ -8,6 +8,7 @@ class General_lib
 		$this->CI =& get_instance();
 	}
 
+	// Activity session
 	function get_main_activities()
 	{
 		if(!$this->CI->session->userdata('mainactivity'))
@@ -90,6 +91,133 @@ class General_lib
 	}
 	function empty_people_main_activity() {
 		$this->CI->session->unset_userdata('amount_people_main_activity');
+	}
+
+	function get_start_date_activity()
+	{
+		if(!$this->CI->session->userdata('start_date_activity'))
+			$this->set_start_date_activity('');
+		return $this->CI->session->userdata('start_date_activity');
+	}
+	function set_start_date_activity($start_date_activity)
+	{
+		$this->CI->session->set_userdata('start_date_activity',$start_date_activity);
+	}
+	function empty_start_date_activity() {
+		$this->CI->session->unset_userdata('start_date_activity');
+	}
+
+	function get_end_date_activity()
+	{
+		if(!$this->CI->session->userdata('end_date_activity'))
+			$this->set_end_date_activity('');
+		return $this->CI->session->userdata('end_date_activity');
+	}
+	function set_end_date_activity($end_date_activity)
+	{
+		$this->CI->session->set_userdata('end_date_activity',$end_date_activity);
+	}
+	function empty_end_date_activity() {
+		$this->CI->session->unset_userdata('end_date_activity');
+	}
+
+	// Accommodations session
+	function get_accommodation()
+	{
+		if(!$this->CI->session->userdata('accommodation'))
+			$this->set_accommodation('');
+		return $this->CI->session->userdata('accommodation');
+	}
+	function set_accommodation($accommodation)
+	{
+		$this->CI->session->set_userdata('accommodation',$accommodation);
+	}
+	function empty_accommodation() {
+		$this->CI->session->unset_userdata('accommodation');
+	}
+
+	function get_people_accommodation()
+	{
+		if(!$this->CI->session->userdata('amount_people_accommodation'))
+			$this->set_people_accommodation('');
+		return $this->CI->session->userdata('amount_people_accommodation');
+	}
+	function set_people_accommodation($amount_people_accommodation)
+	{
+		$this->CI->session->set_userdata('amount_people_accommodation',$amount_people_accommodation);
+	}
+	function empty_people_accommodation() {
+		$this->CI->session->unset_userdata('amount_people_accommodation');
+	}
+
+	function get_checkin_date_accommodation()
+	{
+		if(!$this->CI->session->userdata('checkin_accommodation'))
+			$this->set_checkin_date_accommodation('');
+		return $this->CI->session->userdata('checkin_accommodation');
+	}
+	function set_checkin_date_accommodation($checkin_accommodation)
+	{
+		$this->CI->session->set_userdata('checkin_accommodation',$checkin_accommodation);
+	}
+	function empty_checkin_date_accommodation() {
+		$this->CI->session->unset_userdata('checkin_accommodation');
+	}
+
+	function get_checkout_date_accommodation()
+	{
+		if(!$this->CI->session->userdata('checkout_accommodation'))
+			$this->set_checkout_date_accommodation('');
+		return $this->CI->session->userdata('checkout_accommodation');
+	}
+	function set_checkout_date_accommodation($checkout_accommodation)
+	{
+		$this->CI->session->set_userdata('checkout_accommodation',$checkout_accommodation);
+	}
+	function empty_checkout_date_accommodation() {
+		$this->CI->session->unset_userdata('checkout_accommodation');
+	}
+
+	function get_single_room_accommodation()
+	{
+		if(!$this->CI->session->userdata('single_room_accommodation'))
+			$this->set_single_room_accommodation('');
+		return $this->CI->session->userdata('single_room_accommodation');
+	}
+	function set_single_room_accommodation($single_room_accommodation)
+	{
+		$this->CI->session->set_userdata('single_room_accommodation',$single_room_accommodation);
+	}
+	function empty_single_room_accommodation() {
+		$this->CI->session->unset_userdata('single_room_accommodation');
+	}
+
+	function get_double_room_1bed_accommodation()
+	{
+		if(!$this->CI->session->userdata('double_room_1bed_accommodation'))
+			$this->set_double_room_1bed_accommodation('');
+		return $this->CI->session->userdata('double_room_1bed_accommodation');
+	}
+	function set_double_room_1bed_accommodation($double_room_1bed_accommodation)
+	{
+		$this->CI->session->set_userdata('double_room_1bed_accommodation',$double_room_1bed_accommodation);
+	}
+	function empty_double_room_1bed_accommodation() {
+		$this->CI->session->unset_userdata('double_room_1bed_accommodation');
+	}
+
+	function get_double_room_2beds_accommodation()
+	{
+		if(!$this->CI->session->userdata('double_room_2beds_accommodation'))
+			$this->set_double_room_2beds_accommodation('');
+		return $this->CI->session->userdata('double_room_2beds_accommodation');
+	}
+	function set_double_room_2beds_accommodation($double_room_2beds_accommodation)
+	{
+		$this->CI->session->set_userdata('double_room_2beds_accommodation',$double_room_2beds_accommodation);
+	}
+	function empty_double_room_2beds_accommodation() {
+		$this->CI->session->unset_userdata('double_room_2beds_accommodation');
 	}
         
 }

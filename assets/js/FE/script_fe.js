@@ -188,45 +188,125 @@ jQuery(document).ready(function(){
         });
 });
 
-// Checked box for Customize FE
+// Customize booking on FE with validation of form
+$(function() {
+	// Checked box for Customize FE
+	$("input.check_main_element").each(function() {
+	    var order = $(this).parent().attr("order");
+	    var objThis = $(this).parent().siblings().nextUntil("#main_act_order_'"+order+"'");
+        if ( $(this).is(':checked') ) {
+            objThis.find('input.check_sub_element').prop('disabled', false);
+            objThis.find("input.checkin").prop('disabled', false);
+            objThis.find("input.checkout").prop('disabled', false);
+            objThis.find('select.people').prop('disabled', false);
+            objThis.find('select.room_types').prop('disabled', false);
+        } else {
+        	objThis.find('input.check_sub_element').prop('disabled', true);
+        	objThis.find('input.check_sub_element').prop('checked', false);
+        	objThis.find('select.people_sub_activity').prop('disabled', true).val(0);
+        	objThis.find("input.checkin").prop('disabled', true);
+        	objThis.find("input.checkout").prop('disabled', true);
+        	objThis.find('select.people').prop('disabled', true);
+        	objThis.find('select.room_types').prop('disabled', true);
+        }
+	});	
 
-if ( $('input.check_main_element').is(':checked') ) {
-    $('input.check_sub_element').prop('disabled', false);
-} else {
-    $('input.check_sub_element').prop('disabled', true);
-    $('input.check_sub_element').prop('checked', false);
-}
-if ( $('input.check_sub_element').is(':checked') ) {
-    $('select.people_sub_activity, input.amount_extras').prop('disabled', false);
-} else {
-    $('select.people_sub_activity, input.amount_extras').prop('disabled', true);
-}
+	$("input.check_sub_element").each(function() {
+		var objThis = $(this).parent().parent();
+	    if ( $(this).is(':checked') ) {
+            objThis.parent().next().find('select.people_sub_activity').prop('disabled', false);
+            objThis.next().find('input.amount_extras').prop('disabled', false);
+        } else {
+        	objThis.parent().next().find('select.people_sub_activity').prop('disabled', true).val(0);
+        	objThis.next().find('input.amount_extras').prop('disabled', true).val("");
+        }
+	});	
 
-$(function () {
     $('input.check_main_element').click(function(){
     	var order = $(this).parent().attr("order");
+    	var objThis = $(this).parent().siblings().nextUntil("#main_act_order_'"+order+"'");
         if ( $(this).is(':checked') ) {
-            $(this).parent().siblings().nextUntil("#main_act_order_'"+order+"'").find('input.check_sub_element').prop('disabled', false);
+            objThis.find('input.check_sub_element').prop('disabled', false);
+            objThis.find('select.people').prop('disabled', false);
+            objThis.find('select.room_types').prop('disabled', false);
+            objThis.find("input.checkin").prop('disabled', false);
+            objThis.find("input.checkout").prop('disabled', false);
         } else {
-        	$(this).parent().siblings().nextUntil("#main_act_order_'"+order+"'").find('input.check_sub_element').prop('disabled', true);
-        	$(this).parent().siblings().nextUntil("#main_act_order_'"+order+"'").find('input.check_sub_element').prop('checked', false);
-        	$(this).parent().siblings().nextUntil("#main_act_order_'"+order+"'").find('select.people_sub_activity').prop('disabled', true).val(0);
+        	objThis.find('input.check_sub_element').prop('disabled', true);
+        	objThis.find('input.check_sub_element').prop('checked', false);
+        	objThis.find('select.people_sub_activity').prop('disabled', true).val(0);
+        	objThis.find('select.people').prop('disabled', true);
+        	objThis.find('select.room_types').prop('disabled', true);
+            objThis.find("input.checkin").prop('disabled', true);
+            objThis.find("input.checkout").prop('disabled', true);
         }
     });
 
 	$('input.check_sub_element').click(function(){
+		var objThis = $(this).parent().parent();
         if ( $(this).is(':checked') ) {
-            $(this).parent().parent().parent().next().find('select.people_sub_activity').prop('disabled', false);
-            $(this).parent().parent().next().find('input.amount_extras').prop('disabled', false);
+            objThis.parent().next().find('select.people_sub_activity').prop('disabled', false);
+            objThis.next().find('input.amount_extras').prop('disabled', false);
         } else {
-        	$(this).parent().parent().parent().next().find('select.people_sub_activity').prop('disabled', true).val(0);
-        	$(this).parent().parent().next().find('input.amount_extras').prop('disabled', true).val("");
+        	objThis.parent().next().find('select.people_sub_activity').prop('disabled', true).val(0);
+        	objThis.next().find('input.amount_extras').prop('disabled', true).val("");
         }
     });
 
-    /*$("select.people_sub_activity").change(function() {
-    	var amountPeopleMainActivity = $(this).parent().parent().siblings().children().find("select").val();
-    	var amountPeopleSubActivity = $(this).parent().parent().siblings().children().find("select#subPeople").val();
-    	alert(amountPeopleSubActivity);
-    });*/
+   // Set amount of people on accommodation tab
+	$("select#get_amount_people_room").change(function(){
+    	var selectedAmountPeople = $(this).val();
+
+    	// Single Room
+    	var selectSingle = buildSelectSingleRoom(selectedAmountPeople);
+    	var selectObjSingle = $(this).parent().parent().siblings().find("div#single");
+    	selectObjSingle.find("select#single").remove();
+    	selectObjSingle.append(selectSingle);
+
+    	// Double Room and one bed
+    	var selectDoubleOneBed = buildSelectDoubleRoomOneOrTwoBed(selectedAmountPeople, "double_room_1bed", "room_types");
+    	var selectObjDouble1Bed = $(this).parent().parent().siblings().find("div#double_room_1bed");
+    	selectObjDouble1Bed.find("select#double_room_1bed").remove();
+    	selectObjDouble1Bed.append(selectDoubleOneBed);
+
+    	// Double Room and two beds
+    	var selectDoubleTwoBed = buildSelectDoubleRoomOneOrTwoBed(selectedAmountPeople, "double_room_2beds", "room_types");
+    	var selectObjDouble2Bed = $(this).parent().parent().siblings().find("div#double_room_2beds");
+    	selectObjDouble2Bed.find("select#double_room_2beds").remove();
+    	selectObjDouble2Bed.append(selectDoubleTwoBed);
+    });
+
 });
+
+// Build select option for single room
+function buildSelectSingleRoom(options) {
+    var $select = $('<select class="form-control" id="single" name="room_types"></select>');
+    var $option;
+
+    for (var i=0; i <= options; i++) {
+    	if (i == '0') {
+    		$option = $('<option value="0">-- Select --</option>');
+    	} else {
+    		$option = $('<option value="' + i + '">' + i+" Room(s), "+i + ' Guest(s)</option>');
+    	}
+        $select.append($option);
+    }
+    return $select;
+}
+
+// Build select option for double one bed and two beds
+function buildSelectDoubleRoomOneOrTwoBed(options, select_id, select_name) {
+	// Initialize the first select selector
+    var $select = $('<select class="form-control" id='+select_id+' name='+select_name+'></select>');
+    var $option;
+
+    for (var i=0; i <= (options/2); i++) {
+    	if (i == '0') {
+    		$option = $('<option value="0">-- Select --</option>');
+    	} else {
+    		$option = $('<option value="' + i + '">' + i+" Room(s), "+ (i * 2) + ' Guest(s)</option>');
+    	}
+        $select.append($option);
+    }
+    return $select;
+}

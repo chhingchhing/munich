@@ -234,22 +234,31 @@ class Site extends MU_Controller {
         return $array;
      }
 
-     /*function arraySubActivityPeople($array, $sub_activity, $amount_people, $index) {
-        $array[$index] = array(
-        	'sub_activity' => $sub_activity,
-        	'amount_people' => $amount_people
-        	);
-        return $array;
-     }*/
-
      /**
 	 * Clear all session of storing array
      */
-     public function clear_all() {
+     public function clear_all_for_activity() {
      	$this->general_lib->empty_main_activities();
      	$this->general_lib->empty_sub_activities();
      	$this->general_lib->empty_extra_activities();
      	$this->general_lib->empty_amount_extra();
+     	$this->general_lib->empty_people_sub_activity();
+     	$this->general_lib->empty_people_main_activity();
+     	$this->general_lib->empty_start_date_activity();
+     	$this->general_lib->empty_end_date_activity();
+     }
+
+     /**
+	 * Clear all session of storing array
+     */
+     public function clear_all_for_accommodation() {
+     	$this->general_lib->empty_people_accommodation();
+     	$this->general_lib->empty_accommodation();
+     	$this->general_lib->empty_checkin_date_accommodation();
+     	$this->general_lib->empty_checkout_date_accommodation();
+     	$this->general_lib->empty_single_room_accommodation();
+     	$this->general_lib->empty_double_room_1bed_accommodation();
+     	$this->general_lib->empty_double_room_2beds_accommodation();
      }
         
         /*
@@ -264,7 +273,7 @@ class Site extends MU_Controller {
 		}
 		if ($display_page == "activities") {
 			if($this->input->post('btnActivity')){
-				$this->clear_all();
+				$this->clear_all_for_activity();
 				if ($this->input->post('checkbox_activity')) {
 					foreach ($this->input->post('checkbox_activity') as $element) {
 						$arr_mainactivity = $this->general_lib->get_main_activities();
@@ -272,6 +281,9 @@ class Site extends MU_Controller {
 				        $this->general_lib->set_main_activities($new_arr_mainactivity);
 					}
 				}
+
+				$this->general_lib->set_start_date_activity($this->input->post('txtFrom'));
+				$this->general_lib->set_end_date_activity($this->input->post('txtTo'));
 				
 				if ($this->input->post('checkbox_subactivity')) {
 					foreach ($this->input->post('checkbox_subactivity') as $element) {
@@ -288,29 +300,34 @@ class Site extends MU_Controller {
 				        $this->general_lib->set_extra_activities($new_arr_extra_activity);
 					}
 				}
-				/*if ($this->input->post('checkbox_extra')) {
-					$people = $this->input->post('actPeopleSubActivity');
-					$i = 0;
-					foreach ($this->input->post('checkbox_extra') as $element) {
-						$i++;
-						$arr_extra_activity = $this->general_lib->get_extra_activities();
-				        $new_arr_extra_activity = $this->arraySubActivityPeople($arr_extra_activity, $element, $people[$i-1], $element);
-				        $this->general_lib->set_extra_activities($new_arr_extra_activity);
-					}
-				}*/
 				$this->general_lib->set_amount_extra($this->input->post('amountextras'));
 				$this->general_lib->set_people_sub_activity($this->input->post('actPeopleSubActivity'));
 				$this->general_lib->set_people_main_activity($this->input->post('actPeopleMainActivity'));
 
 				$this->session->set_userdata('actDate', $this->input->post('actTxtDate'));
-				// $this->session->set_userdata('peopleAmount', $this->input->post('actPeopleMainActivity'));
 				redirect('site/customizes/accommodation');
 			}else{
 				$fe_data['recordActivities'] = $this->customizeActivity();
 			}
 		}
 		if ($display_page == "accommodation") {
-			if($this->input->post('btnAccommodation')){				
+			if($this->input->post('btnAccommodation')){	
+				$this->clear_all_for_accommodation();
+
+				if ($this->input->post('checkbox_accommodation')) {
+					foreach ($this->input->post('checkbox_accommodation') as $element) {
+						$arr_accommodation = $this->general_lib->get_accommodation();
+				        $new_arr_accommodation = $this->insertArrayIndex($arr_accommodation, $element, $element);
+				        $this->general_lib->set_accommodation($new_arr_accommodation);
+					}
+				}
+				$this->general_lib->set_checkin_date_accommodation($this->input->post('checkIn'));
+				$this->general_lib->set_checkout_date_accommodation($this->input->post('checkOut'));
+				$this->general_lib->set_single_room_accommodation($this->input->post('single'));
+				$this->general_lib->set_double_room_1bed_accommodation($this->input->post('double_room_1bed'));
+				$this->general_lib->set_double_room_2beds_accommodation($this->input->post('double_room_2beds'));
+
+				$this->general_lib->set_people_accommodation($this->input->post('peopleAccommodation'));		
 				redirect('site/customizes/transportation');
 			}else{
 				$fe_data['recordAccommodation'] = $this->customizeAccommodation();

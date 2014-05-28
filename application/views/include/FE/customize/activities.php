@@ -4,7 +4,7 @@
 	   		<h2>Choose Activity</h2>
 	   		<hr>
 	   		<?php 
-	   		echo form_hidden("amount_main_activity", count($recordActivities));
+	   		echo form_hidden("amount_main_object", count($recordActivities));
 	   		$actOrder = 0;
 	   		foreach ($recordActivities as $rows){ 
 	   			$actOrder++;
@@ -66,12 +66,24 @@
 				        <label class="col-sm-2 control-label">From Date :</label>
 				        <div class="col-sm-4">
 			        		<?php
+			        		$start_date = date("Y-m-d");
+			        		$txtFrom = $this->general_lib->get_start_date_activity();
+				   				if ($txtFrom != '') { 
+				   					if (isset($txtFrom[$actOrder-1])) {
+				   						$start_date = $txtFrom[$actOrder-1];
+				   					} else {
+				   						$start_date = date('Y-m-d');
+				   					}
+			   					} else {
+			   						$start_date = date('Y-m-d');
+			   					}
+
 			                    $txtFrom = array(
 			                    	'id'=>'start_date_'.$actOrder, 
-			                    	'name' => 'txtFrom', 
+			                    	'name' => 'txtFrom[]', 
 			                    	'class' => 'form-control checkin checkin_'.$actOrder,
 			                    	'data-date-format'=>'yyyy-mm-dd',
-			                    	'value' => date("Y-m-d"), 
+			                    	'value' => $start_date, 
 			                    	'checkin_attr'=>$rows['start_date'], 
 			                    	'daysOfWeekDisabled'=>$daysOfWeekDisabled
 			                    );
@@ -81,12 +93,23 @@
 						<label class="col-sm-2 control-label">To Date :</label>
 						<div class="col-sm-4">
 							<?php
+								$end_date = date("Y-m-d");
+				        		$txtTo = $this->general_lib->get_end_date_activity();
+				   				if ($txtTo != '') { 
+				   					if (isset($txtTo[$actOrder-1])) {
+				   						$end_date = $txtTo[$actOrder-1];
+				   					} else {
+				   						$end_date = date('Y-m-d');
+				   					}
+			   					} else {
+			   						$end_date = date('Y-m-d');
+			   					}
 			                    $txtTo = array(
 			                    	'id'=>'end_date_'.$actOrder,
-			                    	'name' => 'txtTo', 
+			                    	'name' => 'txtTo[]', 
 			                    	'class' => 'form-control checkout',
 			                    	'data-date-format'=>'yyyy-mm-dd',
-			                    	'value' => date("Y-m-d"), 
+			                    	'value' => $end_date, 
 			                    	'checkout_attr'=>$rows['end_date']
 			                    );
 			                    echo form_input($txtTo);
@@ -103,11 +126,13 @@
 			                }
 			                $amountPeopleMainActivity = $this->general_lib->get_people_main_activity();
 			                if ($amountPeopleMainActivity != '') {
-			                	if ($amountPeopleMainActivity[$actOrder-1]) {
-			                		echo form_dropdown('actPeopleMainActivity[]', $amount_people, $amountPeopleMainActivity[$actOrder-1], 'class="form-control"');
+			                	if (isset($amountPeopleMainActivity[$actOrder-1])) {
+			                		echo form_dropdown('actPeopleMainActivity[]', $amount_people, $amountPeopleMainActivity[$actOrder-1], 'class="form-control people"');
+			                	} else {
+			                		echo form_dropdown('actPeopleMainActivity[]', $amount_people, $this->session->userdata("people") ? $this->session->userdata("people") : 0, 'class="form-control people"');
 			                	}
 			                } else {
-							echo form_dropdown('actPeopleMainActivity[]', $amount_people, $this->session->userdata("people") ? $this->session->userdata("people") : 0, 'class="form-control"');
+								echo form_dropdown('actPeopleMainActivity[]', $amount_people, $this->session->userdata("people") ? $this->session->userdata("people") : 0, 'class="form-control people"');
 			                }
 				            ?>
 				        </div>
@@ -158,9 +183,10 @@
 					   					$checkbox_subactivity = array(
 					   						'value' => $sub_activity['act_id'], 
 					   						'checked' => $checked, 
-					   						'class' => 'check_sub_element', 
+					   						'class' => 'check_sub_element checkbox_subactivity', 
 					   						'name' => 'checkbox_subactivity[]', 
-					   						'id' => 'checkbox_subactivity'
+					   						'id' => 'checkbox_subactivity_'.$subActOrder,
+					   						'order' => $subActOrder
 					   					);
 					   					echo form_checkbox($checkbox_subactivity);
 					   					?>   
@@ -179,8 +205,10 @@
 				                }
 				                $amountPeople = $this->general_lib->get_people_sub_activity();
 				                if ($amountPeople != '') {
-				                	if ($amountPeople[$subActOrder-1]) {
+				                	if (isset($amountPeople[$subActOrder-1])) {
 				                		echo form_dropdown('actPeopleSubActivity[]', $amount_people, $amountPeople[$subActOrder-1], 'class="form-control people_sub_activity" id="subPeople"');
+				                	} else {
+				                		echo form_dropdown('actPeopleSubActivity[]', $amount_people, 0, 'class="form-control people_sub_activity" id="subPeople"');
 				                	}
 				                } else {
 								echo form_dropdown('actPeopleSubActivity[]', $amount_people, 0, 'class="form-control people_sub_activity" id="subPeople"');
@@ -193,7 +221,7 @@
 				    <?php
 			    		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 						$extraproduct = mod_feCustomize::selectExtraProductActivity($this->session->userdata('ftvID'), $this->session->userdata('lcID'), $rows['act_id']);
-						//var_dump($extraproduct->result());
+
 						$extra = array();
 						if($extraproduct->num_rows() > 0){
 							foreach($extraproduct->result() as $ep_result){
@@ -250,7 +278,7 @@
 				   				<?php
 				   				$amountextras = $this->general_lib->get_amount_extra();
 				   				if ($amountextras != '') { 
-				   					if ($amountextras[$extraOrder-1]) {
+				   					if (isset($amountextras[$extraOrder-1])) {
 				   						$input = array(
 				   							"name"=>"amountextras[]",
 				   							"class"=>"form-control amount_extras", 
@@ -265,7 +293,6 @@
 			   						$input = array("name"=>"amountextras[]", "class"=>"form-control amount_extras");
 					   				echo form_input($input);
 			   					}
-				   				
 				   				?>
 				   			</div>
 				   			<div class="clear_both"></div>

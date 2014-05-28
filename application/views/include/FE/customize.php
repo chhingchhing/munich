@@ -35,37 +35,43 @@
 
 				if($this->session->userdata('ftvID')) echo '<b>Festival : </b>'.MU_Model::getForiegnTableName('festival', array('ftv_id'=>$this->session->userdata('ftvID')), 'ftv_name').'<br/>';
 				if($this->session->userdata('lcID')) echo '<b>Location : </b>'.MU_Model::getForiegnTableName('location', array('lt_id'=>$this->session->userdata('lcID')), 'lt_name');
-				if($this->session->userdata('mainactivity')){
-					$acts = $this->session->userdata('mainactivity');
-					$actPeople = $this->session->userdata('peopleAmount');
+				$acts = $this->general_lib->get_main_activities();
+				if($acts != ''){
+					$actPeople = $this->general_lib->get_people_main_activity();
+					$order = 0;
 					foreach($acts as $key => $actsID){
+						$order++;
 						echo '<p>';
 						echo '<b>Activities : </b>'.MU_Model::getForiegnTableName('activities', array('act_id'=>$actsID), 'act_name');
 						$price = MU_Model::getForiegnTableName('activities', array('act_id'=>$actsID), 'act_saleprice');
-						$price = $price * $actPeople[$key];
+						$price = $price * $actPeople[$order-1];
 						echo '  $'.$price;
 						echo '</p>';
 					}
-					if($this->session->userdata('subactivity')){
-						$sub = $this->session->userdata('subactivity');
-						$actPeople = $this->session->userdata('peopleAmount');
+					$sub = $this->general_lib->get_sub_activities();
+					if($sub != ""){
+						$actPeople = $this->general_lib->get_people_sub_activity();
+						$order = 0;
 						foreach ($sub as $key => $actsID) {
+							$order++;
 							echo "<p>";
 							echo '<b> Sub Activities </b>'.MU_Model::getForiegnTableName('activities', array('act_id' => $actsID), 'act_name');
 							$price = MU_Model::getForiegnTableName('activities', array('act_id'=>$actsID), 'act_saleprice');
-							$price = $price * $actPeople[$key];
+							$price = $price * $actPeople[$order-1];
 							echo ' $'.$price;
 							echo '</p>';
 						}
 					}
 					/* calculate extra products of activity*/
-					if($this->session->userdata('extraactivity')){
-						$extraactivity = $this->session->userdata('extraactivity');
-						$amountextra = $this->session->userdata('amountextras');
+					$extraactivity = $this->general_lib->get_extra_activities();
+					if($extraactivity != ''){
+						$amountextra = $this->general_lib->get_amount_extra();
+						$order = 0;
 						foreach ($extraactivity as $key => $extPro) {
+							$order++;
 							echo '<b> Extra products </b>'.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $extPro), 'ep_name');
-							$epPrice = 	MU_Model::getForiegnTableName('extraproduct', array('ep_id'=>$actsID), 'ep_saleprice');
-							$epPrice = $epPrice * $amountextra[$key];
+							$epPrice = 	MU_Model::getForiegnTableName('extraproduct', array('ep_id'=>$extPro), 'ep_saleprice');
+							$epPrice = $epPrice * $amountextra[$order-1];
 							echo ' $'.$epPrice;
 						}
 					}

@@ -1,14 +1,13 @@
 /*
 * * function for id dp4 and id dp5 for date picker
 */
-
 jQuery(function(){
 
 	/* Starting of From Date and To Date */
 	var nowTemp = new Date();
 	var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
 
-	var amountMainActivity = $("input[name='amount_main_activity']").val();
+	var amountMainActivity = $("input[name='amount_main_object']").val();
 	for (var i = 0; i < amountMainActivity; i++) {
 
 		var startedDate = $( "#start_date_"+(i+1) ).attr('checkin_attr');
@@ -37,6 +36,7 @@ jQuery(function(){
 		    .datepicker('setValue', newDate)
 		    .datepicker("update", newDate)
 		    .focus();
+		    // dates.val(newDate);
 		    // $('#checkout').datepicker({ autoclose: true}).datepicker('setStartDate', ev.date).focus();
 		  }
 		  $(this).datepicker("hide");
@@ -50,10 +50,13 @@ jQuery(function(){
 		    	return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
 		  	}
 		}).on('changeDate', function(ev) {
-		  	checkout.hide();
+			$(this).datepicker("hide");
+			var newDate = new Date(ev.date)
+		    newDate.setDate(newDate.getDate());
+		    $(this).datepicker("setValue", newDate).datepicker("update", newDate);
+		  	// checkout.hide();
 		}).data('datepicker');
 	};
-
 
 	/* End of From Date and To Date */
 /* End of checking and checkout date */
