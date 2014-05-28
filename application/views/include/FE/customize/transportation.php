@@ -131,7 +131,7 @@
 	   			</div>
 	   			<?php }?>
 	   		</div>
-	   		<?php echo anchor("site/customizes/accommodation","Previous", array('role' => 'button', 'class' => 'btn btn-info btn-sm')); ?>
+	   		<?php echo anchor("site/customizes/accommodation","Previous", array('role'=>'button', 'class'=>'btn btn-info btn-sm')); ?>
 			<?php $input = array('name' => 'btnTransportation', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
 			<p></p>
 			<?php echo form_close(); ?>

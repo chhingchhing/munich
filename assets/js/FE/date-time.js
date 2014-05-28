@@ -3,6 +3,61 @@
 */
 
 jQuery(function(){
+
+	/* Starting of From Date and To Date */
+	var nowTemp = new Date();
+	var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+	var amountMainActivity = $("input[name='amount_main_activity']").val();
+	for (var i = 0; i < amountMainActivity; i++) {
+
+		var startedDate = $( "#start_date_"+(i+1) ).attr('checkin_attr');
+		var endedDate = $( "#end_date_"+(i+1) ).attr('checkout_attr');
+
+		var daysOfWeekDisabled = $( "#start_date_"+(i+1) ).attr("daysOfWeekDisabled");
+
+		var checkin = $( "#start_date_"+(i+1) ).datepicker({
+		    startDate: now,
+		    endDate: endedDate,
+		    daysOfWeekDisabled: daysOfWeekDisabled,
+		  	onRender: function(date) {
+		    	return date.valueOf() < now.valueOf() ? 'disabled' : '';
+		  	}
+		}).on('changeDate', function(ev) {
+			var dates = $(this).parent().siblings().find("input");
+		  if (ev.date.valueOf() > checkout.date.valueOf()) {
+		    var newDate = new Date(ev.date)
+		    newDate.setDate(newDate.getDate());
+		    /*checkout.setValue(newDate);
+		    checkout.setDate(newDate);
+		    checkout.startDate = newDate;
+		    checkout.update();*/
+		    dates.datepicker({ autoclose: true})
+		    .datepicker('setStartDate', newDate)
+		    .datepicker('setValue', newDate)
+		    .datepicker("update", newDate)
+		    .focus();
+		    // $('#checkout').datepicker({ autoclose: true}).datepicker('setStartDate', ev.date).focus();
+		  }
+		  $(this).datepicker("hide");
+		  dates[0].focus();
+		}).data('datepicker');
+		var checkout = $( "#end_date_"+(i+1) ).datepicker({
+			startDate: now,
+		    endDate: endedDate,
+		    daysOfWeekDisabled: daysOfWeekDisabled,
+		    onRender: function(date) {
+		    	return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
+		  	}
+		}).on('changeDate', function(ev) {
+		  	checkout.hide();
+		}).data('datepicker');
+	};
+
+
+	/* End of From Date and To Date */
+/* End of checking and checkout date */
+
 	var dps1 =  new Date();
 	dps1.setDate(dps1.getDate()-1);
 	jQuery('#d1').datepicker({

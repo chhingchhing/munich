@@ -2,6 +2,7 @@
 * * function for id dp4 and id dp5 for date picker
 */
 jQuery(function(){	
+
 	var bkPayDate = new Date();
 	bkPayDate.setDate(bkPayDate.getDate()-1);
 	jQuery('#bkPayDate').datepicker({
