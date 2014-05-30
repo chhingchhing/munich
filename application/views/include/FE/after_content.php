@@ -3,6 +3,7 @@
         <div class="col-md-12"></div>
         <?php $this->load->view(INCLUDE_FE_MODEL."tellafriend"); ?>
         <?php $this->load->view(INCLUDE_FE_MODEL."subscriber"); ?>
+        <?php $this->load->view(INCLUDE_FE_MODEL."fe_more_passenger"); ?>
     </div>
 
     <div class="row footer_tem">

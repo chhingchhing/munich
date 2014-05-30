@@ -200,6 +200,7 @@ $(function() {
             objThis.find("input.checkout").prop('disabled', false);
             objThis.find('select.people').prop('disabled', false);
             objThis.find('select.room_types').prop('disabled', false);
+            $(this).parent().parent().siblings().find("input#amount_extra_"+order).prop('disabled', false);
         } else {
         	objThis.find('input.check_sub_element').prop('disabled', true);
         	objThis.find('input.check_sub_element').prop('checked', false);
@@ -208,6 +209,7 @@ $(function() {
         	objThis.find("input.checkout").prop('disabled', true);
         	objThis.find('select.people').prop('disabled', true);
         	objThis.find('select.room_types').prop('disabled', true);
+        	$(this).parent().parent().siblings().find("input#amount_extra_"+order).prop('disabled', true);
         }
 	});	
 
@@ -215,9 +217,11 @@ $(function() {
 		var objThis = $(this).parent().parent();
 	    if ( $(this).is(':checked') ) {
             objThis.parent().next().find('select.people_sub_activity').prop('disabled', false);
+            objThis.next().find('select.people').prop('disabled', false);
             objThis.next().find('input.amount_extras').prop('disabled', false);
         } else {
         	objThis.parent().next().find('select.people_sub_activity').prop('disabled', true).val(0);
+        	objThis.next().find('select.people').prop('disabled', true).val(0);
         	objThis.next().find('input.amount_extras').prop('disabled', true).val("");
         }
 	});	
@@ -231,6 +235,7 @@ $(function() {
             objThis.find('select.room_types').prop('disabled', false);
             objThis.find("input.checkin").prop('disabled', false);
             objThis.find("input.checkout").prop('disabled', false);
+            $(this).parent().parent().siblings().find("input#amount_extra_"+order).prop('disabled', false);
         } else {
         	objThis.find('input.check_sub_element').prop('disabled', true);
         	objThis.find('input.check_sub_element').prop('checked', false);
@@ -239,6 +244,7 @@ $(function() {
         	objThis.find('select.room_types').prop('disabled', true);
             objThis.find("input.checkin").prop('disabled', true);
             objThis.find("input.checkout").prop('disabled', true);
+            $(this).parent().parent().siblings().find("input#amount_extra_"+order).prop('disabled', true);
         }
     });
 
@@ -246,9 +252,11 @@ $(function() {
 		var objThis = $(this).parent().parent();
         if ( $(this).is(':checked') ) {
             objThis.parent().next().find('select.people_sub_activity').prop('disabled', false);
+            objThis.next().find('select.people').prop('disabled', false);
             objThis.next().find('input.amount_extras').prop('disabled', false);
         } else {
         	objThis.parent().next().find('select.people_sub_activity').prop('disabled', true).val(0);
+        	objThis.next().find('select.people').prop('disabled', true).val(0);
         	objThis.next().find('input.amount_extras').prop('disabled', true).val("");
         }
     });
@@ -275,6 +283,64 @@ $(function() {
     	selectObjDouble2Bed.find("select#double_room_2beds").remove();
     	selectObjDouble2Bed.append(selectDoubleTwoBed);
     });
+
+	// Check passenger exists in Customize FE
+	$("body").on("click", "input[name='btnPersonalInfoModal']", function(event) {
+		var url = $('form[name="frm_personal_info_modal"]').attr("action");
+		var data = $('form[name="frm_personal_info_modal"]').serialize();
+		$.ajax({
+			type: "POST",
+			url: url,
+			dataType: "json",
+			data: data,
+			success: function(response) {
+				if (response) {
+					var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
+					div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
+					div_sms += '</div>';
+					$("div#feedback_bar").append(div_sms);
+				}
+			}
+		});
+		event.preventDefault();
+	});
+
+	// Check validation of Email
+	$('.input_email').focusout(function(e) {
+        $(this).parent().next().children(":first").remove();
+        var sEmail = $(this).val();
+        if ($.trim(sEmail).length == 0) {
+            $(this).parent().next().append("<span class='error'>Cannot be empty.</span>");
+            e.preventDefault();
+        } else if (validateEmail(sEmail)) {
+        	$(this).parent().next().append("<span class='success'>Email look like good.</span>");
+        }
+        else {
+            $(this).parent().next().append("<span class='error'>Invalid Email Address.</span>");
+            e.preventDefault();
+        }
+    });
+
+	$('.input_require').focusout(function(e) {
+        $(this).parent().next().children(":first").remove();
+        var value = $(this).val();
+        if ($.trim(value).length == 0) {
+            $(this).parent().next().append("<span class='error'>Cannot be empty.</span>");
+            e.preventDefault();
+        }
+    });
+
+	/*$('.input_require').focusout(function(e) {
+		$('span.error').remove();
+		$('.input_require').each(function() {
+	        var value = $(this).val();
+	        if ($.trim(value).length == 0) {
+	            $(this).parent().next().append("<span class='error'>Cannot be empty.</span>");
+	            e.preventDefault();
+	        }
+		});    
+	});*/
 
 });
 
@@ -309,4 +375,14 @@ function buildSelectDoubleRoomOneOrTwoBed(options, select_id, select_name) {
         $select.append($option);
     }
     return $select;
+}
+
+// Validate Email input
+function validateEmail(sEmail) {
+    var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+    if (filter.test(sEmail)) {
+        return true;
+    } else {
+        return false;
+    }
 }

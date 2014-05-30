@@ -136,6 +136,34 @@ class General_lib
 		$this->CI->session->unset_userdata('accommodation');
 	}
 
+	function get_sub_acc_extr_product()
+	{
+		if(!$this->CI->session->userdata('sub_acc_extra_pro'))
+			$this->set_sub_acc_extr_product('');
+		return $this->CI->session->userdata('sub_acc_extra_pro');
+	}
+	function set_sub_acc_extr_product($sub_acc_extra_pro)
+	{
+		$this->CI->session->set_userdata('sub_acc_extra_pro',$sub_acc_extra_pro);
+	}
+	function empty_sub_acc_extr_product() {
+		$this->CI->session->unset_userdata('sub_acc_extra_pro');
+	}
+
+	function get_sub_acc_amount_extra()
+	{
+		if(!$this->CI->session->userdata('amount_acc_extra'))
+			$this->set_sub_acc_amount_extra('');
+		return $this->CI->session->userdata('amount_acc_extra');
+	}
+	function set_sub_acc_amount_extra($amount_acc_extra)
+	{
+		$this->CI->session->set_userdata('amount_acc_extra',$amount_acc_extra);
+	}
+	function empty_sub_acc_amount_extra() {
+		$this->CI->session->unset_userdata('amount_acc_extra');
+	}
+
 	function get_people_accommodation()
 	{
 		if(!$this->CI->session->userdata('amount_people_accommodation'))
@@ -218,6 +246,177 @@ class General_lib
 	}
 	function empty_double_room_2beds_accommodation() {
 		$this->CI->session->unset_userdata('double_room_2beds_accommodation');
+	}
+
+	// Transportation session
+	function get_transportation()
+	{
+		if(!$this->CI->session->userdata('transportation'))
+			$this->set_transportation('');
+		return $this->CI->session->userdata('transportation');
+	}
+	function set_transportation($transportation)
+	{
+		$this->CI->session->set_userdata('transportation',$transportation);
+	}
+	function empty_transportation() {
+		$this->CI->session->unset_userdata('transportation');
+	}
+
+	function get_sub_transportation()
+	{
+		if(!$this->CI->session->userdata('sub_transportation'))
+			$this->set_sub_transportation('');
+		return $this->CI->session->userdata('sub_transportation');
+	}
+	function set_sub_transportation($sub_transportation)
+	{
+		$this->CI->session->set_userdata('sub_transportation',$sub_transportation);
+	}
+	function empty_sub_transportation() {
+		$this->CI->session->unset_userdata('sub_transportation');
+	}
+
+	function get_departure_transportation()
+	{
+		if(!$this->CI->session->userdata('departure_transportation'))
+			$this->set_departure_transportation('');
+		return $this->CI->session->userdata('departure_transportation');
+	}
+	function set_departure_transportation($departure_transportation)
+	{
+		$this->CI->session->set_userdata('departure_transportation',$departure_transportation);
+	}
+	function empty_departure_transportation() {
+		$this->CI->session->unset_userdata('departure_transportation');
+	}
+
+	function get_return_date_transportation()
+	{
+		if(!$this->CI->session->userdata('return_date_transportation'))
+			$this->set_return_date_transportation('');
+		return $this->CI->session->userdata('return_date_transportation');
+	}
+	function set_return_date_transportation($return_date_transportation)
+	{
+		$this->CI->session->set_userdata('return_date_transportation',$return_date_transportation);
+	}
+	function empty_return_date_transportation() {
+		$this->CI->session->unset_userdata('return_date_transportation');
+	}
+
+	function get_people_transportation()
+	{
+		if(!$this->CI->session->userdata('people_transportation'))
+			$this->set_people_transportation('');
+		return $this->CI->session->userdata('people_transportation');
+	}
+	function set_people_transportation($people_transportation)
+	{
+		$this->CI->session->set_userdata('people_transportation',$people_transportation);
+	}
+	function empty_people_transportation() {
+		$this->CI->session->unset_userdata('people_transportation');
+	}
+
+	function get_people_sub_transportation()
+	{
+		if(!$this->CI->session->userdata('people_sub_transportation'))
+			$this->set_people_sub_transportation('');
+		return $this->CI->session->userdata('people_sub_transportation');
+	}
+	function set_people_sub_transportation($people_sub_transportation)
+	{
+		$this->CI->session->set_userdata('people_sub_transportation',$people_sub_transportation);
+	}
+	function empty_people_sub_transportation() {
+		$this->CI->session->unset_userdata('people_sub_transportation');
+	}
+
+	function get_sub_trans_extr_product()
+	{
+		if(!$this->CI->session->userdata('sub_trans_extra_pro'))
+			$this->set_sub_trans_extr_product('');
+		return $this->CI->session->userdata('sub_trans_extra_pro');
+	}
+	function set_sub_trans_extr_product($sub_trans_extra_pro)
+	{
+		$this->CI->session->set_userdata('sub_trans_extra_pro',$sub_trans_extra_pro);
+	}
+	function empty_sub_trans_extr_product() {
+		$this->CI->session->unset_userdata('sub_trans_extra_pro');
+	}
+
+	function get_sub_trans_amount_extra()
+	{
+		if(!$this->CI->session->userdata('amount_trans_extra'))
+			$this->set_sub_trans_amount_extra('');
+		return $this->CI->session->userdata('amount_trans_extra');
+	}
+	function set_sub_trans_amount_extra($amount_trans_extra)
+	{
+		$this->CI->session->set_userdata('amount_trans_extra',$amount_trans_extra);
+	}
+	function empty_sub_trans_amount_extra() {
+		$this->CI->session->unset_userdata('amount_trans_extra');
+	}
+
+	// Extra-service session
+	function get_extra_services()
+	{
+		if(!$this->CI->session->userdata('extra_services'))
+			$this->set_extra_services('');
+		return $this->CI->session->userdata('extra_services');
+	}
+	function set_extra_services($extra_services)
+	{
+		$this->CI->session->set_userdata('extra_services',$extra_services);
+	}
+	function empty_extra_services() {
+		$this->CI->session->unset_userdata('extra_services');
+	}
+
+	function get_num_extra_services()
+	{
+		if(!$this->CI->session->userdata('num_extra_services'))
+			$this->set_num_extra_services('');
+		return $this->CI->session->userdata('num_extra_services');
+	}
+	function set_num_extra_services($num_extra_services)
+	{
+		$this->CI->session->set_userdata('num_extra_services',$num_extra_services);
+	}
+	function empty_num_extra_services() {
+		$this->CI->session->unset_userdata('num_extra_services');
+	}
+
+	function get_index_extra_service()
+	{
+		if(!$this->CI->session->userdata('index_extra_service'))
+			$this->set_index_extra_service('');
+		return $this->CI->session->userdata('index_extra_service');
+	}
+	function set_index_extra_service($index_extra_service)
+	{
+		$this->CI->session->set_userdata('index_extra_service',$index_extra_service);
+	}
+	function empty_index_extra_service() {
+		$this->CI->session->unset_userdata('index_extra_service');
+	}
+
+	// Personal Information session
+	function get_personalInfo_message()
+	{
+		if(!$this->CI->session->userdata('personalInfo_sms'))
+			$this->set_personalInfo_message('');
+		return $this->CI->session->userdata('personalInfo_sms');
+	}
+	function set_personalInfo_message($personalInfo_sms)
+	{
+		$this->CI->session->set_userdata('personalInfo_sms',$personalInfo_sms);
+	}
+	function empty_personalInfo_message() {
+		$this->CI->session->unset_userdata('personalInfo_sms');
 	}
         
 }
