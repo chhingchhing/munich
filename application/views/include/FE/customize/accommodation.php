@@ -68,7 +68,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 	   					?> 
 	   				<h4 class="fe_customize" id="<?php echo "main_act_order_$accOrder"; ?>" order="<?php echo $accOrder; ?>">
 	   					<?php echo form_checkbox($checkbox_accommodation).nbs(); ?>
-	   					<?php echo $acc['acc_name'];?>
+	   					<?php echo $acc['clf_name'];?>
 	   				</h4>
 	   				<p><?php echo $acc['acc_bookingtext'];?></p>
 	   				<div class="form-group">
@@ -130,6 +130,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 			                }
 			                $peopleSelect = $this->session->userdata("people") ? $this->session->userdata("people") : 0;
 			                $amountPeopleAccommodation = $this->general_lib->get_people_accommodation();
+			                
 			                if ($amountPeopleAccommodation != '') {
 			                	if (isset($amountPeopleAccommodation[$accOrder-1])) {
 			                		$peopleSelect = $amountPeopleAccommodation[$accOrder-1];
@@ -234,6 +235,6 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 	   		<?php echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
 			<?php $input = array('name' => 'btnAccommodation', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
 			<p></p>
-	   </div>
+	   </div> 
 <?php echo form_close(); ?>
 <!-- end accommodation -->

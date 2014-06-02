@@ -192,8 +192,7 @@ class General_lib
 		$this->CI->session->unset_userdata('checkin_accommodation');
 	}
 
-	function get_checkout_date_accommodation()
-	{
+	function get_checkout_date_accommodation(){
 		if(!$this->CI->session->userdata('checkout_accommodation'))
 			$this->set_checkout_date_accommodation('');
 		return $this->CI->session->userdata('checkout_accommodation');

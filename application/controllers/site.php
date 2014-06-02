@@ -159,7 +159,7 @@ class Site extends MU_Controller {
 				show_404();
 			}
 			$fe_data['single_fb'] = $this->view_feedback($view_feedback);
-			$fe_data['back_to'] = 'page/'.$view_feedback; // wrong
+			$fe_data['back_to'] = 'page/'.$view_feedback; 
 			$fe_data['site_setting'] = "view_feedback";
 		}else{
 			$fe_data['site_setting'] = "feedback";
@@ -578,7 +578,6 @@ class Site extends MU_Controller {
 				}
 			}
 		}
-		
 		return $records;
 	}
 	public function clickCustomizeActivity() {

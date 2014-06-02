@@ -60,6 +60,8 @@ class Mod_FeCustomize extends MU_model {
             ->join('acc_calendar','accommodation.acc_id = acc_calendar.accomodations_id')
             ->join('calendar_available', 'calendar_available.ca_id = acc_calendar.calendar_available_id')
             ->join('photo','photo.photo_id = accommodation.photo_id')
+            ->join('room_types','room_types.rt_id = accommodation.acc_rt_id')
+            ->join('classification','classification.clf_id = accommodation.classification_id')
             ->where('accommodation.acc_deleted',0)
             ->where('accommodation.acc_subof', 0)
             ->where('accommodation.acc_ftv_id', $ftvID)
@@ -82,6 +84,14 @@ class Mod_FeCustomize extends MU_model {
             ->where('accommodation.location_id', $lcId)
             ->get('accommodation');
             return $subAccommodation;
+    }
+    public function selectRoomType(){
+        $roomType = $this->db->select('*')
+            ->from('room_types')
+            ->where('rt_status',1)
+            ->where('rt_deleted',0)
+            ->get();
+        return $roomType;
     }
     /*
     * select extra products of Accommodation
