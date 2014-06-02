@@ -288,9 +288,6 @@ class Site extends MU_Controller {
      	$this->general_lib->empty_accommodation();
      	$this->general_lib->empty_checkin_date_accommodation();
      	$this->general_lib->empty_checkout_date_accommodation();
-     	$this->general_lib->empty_single_room_accommodation();
-     	$this->general_lib->empty_double_room_1bed_accommodation();
-     	$this->general_lib->empty_double_room_2beds_accommodation();
      	$this->general_lib->empty_sub_acc_amount_extra();
      	$this->general_lib->empty_sub_acc_extr_product();
      }
@@ -316,13 +313,6 @@ class Site extends MU_Controller {
 		$this->general_lib->empty_extra_services();
 		$this->general_lib->empty_num_extra_services();
 	}
-
-	/**
-	* Clear all session for storing array of personal information
-     */
-	/*public function clear_all_for_personal_info() {
-		$this->general_lib->empty_personalInfo_message();
-	}*/
         
     /*
 	* public function customize
@@ -349,9 +339,17 @@ class Site extends MU_Controller {
 			if($this->input->post('btnAccommodation')){	
 				$this->clear_all_for_accommodation();
 				$this->clickCustomizeAccommodation();
-
+ 
 				redirect('site/customizes/transportation');
 			}else{
+				$fe_data['opt_room_types'] = array("" => "-- Select --");
+		        foreach ($this->mod_fecustomize->getAllRoomType()->result() as $room_type)
+		        {
+		            // $fe_data['opt_room_types'][$room_type->rt_id] = $room_type->rt_name ." (Amount People: $room_type->rt_people_per_room : $room_type->rt_description) ";
+		            $fe_data['opt_room_types'][$room_type->rt_id] = "- ".$room_type->rt_name ." (Amount People: $room_type->rt_people_per_room) ";
+		        }
+
+		        $fe_data['room_types'] = $this->mod_fecustomize->getAllRoomType();
 				$fe_data['recordAccommodation'] = $this->customizeAccommodation();
 			}	
 		}
@@ -440,14 +438,6 @@ class Site extends MU_Controller {
 							'pass_id' => $result
 						);
 						$this->session->set_userdata("new_passenger_id", $newPass);
-						/*$arr_errors = array(
-							"success" => true,
-							"sms_type" => "success",
-							"sms_title" => "Congradulation!",
-							"sms_value" => "Your account has been save in our database, please check your email inbox."
-						);
-						$this->general_lib->set_personalInfo_message($arr_errors);*/
-						//Set session
 						redirect('site/customizes/payments');	
 					}			
 				}
@@ -462,28 +452,6 @@ class Site extends MU_Controller {
 
 		$this->load->view('index', $fe_data);
 	}
-
-	/*function check_email_pass_exists() {
-		$result  = $this->mod_fecustomize->exist_passenger_by_email($this->input->post('pemail'));	
-		if ($result) {
-			$arr_errors = array(
-				"success" => false,
-				"sms_type" => "danger",
-				"sms_title" => "Error!",
-				"sms_value" => "Sorry! That email is already registered. Please login before you booking"
-			);
-			echo json_encode($arr_errors); 
-		} else {
-			$arr_errors = array(
-				"success" => true,
-				"sms_type" => "success",
-				"sms_title" => "Congradulation!",
-				"sms_value" => "Your account has been save in our database, please check your email inbox."
-			);
-			$this->general_lib->set_personalInfo_message($arr_errors);
-			redirect('site/customizes/payments');	
-		}
-	}*/
 
 	/*
 	* public function customize trip information
@@ -691,13 +659,13 @@ class Site extends MU_Controller {
 		        $this->general_lib->set_sub_acc_extr_product($new_arr_extra_acc);
 			}
 		}
+
+
 		$this->general_lib->set_sub_acc_amount_extra($this->input->post('amountAccExtras'));
 		$this->general_lib->set_checkin_date_accommodation($this->input->post('checkIn'));
 		$this->general_lib->set_checkout_date_accommodation($this->input->post('checkOut'));
-		$this->general_lib->set_single_room_accommodation($this->input->post('single'));
-		$this->general_lib->set_double_room_1bed_accommodation($this->input->post('double_room_1bed'));
-		$this->general_lib->set_double_room_2beds_accommodation($this->input->post('double_room_2beds'));
 		$this->general_lib->set_people_accommodation($this->input->post('peopleAccommodation'));
+		$this->general_lib->set_room_type_accommodation($this->input->post('multi_select_rooms'));
 	}
 	
 	/*select sub accommodation */
@@ -800,12 +768,15 @@ class Site extends MU_Controller {
 	public function customizePersonal_info(){ 
 		$new_sess_passenger = $this->session->userdata('new_passenger_id');
 		$sess_passenger = $this->session->userdata("passenger");
-		$passenger_id = $sess_passenger ? $sess_passenger['pass_id'] : $new_sess_passenger ? $new_sess_passenger['pass_id'] : -1;
+		if ($new_sess_passenger) {
+			$passenger_id = $new_sess_passenger['pass_id'];
+		} else if($sess_passenger) {
+			$passenger_id = $sess_passenger['pass_id'];
+		} else {
+			$passenger_id = -1;
+		}
 		return $this->mod_fecustomize->customizePersonal_info($passenger_id);
 	}
-
-
-
 
 	/*
 	* public function customize_more_passenger
@@ -814,7 +785,13 @@ class Site extends MU_Controller {
 	public function customize_more_passenger() {
 		$new_sess_passenger = $this->session->userdata('new_passenger_id');
 		$login_sess_passenger = $this->session->userdata("passenger");
-		$pass_addby = $login_sess_passenger ? $login_sess_passenger['pass_id'] : $new_sess_passenger ? $new_sess_passenger['pass_id'] : 0;
+		if ($new_sess_passenger) {
+			$pass_addby = $new_sess_passenger['pass_id'];
+		} else if($login_sess_passenger) {
+			$pass_addby = $login_sess_passenger['pass_id'];
+		} else {
+			$pass_addby = -1;
+		}
 		$passengerInfo = array(
 			'pass_addby' => $pass_addby,
 			'pass_fname'        => $this->input->post('pfname'),
@@ -836,6 +813,14 @@ class Site extends MU_Controller {
 				"sms_type" => "danger",
 				"sms_title" => "Error!",
 				"sms_value" => "Sorry! That email is already registered. Please login before you booking."
+			);
+			echo json_encode($arr_errors);
+		} else if($result == 'over_number') {
+			$arr_errors = array(
+				"success" => true,
+				"sms_type" => "warning",
+				"sms_title" => "Warning!",
+				"sms_value" => "Your member selected only ".$this->session->userdata('people')." member(s), if you would like to add more, please change amount of passenger.."
 			);
 			echo json_encode($arr_errors);
 		} else {

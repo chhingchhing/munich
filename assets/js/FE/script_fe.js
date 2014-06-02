@@ -261,27 +261,15 @@ $(function() {
         }
     });
 
-   // Set amount of people on accommodation tab
-	$("select#get_amount_people_room").change(function(){
-    	var selectedAmountPeople = $(this).val();
+    $('input.add_pass_amount_pass').prop("disabled", true);
+    $("body").on("click", "a#edit_amount_pass", function(event) {
+    	event.preventDefault();
+    	$('input.add_pass_amount_pass').prop("disabled", false);
+    });
 
-    	// Single Room
-    	var selectSingle = buildSelectSingleRoom(selectedAmountPeople);
-    	var selectObjSingle = $(this).parent().parent().siblings().find("div#single");
-    	selectObjSingle.find("select#single").remove();
-    	selectObjSingle.append(selectSingle);
-
-    	// Double Room and one bed
-    	var selectDoubleOneBed = buildSelectDoubleRoomOneOrTwoBed(selectedAmountPeople, "double_room_1bed", "room_types");
-    	var selectObjDouble1Bed = $(this).parent().parent().siblings().find("div#double_room_1bed");
-    	selectObjDouble1Bed.find("select#double_room_1bed").remove();
-    	selectObjDouble1Bed.append(selectDoubleOneBed);
-
-    	// Double Room and two beds
-    	var selectDoubleTwoBed = buildSelectDoubleRoomOneOrTwoBed(selectedAmountPeople, "double_room_2beds", "room_types");
-    	var selectObjDouble2Bed = $(this).parent().parent().siblings().find("div#double_room_2beds");
-    	selectObjDouble2Bed.find("select#double_room_2beds").remove();
-    	selectObjDouble2Bed.append(selectDoubleTwoBed);
+    $("body").on("change", "input[name='add_pass_amount_pass']", function(event) {
+    	event.preventDefault();
+    	alert("json");
     });
 
 	// Check passenger exists in Customize FE
@@ -295,6 +283,9 @@ $(function() {
 			data: data,
 			success: function(response) {
 				if (response) {
+					if (response.sms_type == 'warning') {
+
+					};
 					var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
 					div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
 					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
@@ -331,51 +322,12 @@ $(function() {
         }
     });
 
-	/*$('.input_require').focusout(function(e) {
-		$('span.error').remove();
-		$('.input_require').each(function() {
-	        var value = $(this).val();
-	        if ($.trim(value).length == 0) {
-	            $(this).parent().next().append("<span class='error'>Cannot be empty.</span>");
-	            e.preventDefault();
-	        }
-		});    
-	});*/
+	// Tooltip
+	$("body").on("mouseover", ".theTooltip", function(){
+		$(this).tooltip('show');
+	});
 
 });
-
-// Build select option for single room
-function buildSelectSingleRoom(options) {
-    var $select = $('<select class="form-control" id="single" name="room_types"></select>');
-    var $option;
-
-    for (var i=0; i <= options; i++) {
-    	if (i == '0') {
-    		$option = $('<option value="0">-- Select --</option>');
-    	} else {
-    		$option = $('<option value="' + i + '">' + i+" Room(s), "+i + ' Guest(s)</option>');
-    	}
-        $select.append($option);
-    }
-    return $select;
-}
-
-// Build select option for double one bed and two beds
-function buildSelectDoubleRoomOneOrTwoBed(options, select_id, select_name) {
-	// Initialize the first select selector
-    var $select = $('<select class="form-control" id='+select_id+' name='+select_name+'></select>');
-    var $option;
-
-    for (var i=0; i <= (options/2); i++) {
-    	if (i == '0') {
-    		$option = $('<option value="0">-- Select --</option>');
-    	} else {
-    		$option = $('<option value="' + i + '">' + i+" Room(s), "+ (i * 2) + ' Guest(s)</option>');
-    	}
-        $select.append($option);
-    }
-    return $select;
-}
 
 // Validate Email input
 function validateEmail(sEmail) {

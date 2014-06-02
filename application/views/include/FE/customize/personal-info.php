@@ -16,7 +16,8 @@ if (isset($arr_messages)) {
 <!-- Start Div Control Form Personal Information -->
 <div class="col-sm-12 form-booking" id="personal_info">
 	   		<h2>Personal Information</h2>
-	   		<?php echo anchor("#", "Edit Personal Info", "id='edit_profile_pass'"); ?>
+	   		<?php //echo anchor("#", "Edit Personal Info", "id='edit_profile_pass'"); 
+	   		?>
 	   		<hr>
 	   		<div class="col-sm-12">
 	   			<div class="form-group">
@@ -148,7 +149,7 @@ if (isset($arr_messages)) {
 	   		
 	   		<?php echo anchor("site/customizes/extra-service","Previous", array('role'=>'button', 'class'=>'btn btn-default btn-sm')); ?>
 			<?php 
-			$input = array('name' => 'btnPersonalInfo', 'class' => 'btn btn-primary btn-sm', 'value' => ' Save ', 'disabled' => true); 
+			$input = array('name' => 'btnPersonalInfo', 'class' => 'btn btn-primary btn-sm', 'value' => ' Save '); 
 			echo form_submit($input);
 			echo nbs();
 			if ($passenger_info->pass_id != "") {

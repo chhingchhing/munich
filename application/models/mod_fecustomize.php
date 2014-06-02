@@ -169,17 +169,30 @@ class Mod_FeCustomize extends MU_model {
     * @param parameter $pfname, $plname, $pgender, $pdob, $pmobile, $phphone, $paddress, $pcode, $pcity, $pcountry, $pnumber
     */
     public function personal_information($passengerInfo){
-        if ($this->exist_passenger_by_email($passengerInfo['pass_email'])) {
-            return false;
+        // Plus 1 more is trip leader
+        $amount_people = $this->count_all_passenger_by_pass_addby($passengerInfo['pass_addby']) + 1;
+        if ($amount_people < $this->session->userdata("people")) {
+            if ($this->exist_passenger_by_email($passengerInfo['pass_email'])) {
+                return false;
+            } else {
+                if($this->db->insert('passenger', $passengerInfo))
+                {
+                    return $passengerInfo['pass_id'] = $this->db->insert_id();
+                } 
+                return false;
+            }
         } else {
-            if($this->db->insert('passenger', $passengerInfo))
-            {
-                return $passengerInfo['pass_id'] = $this->db->insert_id();
-                // return true;
-            } 
-            return false;
-            // return $this->db->insert('passenger', $passengerInfo);
+            return "over_number";
         }
+        
+    }
+
+    /*
+    * Count all passengers who added by a trip leader
+    */
+    function count_all_passenger_by_pass_addby($pass_addby) {
+        $query = $this->db->where("pass_addby", $pass_addby)->get("passenger");
+        return $query->num_rows();
     }
 
     /*
@@ -215,6 +228,17 @@ class Mod_FeCustomize extends MU_model {
 
             return $pass_obj;
         }
+    }
+
+    /*
+    Returns all the room types
+    */
+    function getAllRoomType($col='rt_name',$order='asc')
+    {
+        $data = $this->db
+            ->order_by($col, $order)
+            ->get("room_types");
+        return $data;
     }
     
 }

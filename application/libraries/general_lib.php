@@ -206,7 +206,21 @@ class General_lib
 		$this->CI->session->unset_userdata('checkout_accommodation');
 	}
 
-	function get_single_room_accommodation()
+	function get_room_type_accommodation()
+	{
+		if(!$this->CI->session->userdata('room_types_acc'))
+			$this->set_room_type_accommodation('');
+		return $this->CI->session->userdata('room_types_acc');
+	}
+	function set_room_type_accommodation($room_types_acc)
+	{
+		$this->CI->session->set_userdata('room_types_acc',$room_types_acc);
+	}
+	function empty_room_type_accommodation() {
+		$this->CI->session->unset_userdata('room_types_acc');
+	}
+
+	/*function get_single_room_accommodation()
 	{
 		if(!$this->CI->session->userdata('single_room_accommodation'))
 			$this->set_single_room_accommodation('');
@@ -246,7 +260,7 @@ class General_lib
 	}
 	function empty_double_room_2beds_accommodation() {
 		$this->CI->session->unset_userdata('double_room_2beds_accommodation');
-	}
+	}*/
 
 	// Transportation session
 	function get_transportation()

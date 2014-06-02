@@ -9,7 +9,7 @@
                 <hr>        
                 <div class="col-sm-12">
                   <div class="form-group" id="feedback_bar"></div>
-                  
+
                   <div class="form-group">
                     <label class="col-sm-3 control-label">Passenger firstname <span class="require">*</span>:</label>
                     <div class="col-sm-5">
@@ -136,6 +136,28 @@
                     <p class="help-block error"></p>
                   </div>
                 </div>
+                <div>
+              <?php 
+              echo form_fieldset('Amount of Passenger');
+              ?>
+              <div class="form-group">
+                <label class="col-sm-3 control-label"> Amount of Passenger: </label>
+                <div class="col-sm-5">
+                    <?php
+                      $people = array(
+                      'name' => 'add_pass_amount_pass', 
+                      'class' => 'form-control add_pass_amount_pass', 
+                      'value' => $this->session->userdata("people")
+                      ); 
+                      echo form_input($people); 
+                    ?>
+                </div>
+                <?php echo anchor("#", "Edit Amount Passenger", "id='edit_amount_pass'");  ?>
+              </div>
+              <?php
+              echo form_fieldset_close(); 
+              ?>
+            </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                   <?php $input = array('name' => 'btnPersonalInfoModal', 'class' => 'btn btn-primary btn-sm', 'value' => ' Submit '); echo form_submit($input);?>

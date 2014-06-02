@@ -144,61 +144,15 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				        </div>
 			    	</div>
 			    	<div class="form-group room_types">
-				        <label class="col-sm-5 control-label">Single Room (1 Bed, 1 Guest) :</label>
-				        <div class="col-sm-7" id='single'>
-				        	<?php 
-				        	$single_selected = 0;
-				        	$single_rooms = $this->general_lib->get_single_room_accommodation();
-			                if ($single_rooms != '') {
-			                	if (isset($single_rooms[$accOrder-1])) {
-			                		$single_selected = $single_rooms[$accOrder-1];
-			                	}
-			                }
-				        	echo form_dropdown("single[]", $option, $single_selected, "class='form-control room_types' id='single'");
+				        <label class="col-sm-2 control-label">Room :</label>
+				        <div class="col-sm-10">
+				        	<?php
+				        	$selected = $this->general_lib->get_room_type_accommodation();
+				        	echo form_multiselect("multi_select_rooms[]", $opt_room_types, $selected, "class='form-control room_types' ");
 				        	?>
 				        </div>
 			    	</div>
-
-			    	<div class="form-group room_types">
-				        <label class="col-sm-5 control-label">Double Room (1 Bed, 2 Guests) :</label>
-				        <div class="col-sm-7" id="double_room_1bed">
-				        	<?php 
-				        	$double1bed_selected = 0;
-				        	$double1bed_rooms = $this->general_lib->get_double_room_1bed_accommodation();
-			                if ($double1bed_rooms != '') {
-			                	if (isset($double1bed_rooms[$accOrder-1])) {
-			                		$double1bed_selected = $double1bed_rooms[$accOrder-1];
-			                	}
-			                }
-				        	echo form_dropdown(
-				        		"double_room_1bed[]", 
-				        		$double_room_1bed, 
-				        		$double1bed_selected, 
-				        		"class='form-control room_types' id='double_room_1bed'"
-				        	);
-				        	?>
-				        </div>
-			    	</div>
-			    	<div class="form-group room_types">
-				        <label class="col-sm-5 control-label">Double Room (2 Beds, 2 Guests) :</label>
-				        <div class="col-sm-7" id="double_room_2beds">
-				        	<?php 
-				        	$double2beds_selected = 0;
-				        	$double2beds_rooms = $this->general_lib->get_double_room_2beds_accommodation();
-			                if ($double2beds_rooms != '') {
-			                	if (isset($double2beds_rooms[$accOrder-1])) {
-			                		$double2beds_selected = $double2beds_rooms[$accOrder-1];
-			                	}
-			                }
-				        	echo form_dropdown(
-				        		"double_room_2beds[]", 
-				        		$double_room_2beds, 
-				        		$double2beds_selected, 
-				        		"class='form-control room_types' id='double_room_2beds'"
-				        	);
-				        	?>
-				        </div>
-			    	</div>
+			    	
 				    <h3>Extra Products</h3>
 				    	<?php
 				    		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
