@@ -206,7 +206,7 @@ iframe {
 /* add style form customize on front end */
 
 .wrap_customize{
-	background-color: #EFEFEF;
+	/*background-color: #EFEFEF;*/
 	border-radius: 5px;
 }
 .titleBooking{
@@ -217,11 +217,14 @@ iframe {
 .form-booking{
 	border-radius: 3px;
 	border: 1px solid #CCC;
-	background-color: #F0F9F0;
+	/*background-color: #F0F9F0;*/
+	background-color: #F8F8F8;
+	border-bottom-right-radius: 5px solid #F5F5F5;
 }
 .form-order{
 	border-left-color: #DDDDDD;
-	background-color: #F0F9F0;
+	/*background-color: #F0F9F0;*/
+	background-color: #F8F8F8;
 	border-radius: 3px;
 	border: 1px solid #CCC;
 }

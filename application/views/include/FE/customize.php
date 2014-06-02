@@ -31,6 +31,7 @@
 		<!-- start calculate form order -->
 		<div class="col-sm-2 form-order">
 			<h3>Order</h3>
+			<hr/>
 			<?php 
 
 				if($this->session->userdata('ftvID')) echo '<b>Festival : </b>'.MU_Model::getForiegnTableName('festival', array('ftv_id'=>$this->session->userdata('ftvID')), 'ftv_name').'<br/>';
@@ -76,26 +77,52 @@
 						}
 					}
 				}
-				
-				if($this->session->userdata('mainAccommodation')){
-					$accs = $this->session->userdata('mainAccommodation');
-					$accPeople = $this->session->userdata('accAmountpeople');
-					foreach ($accs as $key => $accsID) {
-						echo '<b>Accommodation : </b>'.MU_Model::getForiegnTableName('accommodation', array('acc_id'=>$accsID), 'acc_name');
-						$accPrice = MU_Model::getForiegnTableName('accommodation', array('acc_id'=>$accsID), 'acc_saleprice');
-						$accPrice = $accPrice * $accPeople[$key];
-						echo '  $'.$accPrice;
+				// Calcuation the price of Accommodations
+				$accs = $this->general_lib->get_accommodation();
+				if($accs != ''){
+					$singleRoom = $this->general_lib->get_single_room_accommodation();
+					$doubleRoomOneBed = $this->general_lib->get_double_room_1bed_accommodation();
+					$doubleRoomTwoBed = $this->general_lib->get_double_room_2beds_accommodation();
+					$getCheckIn = $this->general_lib->get_checkin_date_accommodation();
+					$getCheckOut = $this->general_lib->get_checkout_date_accommodation();
+					$accOrders = 0;
+					foreach ($accs as $key => $accsID){
+						$accOrders++;
+						echo '<p>';
+						echo '<b>Accommodations : </b>'.MU_Model::getForiegnTableName('accommodation', array('acc_id'=>$accsID), 'acc_name');
+						$price = MU_Model::getForiegnTableName('accommodation', array('acc_id'=>$accsID), 'acc_saleprice');						
+						if($singleRoom != ''){
+							if (isset($singleRoom[$accOrders-1])) {
+								$priceSingleRoom = $price * $singleRoom[$accOrders-1];
+							}
+						}
+						if($doubleRoomOneBed != ''){
+							if(isset($doubleRoomOneBed[$accOrders-1])){
+								$priceDoubleRoomOneBed = $price * $doubleRoomOneBed[$accOrders-1];
+							}
+						}
+						if ($doubleRoomTwoBed != '') {
+							if (isset($doubleRoomTwoBed[$accOrders-1])) {
+								$priceDoubleRoomTwoBed = $price * $doubleRoomTwoBed[$accOrders-1];
+							}
+						}
+						$price =0;
+						if($singleRoom != '' && $doubleRoomOneBed !=''){
+							$price = $priceSingleRoom + $priceDoubleRoomOneBed;
+							echo '  $'.$price.'<br/>';
+						}else if($singleRoom != '' && $doubleRoomOneBed != '' && $doubleRoomTwoBed != ''){
+							$price = $priceSingleRoom + $priceDoubleRoomOneBed + $priceDoubleRoomTwoBed;
+							echo '  $'.$price.'<br/>';
+						}else if($singleRoom != '' && $doubleRoomTwoBed != ''){
+							$price = $priceSingleRoom + $priceDoubleRoomTwoBed;
+							echo '  $'.$price.'<br/>';
+						}else if($doubleRoomOneBed !='' && $doubleRoomTwoBed != ''){
+							$price = $priceDoubleRoomOneBed + $priceDoubleRoomTwoBed;
+							 echo '  $'.$price.'<br/>';
+						}else{
+							echo '<br/>'. 'You was not select room'; 
+						}
 					}
-					if($this->session->userdata('subAccommodation')){
-					$sub = $this->session->userdata('subAccommodation');
-					$accPeople = $this->session->userdata('accAmountpeople');
-					foreach ($sub as $key => $accsID) {
-						echo '<b>Sub Accommodation : </b>'.MU_Model::getForiegnTableName('accommodation', array('acc_id'=>$accsID), 'acc_name');
-						$accPrice = MU_Model::getForiegnTableName('accommodation', array('acc_id'=>$accsID), 'acc_saleprice');
-						$accPrice = $accPrice * $accPeople[$key];
-						echo '  $'.$accPrice;
-					}
-				}
 				}
 
 				if($this->session->userdata('maintransportation')){

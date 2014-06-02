@@ -68,7 +68,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 	   					?> 
 	   				<h4 id="<?php echo "main_act_order_$accOrder"; ?>" order="<?php echo $accOrder; ?>">
 	   					<?php echo form_checkbox($checkbox_accommodation).nbs(); ?>
-	   					<?php echo $acc['acc_name'];?>
+	   					<?php echo $acc['clf_name'];?>
 	   				</h4>
 	   				<p><?php echo $acc['acc_bookingtext'];?></p>
 	   				<div class="form-group">
@@ -134,6 +134,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 			                }
 			                $peopleSelect = $this->session->userdata("people") ? $this->session->userdata("people") : 0;
 			                $amountPeopleAccommodation = $this->general_lib->get_people_accommodation();
+			                
 			                if ($amountPeopleAccommodation != '') {
 			                	if (isset($amountPeopleAccommodation[$accOrder-1])) {
 			                		$peopleSelect = $amountPeopleAccommodation[$accOrder-1];
@@ -148,7 +149,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				        </div>
 			    	</div>
 			    	<div class="form-group room_types">
-				        <label class="col-sm-3 control-label">Single Room (1 Bed, 1 Guest) :</label>
+				        <label class="col-sm-3 control-label">Single Room (1 Bed, 1 Guest):</label>
 				        <div class="col-sm-9" id='single'>
 				        	<?php 
 				        	$single_selected = 0;
@@ -162,9 +163,8 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				        	?>
 				        </div>
 			    	</div>
-
 			    	<div class="form-group room_types">
-				        <label class="col-sm-3 control-label">Double Room (1 Bed, 2 Guests) :</label>
+				        <label class="col-sm-3 control-label"><?php echo $acc['rt_name'];?> Double Room (1 Bed, 2 Guests) :</label>
 				        <div class="col-sm-9" id="double_room_1bed">
 				        	<?php 
 				        	$double1bed_selected = 0;
@@ -175,7 +175,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 			                	}
 			                }
 				        	echo form_dropdown(
-				        		"double_room_1bed[]", 
+				        		"double_room_1 bed[]", 
 				        		$double_room_1bed, 
 				        		$double1bed_selected, 
 				        		"class='form-control room_types' id='double_room_1bed'"
@@ -203,7 +203,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				        	?>
 				        </div>
 			    	</div>
-			    	<h3>Sub Accommodations</h3>
+			    	<!-- <h3>Sub Accommodations</h3>
 			    	<?php
 			    		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 						$subAccommodation = mod_fecustomize::selectSubAccommodation($this->session->userdata('ftvID'), $this->session->userdata('lcID'), $acc['acc_id']);
@@ -244,7 +244,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				   			</div>
 				   			<div class="clear_both"></div>
 				    	</div>
-			    	<?php }?>
+			    	<?php }?> -->
 				    	
 				    	<h3>Extra Products</h3>
 				    	<?php
@@ -292,6 +292,6 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 	   		<?php echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-info btn-sm')); ?>
 			<?php $input = array('name' => 'btnAccommodation', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
 			<p></p>
-	   </div>
+	   </div> 
 <?php echo form_close(); ?>
 <!-- end accommodation -->
