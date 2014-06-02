@@ -247,3 +247,12 @@ iframe {
 	clear: both; 
 	height: 10px;
 }
+span.error, span.require {
+	color: #FF4040;
+}
+span.success {
+	color: #3E8F3E;
+}
+*.disable {
+	user-select: readonly;
+}

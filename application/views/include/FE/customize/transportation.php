@@ -3,53 +3,121 @@
 	<h2> Choose Transportation </h2>
 	<hr>
 	   		<div class="col-sm-12">
-	   			<?php foreach ($recordTransportation as $tp_record) {?>
+	   			<?php 
+	   			echo form_hidden("amount_main_object", count($recordTransportation));
+	   			$transOrder = 0;
+	   			foreach ($recordTransportation as $tp_record) {
+	   				$transOrder++;
+	   				// Disable day of a week
+		   			$daysOfWeekDisabled = '';
+		   			if ($recordTransportation[$transOrder-1]['sunday'] == 0) $daysOfWeekDisabled .= "0, ";
+		   			if ($recordTransportation[$transOrder-1]['monday'] == 0) $daysOfWeekDisabled .= "1, ";
+		   			if ($recordTransportation[$transOrder-1]['tuesday'] == 0) $daysOfWeekDisabled .= "2, ";
+		   			if ($recordTransportation[$transOrder-1]['wednesday'] == 0) $daysOfWeekDisabled .= "3, ";
+		   			if ($recordTransportation[$transOrder-1]['thursday'] == 0) $daysOfWeekDisabled .= "4, ";
+		   			if ($recordTransportation[$transOrder-1]['friday'] == 0) $daysOfWeekDisabled .= "5, ";
+		   			if ($recordTransportation[$transOrder-1]['saturday'] == 0) $daysOfWeekDisabled .= "6";
+	   			?>
 	   			<div class="col-sm-3">
-	   				<?php $transportation = array('src' => 'user_uploads/thumbnail/original/'.$tp_record['pho_source'],'alt' => 'customize','class' => 'img-thumbnail images-dashboard','title' => 'Customize');?>
+	   				<?php $transportation = array(
+	   					'src' => 'user_uploads/thumbnail/original/'.$tp_record['pho_source'],
+	   					'alt' => 'customize',
+	   					'class' => 'img-thumbnail images-dashboard',
+	   					'title' => 'Customize'
+	   					);
+	   				?>
 		    		<?php echo img($transportation);?>
 	   			</div>
 	   			<div class="col-sm-9">
-	   				<?php echo form_checkbox($checkbox_transportation = array('name' => 'checkbox_transportation[]', 'id' => 'checkbox_transportation'), $tp_record['tp_id']);?>   
+	   				<?php 
+	   					$transportation = $this->general_lib->get_transportation();
+	   					$checked = false;
+	   					if ($transportation != '') {
+	   						if (isset($transportation[$tp_record['tp_id']])) {
+	   							if ($transportation[$tp_record['tp_id']] == $tp_record['tp_id']) {
+			   						$checked = true;
+			   					}
+	   						}
+	   					}
+	   					
+	   					$checkbox_transportation = array(
+	   						'value' => $tp_record['tp_id'], 
+	   						'checked' => $checked, 
+	   						'class' => 'check_main_element', 
+	   						'name' => 'checkbox_transportation[]', 
+	   						'id' => "checkbox_transportation"
+	   					);
+	   					echo form_checkbox($checkbox_transportation);
+	   				?>   
 	   				<label><?php echo $tp_record['tp_name'];?></label>
 	   				<p><?php echo $tp_record['tp_textbooking'];?></p>
 	   				<div class="form-group">
 				        <label class="col-sm-2 control-label">Departure Date :</label>
 				        <div class="col-sm-4">
-				            <?php 
-				        		$day_avaliable['monday'] 	= $tp_record['monday'];
-				                $day_avaliable['tuesday'] 	= $tp_record['tuesday'];
-				                $day_avaliable['wednesday'] = $tp_record['wednesday'];
-				                $day_avaliable['thursday'] 	= $tp_record['thursday'];
-				                $day_avaliable['friday'] 	= $tp_record['friday'];
-				                $day_avaliable['saturday'] 	= $tp_record['saturday'];
-				                $day_avaliable['sunday'] 	= $tp_record['sunday'];
-				            	$new = site::convertDateToRangeFromFE($day_avaliable, $tp_record['start_date'], $tp_record['end_date']);
-				            echo form_dropdown('txtDate', $new,'', 'class="form-control"');  
+				            <?php
+				            	$start_date = date("Y-m-d");
+				        		$departure_date = $this->general_lib->get_departure_transportation();
+				   				if ($departure_date != '') { 
+				   					if (isset($departure_date[$transOrder-1])) {
+				   						$start_date = $departure_date[$transOrder-1];
+				   					}
+			   					}
+			                    $departure = array(
+			                    	'id'=>'start_date_'.$transOrder, 
+			                    	'name' => 'trans_departure[]', 
+			                    	'class' => 'form-control checkin checkin_'.$transOrder,
+			                    	'data-date-format'=>'yyyy-mm-dd',
+			                    	'value' => $start_date, 
+			                    	'checkin_attr'=>$tp_record['start_date'], 
+			                    	'daysOfWeekDisabled'=>$daysOfWeekDisabled
+			                    );
+			                    echo form_input($departure);
 				            ?>
 				        </div>
 				        <label class="col-sm-2 control-label">Return Date :</label>
 				        <div class="col-sm-4">
 				            <?php 
-				        		$day_avaliable['monday'] = $tp_record['monday'];
-				                $day_avaliable['tuesday'] = $tp_record['tuesday'];
-				                $day_avaliable['wednesday'] = $tp_record['wednesday'];
-				                $day_avaliable['thursday'] = $tp_record['thursday'];
-				                $day_avaliable['friday'] = $tp_record['friday'];
-				                $day_avaliable['saturday'] = $tp_record['saturday'];
-				                $day_avaliable['sunday'] = $tp_record['sunday'];
-				            	$new = site::convertDateToRangeFromFE($day_avaliable, $tp_record['start_date'], $tp_record['end_date']);
-				            echo form_dropdown('txtDate', $new,'', 'class="form-control"');  
+				            $end_date = date("Y-m-d");
+				        		$return_date = $this->general_lib->get_return_date_transportation();
+				   				if ($return_date != '') { 
+				   					if (isset($return_date[$transOrder-1])) {
+				   						$end_date = $return_date[$transOrder-1];
+				   					}
+			   					}
+			                    $return = array(
+			                    	'id'=>'end_date_'.$transOrder, 
+			                    	'name' => 'trans_return[]', 
+			                    	'class' => 'form-control checkout',
+			                    	'data-date-format'=>'yyyy-mm-dd',
+			                    	'value' => $end_date, 
+			                    	'checkin_attr'=>$tp_record['end_date'], 
+			                    	'daysOfWeekDisabled'=>$daysOfWeekDisabled
+			                    );
+			                    echo form_input($return);
 				            ?>
 				        </div>
 			    	</div>
 			    	<div class="form-group">
 				        <label class="col-sm-4 control-label">Number of Passenger :</label>
-				        <div class="col-sm-2">
-				            <select class="form-control">
-								<option>1</option>
-								<option>2</option>
-								<option>3</option>
-							</select>
+				        <div class="col-sm-3">
+				        <?php
+				        	$amount_people[0] = "-- Select --";
+			                for ($i=1; $i <= $this->session->userdata("people"); $i++) { 
+			                		$amount_people[$i] = $i;
+			                }
+			                $peopleSelect = $this->session->userdata("people") ? $this->session->userdata("people") : 0;
+			                $amountPeopleTransport = $this->general_lib->get_people_transportation();
+			                if ($amountPeopleTransport != '') {
+			                	if (isset($amountPeopleTransport[$transOrder-1])) {
+			                		$peopleSelect = $amountPeopleTransport[$transOrder-1];
+			                	}
+			                }
+			                echo form_dropdown('peopleTransportation[]', 
+								$amount_people, 
+								$peopleSelect, 
+								'class="form-control people" id="amount_people_transport"'
+							);
+				        ?>
 				        </div>
 			    	</div>
 			    	<h3>Sub Transportations</h3>
@@ -67,23 +135,69 @@
 								}
 							}
 				    ?>	
-				    <?php foreach ($subtransportation as $sub_transportation) {?>   	
-			    	<div class="col-sm-12">
+				    <?php 
+				    $subActOrder = 0;
+				    foreach ($subtransportation as $sub_transportation) {
+				    	$subActOrder++;
+				    ?>   	
+			    	<div class="form-group">
 			    		<div class="col-sm-3">
-			    			<?php $transportation = array('src' => 'user_uploads/thumbnail/original/'.$sub_transportation['pho_source'],'alt' => 'customize','class' => 'img-thumbnail images-dashboard','title' => 'Customize');?>
+			    			<?php $transportation = array(
+			    				'src' => 'user_uploads/thumbnail/original/'.$sub_transportation['pho_source'],
+			    				'alt' => 'customize',
+			    				'class' => 'img-thumbnail images-dashboard',
+			    				'title' => 'Customize'
+			    				);
+			    			?>
 		    				<?php echo img($transportation);?>
 			    		</div>
-			    		<div class="col-sm-7">
-			    			<label><input type="checkbox">  <?php echo $sub_transportation['tp_name'];?></label>
+			    		<div class="col-sm-6">
+			    			<label> 
+			    				<?php 
+				   					$subTrans = $this->general_lib->get_sub_transportation();
+				   					$checked = false;
+				   					if ($subTrans != '') { 
+				   						if (isset($subTrans[$sub_transportation['tp_id']])) {
+				   							if ($subTrans[$sub_transportation['tp_id']] == $sub_transportation['tp_id']) {
+						   						$checked = true;
+						   					}
+				   						}
+				   					}
+
+				   					$checkbox_subTrans = array(
+				   						'value' => $sub_transportation['tp_id'], 
+				   						'checked' => $checked, 
+				   						'class' => 'check_sub_element checkbox_sub_trans', 
+				   						'name' => 'checkbox_subTrans[]', 
+				   						'id' => 'checkbox_sub_trans_'.$subActOrder,
+				   						'order' => $subActOrder
+				   					);
+				   					echo form_checkbox($checkbox_subTrans);
+				   				?> 
+			    				<?php echo $sub_transportation['tp_name'];?>
+			    			</label>
 	   						<p><?php echo $sub_transportation['tp_textbooking'];?></p>
 			    		</div>
-			    		<div class="col-sm-2">
+			    		<div class="col-sm-3">
 			    			<label class="col-sm-3 control-label">N/Passenger:</label>
-			    				<select class="form-control col-sm-4">
-									<option>1</option>
-									<option>2</option>
-									<option>3</option>
-								</select>
+			    				<?php
+						        	$amount_people[0] = "-- Select --";
+					                for ($i=1; $i <= $this->session->userdata("people"); $i++) { 
+					                		$amount_people[$i] = $i;
+					                }
+					                $peopleSelect = $this->session->userdata("people") ? $this->session->userdata("people") : 0;
+					                $amountPeopleSubTransport = $this->general_lib->get_people_sub_transportation();
+					                if ($amountPeopleSubTransport != '') {
+					                	if (isset($amountPeopleSubTransport[$transOrder-1])) {
+					                		$peopleSelect = $amountPeopleSubTransport[$transOrder-1];
+					                	}
+					                }
+					                echo form_dropdown('peopleSubTransportation[]', 
+										$amount_people, 
+										$peopleSelect, 
+										'class="form-control col-sm-4 people" id="amount_sub_people_transport"'
+									);
+						        ?>
 			    		</div>
 			    		<div class="clear_both"></div>
 			    	</div>
@@ -103,7 +217,11 @@
 								}
 							}
 					    ?>
-					    <?php foreach ($extra as $ep_result) {?>
+					    <?php 
+					    $accExtraOrder = 0;
+					    foreach ($extra as $ep_result) {
+					    	$accExtraOrder++;
+					    ?>
 						    <div class="col-sm-12">
 					    		<div class="col-sm-3">
 					   				<?php $extras = array('src' => 'user_uploads/thumbnail/original/'.$ep_result['pho_source'],'alt' => 'customize','class' => 'img-thumbnail images-dashboard','title' => 'Customize');?>
@@ -112,9 +230,25 @@
 					   			<div class="col-sm-7">
 					   				<label>
 					   					<?php 
-					   					$checked = $this->session->userdata('extraactivity');
-					   					$checkbox_extra = array('value' => $ep_result['ep_id'], 'checked' => !$checked ? false : true, 'class' => 'check_sub_element', 'name' => 'checkbox_extra[]', 'id' => 'checkbox_extra');
-					   					echo form_checkbox($checkbox_extra);
+					   					$sub_trans_extra_pro = $this->general_lib->get_sub_trans_extr_product();
+					   					$checked = false;
+					   					if ($sub_trans_extra_pro != '') { 
+					   						if (isset($sub_trans_extra_pro[$ep_result['ep_id']])) {
+					   							if ($sub_trans_extra_pro[$ep_result['ep_id']] == $ep_result['ep_id']) {
+							   						$checked = true;
+							   					}
+					   						}
+					   					}
+
+					   					$checkbox_sub_trans = array(
+					   						'value' => $ep_result['ep_id'], 
+					   						'checked' => $checked, 
+					   						'class' => 'check_sub_element checkbox_subactivity', 
+					   						'name' => 'sub_trans_extra_product[]', 
+					   						'id' => 'checkbox_subactivity_'.$accExtraOrder,
+					   						'order' => $accExtraOrder
+					   					);
+					   					echo form_checkbox($checkbox_sub_trans);
 					   					?>
 					   					<?php echo $ep_result['ep_name'];?>
 					   				</label>
@@ -122,8 +256,24 @@
 					   			</div>
 					   			<div class="col-sm-2">
 					   				<label>Amount of Extra Product</label>
-					   				<input type="text" name="amountextras[]" class="form-control amount_extras" />
-					   				<?php ?>
+					   				<?php 
+						   				$value = "";
+						   				$amountExtras = $this->general_lib->get_sub_trans_amount_extra();
+
+										if (isset($amountExtras[$ep_result['ep_id']])) {
+						   					$main_value = $amountExtras[$ep_result['ep_id']["0"]];
+						   					foreach ($main_value as $val) {
+						   						$value = $val;
+						   					}
+						   				}
+
+					   					$input = array(
+					   							"name"=>"amountTransExtras[".$ep_result['ep_id']."][]",
+					   							"class"=>"form-control amount_extras", 
+					   							"value"=> $value
+					   						);
+					   					echo form_input($input);
+					   				?>
 					   			</div>
 					   			<div class="clear_both"></div>
 							</div>
@@ -131,7 +281,7 @@
 	   			</div>
 	   			<?php }?>
 	   		</div>
-	   		<?php echo anchor("site/customizes/accommodation","Previous", array('role'=>'button', 'class'=>'btn btn-info btn-sm')); ?>
+	   		<?php echo anchor("site/customizes/accommodation","Previous", array('role'=>'button', 'class'=>'btn btn-default btn-sm')); ?>
 			<?php $input = array('name' => 'btnTransportation', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
 			<p></p>
 			<?php echo form_close(); ?>

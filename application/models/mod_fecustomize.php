@@ -178,21 +178,53 @@ class Mod_FeCustomize extends MU_model {
     * public function add information of passenger to table passenger
     * @param parameter $pfname, $plname, $pgender, $pdob, $pmobile, $phphone, $paddress, $pcode, $pcity, $pcountry, $pnumber
     */
-    public function personal_information($pfname, $plname, $pemail, $phphone, $pmobile, $pcountry, $paddress, $pcompany, $pgender){
-        $passenger = array(
-            'pass_fname'        => $pfname,
-            'pass_lname'        => $plname,
-            'pass_email'        => $pemail,
-            'pass_phone'        => $phphone,
-            'pass_mobile'       => $pmobile,
-            'pass_country'      => $pcountry,
-            'pass_address'      => $paddress,
-            'pass_company'      => $pcompany,
-            'pass_gender'       => $pgender,
-            'pass_status'       => 1,
-            'pass_deleted'      => 0,
-        );
-        $this->db->insert('passenger', $passenger);
+    public function personal_information($passengerInfo){
+        if ($this->exist_passenger_by_email($passengerInfo['pass_email'])) {
+            return false;
+        } else {
+            if($this->db->insert('passenger', $passengerInfo))
+            {
+                return $passengerInfo['pass_id'] = $this->db->insert_id();
+                // return true;
+            } 
+            return false;
+            // return $this->db->insert('passenger', $passengerInfo);
+        }
+    }
+
+    /*
+    * Check existing passenger by email
+    */
+    function exist_passenger_by_email($email) {
+        $query = $this->db
+            ->where("pass_email", $email)
+            ->get("passenger");
+        return ($query->num_rows() == 1);
+    }
+
+    /*
+    * Get passenger information when passenger has been loged in
+    */
+    public function customizePersonal_info($passenger_id) {
+        $query = $this->db
+            ->where("pass_id", $passenger_id)
+            ->get("passenger");
+        if ($query->num_rows() == 1) {
+            return $query->row();
+        } else {
+            //Get empty base parent object, as $item_id is NOT an item
+            $pass_obj=new stdClass();
+
+            //Get all the fields from items table
+            $fields = $this->db->list_fields('passenger');
+
+            foreach ($fields as $field)
+            {
+                $pass_obj->$field='';
+            }
+
+            return $pass_obj;
+        }
     }
     
 }

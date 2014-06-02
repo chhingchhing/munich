@@ -28,7 +28,7 @@
 		    		<?php echo img($customize_img).br(1);?>
 	   			</div>
 	   			<div class="col-sm-9">
-	   				<h4 id="<?php echo "main_act_order_$actOrder"; ?>" order="<?php echo $actOrder; ?>">
+	   				<h4 class="fe_customize" id="<?php echo "main_act_order_$actOrder"; ?>" order="<?php echo $actOrder; ?>">
 	   					<?php
 	   					$mainactivity = $this->general_lib->get_main_activities();
 	   					$checked = false;
@@ -190,19 +190,22 @@
 					        <div class="col-sm-4">
 					        	<?php 
 					            $amount_people[0] = "-- Select --";
+					            $selectPeople = 0;
 				                for ($i=1; $i <= $this->session->userdata("people"); $i++) { 
 				                		$amount_people[$i] = $i;
 				                }
 				                $amountPeople = $this->general_lib->get_people_sub_activity();
 				                if ($amountPeople != '') {
 				                	if (isset($amountPeople[$subActOrder-1])) {
-				                		echo form_dropdown('actPeopleSubActivity[]', $amount_people, $amountPeople[$subActOrder-1], 'class="form-control people_sub_activity" id="subPeople"');
-				                	} else {
-				                		echo form_dropdown('actPeopleSubActivity[]', $amount_people, 0, 'class="form-control people_sub_activity" id="subPeople"');
+				                		$selectPeople = $amountPeople[$subActOrder-1];
 				                	}
-				                } else {
-								echo form_dropdown('actPeopleSubActivity[]', $amount_people, 0, 'class="form-control people_sub_activity" id="subPeople"');
 				                }
+				                echo form_dropdown(
+				                	'actPeopleSubActivity[]', 
+				                	$amount_people, 
+				                	$selectPeople, 
+				                	'class="form-control people_sub_activity" id="subPeople"'
+				                );
 					            ?>
 					        </div>
 						    </div>
@@ -265,23 +268,19 @@
 				   			<div class="col-sm-2">
 				   				<label>Amount of Extra Product</label>
 				   				<?php
+				   				$value = "";
 				   				$amountextras = $this->general_lib->get_amount_extra();
 				   				if ($amountextras != '') { 
 				   					if (isset($amountextras[$extraOrder-1])) {
-				   						$input = array(
-				   							"name"=>"amountextras[]",
-				   							"class"=>"form-control amount_extras", 
-				   							"value"=>$amountextras[$extraOrder-1]
-				   						);
-					   					echo form_input($input);
-				   					} else {
-				   						$input = array("name"=>"amountextras[]", "class"=>"form-control amount_extras");
-					   					echo form_input($input);
+				   						$value = $amountextras[$extraOrder-1];
 				   					}
-			   					} else {
-			   						$input = array("name"=>"amountextras[]", "class"=>"form-control amount_extras");
-					   				echo form_input($input);
 			   					}
+			   					$input = array(
+			   							"name"=>"amountextras[]",
+			   							"class"=>"form-control amount_extras", 
+			   							"value"=> $value
+			   						);
+			   					echo form_input($input);
 				   				?>
 				   			</div>
 				   			<div class="clear_both"></div>
@@ -289,7 +288,7 @@
 					<?php } ?>
 	   				</div>
 	   			<?php }?>
-	   			<?php echo anchor("site/customizes/","Previous", array('role'=>'button', 'class'=>'btn btn-info btn-sm')); ?>
+	   			<?php echo anchor("site/customizes/","Previous", array('role'=>'button', 'class'=>'btn btn-default btn-sm')); ?>
 	   			<?php $input = array('name' => 'btnActivity', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>	   			   			   						
 	   		<p></p>		
 	   </div>

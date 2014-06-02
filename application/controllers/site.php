@@ -291,14 +291,46 @@ class Site extends MU_Controller {
      	$this->general_lib->empty_single_room_accommodation();
      	$this->general_lib->empty_double_room_1bed_accommodation();
      	$this->general_lib->empty_double_room_2beds_accommodation();
+     	$this->general_lib->empty_sub_acc_amount_extra();
+     	$this->general_lib->empty_sub_acc_extr_product();
      }
+
+     /**
+	* Clear all session for storing array of transportation
+     */
+	public function clear_all_for_transportation() {
+		$this->general_lib->empty_transportation();
+		$this->general_lib->empty_sub_transportation();
+		$this->general_lib->empty_departure_transportation();
+		$this->general_lib->empty_return_date_transportation();
+		$this->general_lib->empty_people_transportation();
+		$this->general_lib->empty_people_sub_transportation();
+		$this->general_lib->empty_sub_trans_extr_product();
+		$this->general_lib->empty_sub_trans_amount_extra();
+	}
+
+	/**
+	* Clear all session for storing array of extra services
+     */
+	public function clear_all_for_extra_services() {
+		$this->general_lib->empty_extra_services();
+		$this->general_lib->empty_num_extra_services();
+	}
+
+	/**
+	* Clear all session for storing array of personal information
+     */
+	/*public function clear_all_for_personal_info() {
+		$this->general_lib->empty_personalInfo_message();
+	}*/
         
-        /*
+    /*
 	* public function customize
 	* @param $display_page default (false)
 	* load template customizes and include customize
 	*/
 	public function customizes($display_page = false){
+		// $this->session->sess_destroy();
 		if($display_page == "customizeTrip"){
 			$this->customizeTrip();
 			redirect('site/customizes/activities');
@@ -306,37 +338,8 @@ class Site extends MU_Controller {
 		if ($display_page == "activities") {
 			if($this->input->post('btnActivity')){
 				$this->clear_all_for_activity();
-				if ($this->input->post('checkbox_activity')) {
-					foreach ($this->input->post('checkbox_activity') as $element) {
-						$arr_mainactivity = $this->general_lib->get_main_activities();
-				        $new_arr_mainactivity = $this->insertArrayIndex($arr_mainactivity, $element, $element);
-				        $this->general_lib->set_main_activities($new_arr_mainactivity);
-					}
-				}
+				$this->clickCustomizeActivity();
 
-				$this->general_lib->set_start_date_activity($this->input->post('txtFrom'));
-				$this->general_lib->set_end_date_activity($this->input->post('txtTo'));
-				
-				if ($this->input->post('checkbox_subactivity')) {
-					foreach ($this->input->post('checkbox_subactivity') as $element) {
-						$arr_subactivity = $this->general_lib->get_sub_activities();
-				        $new_arr_subactivity = $this->insertArrayIndex($arr_subactivity, $element, $element);
-				        $this->general_lib->set_sub_activities($new_arr_subactivity);
-					}
-				}
-
-				if ($this->input->post('checkbox_extra')) {
-					foreach ($this->input->post('checkbox_extra') as $element) {
-						$arr_extra_activity = $this->general_lib->get_extra_activities();
-				        $new_arr_extra_activity = $this->insertArrayIndex($arr_extra_activity, $element, $element);
-				        $this->general_lib->set_extra_activities($new_arr_extra_activity);
-					}
-				}
-				$this->general_lib->set_amount_extra($this->input->post('amountextras'));
-				$this->general_lib->set_people_sub_activity($this->input->post('actPeopleSubActivity'));
-				$this->general_lib->set_people_main_activity($this->input->post('actPeopleMainActivity'));
-
-				$this->session->set_userdata('actDate', $this->input->post('actTxtDate'));
 				redirect('site/customizes/accommodation');
 			}else{
 				$fe_data['recordActivities'] = $this->customizeActivity();
@@ -345,21 +348,8 @@ class Site extends MU_Controller {
 		if ($display_page == "accommodation") {
 			if($this->input->post('btnAccommodation')){	
 				$this->clear_all_for_accommodation();
+				$this->clickCustomizeAccommodation();
 
-				if ($this->input->post('checkbox_accommodation')) {
-					foreach ($this->input->post('checkbox_accommodation') as $element) {
-						$arr_accommodation = $this->general_lib->get_accommodation();
-				        $new_arr_accommodation = $this->insertArrayIndex($arr_accommodation, $element, $element);
-				        $this->general_lib->set_accommodation($new_arr_accommodation);
-					}
-				}
-				$this->general_lib->set_checkin_date_accommodation($this->input->post('checkIn'));
-				$this->general_lib->set_checkout_date_accommodation($this->input->post('checkOut'));
-				$this->general_lib->set_single_room_accommodation($this->input->post('single'));
-				$this->general_lib->set_double_room_1bed_accommodation($this->input->post('double_room_1bed'));
-				$this->general_lib->set_double_room_2beds_accommodation($this->input->post('double_room_2beds'));
-
-				$this->general_lib->set_people_accommodation($this->input->post('peopleAccommodation'));		
 				redirect('site/customizes/transportation');
 			}else{
 				$fe_data['recordAccommodation'] = $this->customizeAccommodation();
@@ -367,6 +357,9 @@ class Site extends MU_Controller {
 		}
 		if($display_page == "transportation"){
 			if($this->input->post('btnTransportation')){
+				$this->clear_all_for_transportation();
+				$this->clickCustomizeTransportation();
+
 				redirect('site/customizes/extra-service');
 			}else{
 				$fe_data['recordTransportation'] = $this->customizeTransportation();
@@ -374,13 +367,26 @@ class Site extends MU_Controller {
 		}
 		if($display_page == "extra-service"){
 			if($this->input->post('btnExtraService')){
+				$this->clear_all_for_extra_services();
+				$this->clickCustomizeExtraService();
+
 				redirect('site/customizes/personal-info');
 			}else{
 				$fe_data['recordExtraProducts'] = $this->customizeExtra_service();
+				foreach ($fe_data['recordExtraProducts'] as $extra) {
+					$extra_index[] = $extra['ep_id']; 
+				}
+				$this->general_lib->set_index_extra_service($extra_index);
 			}
 		}
 		if ($display_page == "personal-info") {
-			if($this->input->post('btnExtraService')){	
+			if ($this->session->userdata('new_passenger_id') OR $this->session->userdata('passenger')) {
+				$this->general_lib->empty_personalInfo_message();
+			}
+			if($this->input->post('btnPersonalInfo')){	
+				$this->general_lib->empty_personalInfo_message();
+				// $this->clear_all_for_personal_info();
+
 				$addpassenger  = array(
 					array(
 						'field' => 'pfname',
@@ -395,23 +401,60 @@ class Site extends MU_Controller {
 					);	
 				$this->form_validation->set_rules($addpassenger);
 				if($this->form_validation->run() == FALSE){
-					 echo "sorry you are wrong."   ;
+					$arr_errors = array(
+						"success" => false,
+						"sms_type" => "warning",
+						"sms_title" => "Warming!",
+						"sms_value" => "Sorry! Please check the data you have input. There are something wrong."
+					);
+					$this->general_lib->set_personalInfo_message($arr_errors);
+
+					$fe_data['arr_messages'] = $this->general_lib->get_personalInfo_message();
+					$fe_data['passenger_info'] = $this->customizePersonal_info();
 				}else{	
-					$pfname = $this->input->post('pfname');
-					$plname = $this->input->post('plname');
-					$pemail =  $this->input->post('pemail');
-					$phphone =  $this->input->post('phphone');
-					$pmobile = $this->input->post('pmobile');
-					$pcountry =  $this->input->post('pcountry');
-					$paddress =  $this->input->post('paddress');
-					$pcompany =  $this->input->post('pcompany');
-					$pgender =  $this->input->post('pgender');
-					$this->mod_fecustomize->personal_information($pfname, $plname, $pemail, $phphone, $pmobile, $pcountry, $paddress, $pcompany, $pgender);				
-					redirect('site/customizes/payments');					
+					$passengerInfo = array(
+						'pass_fname'        => $this->input->post('pfname'),
+			            'pass_lname'        => $this->input->post('plname'),
+			            'pass_email'        => $this->input->post('pemail'),
+			            'pass_phone'        => $this->input->post('phphone'),
+			            'pass_mobile'       => $this->input->post('pmobile'),
+			            'pass_country'      => $this->input->post('pcountry'),
+			            'pass_address'      => $this->input->post('paddress'),
+			            'pass_company'      => $this->input->post('pcompany'),
+			            'pass_gender'       => $this->input->post('pgender'),
+			            'pass_status'       => 1,
+			            'pass_deleted'      => 0,
+					);
+					$result  = $this->mod_fecustomize->personal_information($passengerInfo);
+					if (!$result) {
+						$arr_errors = array(
+							"success" => false,
+							"sms_type" => "danger",
+							"sms_title" => "Error!",
+							"sms_value" => "Sorry! That email is already registered. Please login before you booking"
+						);
+						$this->general_lib->set_personalInfo_message($arr_errors);
+						redirect('site/customizes/personal-info');
+					} else {
+						$newPass = array(
+							'pass_id' => $result
+						);
+						$this->session->set_userdata("new_passenger_id", $newPass);
+						/*$arr_errors = array(
+							"success" => true,
+							"sms_type" => "success",
+							"sms_title" => "Congradulation!",
+							"sms_value" => "Your account has been save in our database, please check your email inbox."
+						);
+						$this->general_lib->set_personalInfo_message($arr_errors);*/
+						//Set session
+						redirect('site/customizes/payments');	
+					}			
 				}
 
 			}else{
-				$fe_data['recordActivities'] = $this->customizePersonal_info();
+				$fe_data['arr_messages'] = $this->general_lib->get_personalInfo_message();
+				$fe_data['passenger_info'] = $this->customizePersonal_info(); 
 			}
 		}
 		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
@@ -419,6 +462,29 @@ class Site extends MU_Controller {
 
 		$this->load->view('index', $fe_data);
 	}
+
+	/*function check_email_pass_exists() {
+		$result  = $this->mod_fecustomize->exist_passenger_by_email($this->input->post('pemail'));	
+		if ($result) {
+			$arr_errors = array(
+				"success" => false,
+				"sms_type" => "danger",
+				"sms_title" => "Error!",
+				"sms_value" => "Sorry! That email is already registered. Please login before you booking"
+			);
+			echo json_encode($arr_errors); 
+		} else {
+			$arr_errors = array(
+				"success" => true,
+				"sms_type" => "success",
+				"sms_title" => "Congradulation!",
+				"sms_value" => "Your account has been save in our database, please check your email inbox."
+			);
+			$this->general_lib->set_personalInfo_message($arr_errors);
+			redirect('site/customizes/payments');	
+		}
+	}*/
+
 	/*
 	* public function customize trip information
 	* @param 
@@ -546,6 +612,38 @@ class Site extends MU_Controller {
 		}
 		return $records;
 	}
+	public function clickCustomizeActivity() {
+		if ($this->input->post('checkbox_activity')) {
+			foreach ($this->input->post('checkbox_activity') as $element) {
+				$arr_mainactivity = $this->general_lib->get_main_activities();
+		        $new_arr_mainactivity = $this->insertArrayIndex($arr_mainactivity, $element, $element);
+		        $this->general_lib->set_main_activities($new_arr_mainactivity);
+			}
+		}
+
+		$this->general_lib->set_start_date_activity($this->input->post('txtFrom'));
+		$this->general_lib->set_end_date_activity($this->input->post('txtTo'));
+		
+		if ($this->input->post('checkbox_subactivity')) {
+			foreach ($this->input->post('checkbox_subactivity') as $element) {
+				$arr_subactivity = $this->general_lib->get_sub_activities();
+		        $new_arr_subactivity = $this->insertArrayIndex($arr_subactivity, $element, $element);
+		        $this->general_lib->set_sub_activities($new_arr_subactivity);
+			}
+		}
+
+		if ($this->input->post('checkbox_extra')) {
+			foreach ($this->input->post('checkbox_extra') as $element) {
+				$arr_extra_activity = $this->general_lib->get_extra_activities();
+		        $new_arr_extra_activity = $this->insertArrayIndex($arr_extra_activity, $element, $element);
+		        $this->general_lib->set_extra_activities($new_arr_extra_activity);
+			}
+		}
+		$this->general_lib->set_amount_extra($this->input->post('amountextras'));
+		$this->general_lib->set_people_sub_activity($this->input->post('actPeopleSubActivity'));
+		$this->general_lib->set_people_main_activity($this->input->post('actPeopleMainActivity'));
+	}
+
 	public function selectSubActivity($sub_act){
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 		$subActivity = $this->mod_fecustomize->selectSubActivity($this->session->userdata('ftvID'), $this->session->userdata('lcID'), $sub_act);
@@ -575,6 +673,30 @@ class Site extends MU_Controller {
 			}
 		}
 		return $data;
+	}
+
+	public function clickCustomizeAccommodation() {
+		if ($this->input->post('checkbox_accommodation')) {
+			foreach ($this->input->post('checkbox_accommodation') as $element) {
+				$arr_accommodation = $this->general_lib->get_accommodation();
+		        $new_arr_accommodation = $this->insertArrayIndex($arr_accommodation, $element, $element);
+		        $this->general_lib->set_accommodation($new_arr_accommodation);
+			}
+		}
+		if ($this->input->post('sub_acc_extra_product')) {
+			foreach ($this->input->post('sub_acc_extra_product') as $element) {
+				$arr_extra_acc = $this->general_lib->get_sub_acc_extr_product();
+		        $new_arr_extra_acc = $this->insertArrayIndex($arr_extra_acc, $element, $element);
+		        $this->general_lib->set_sub_acc_extr_product($new_arr_extra_acc);
+			}
+		}
+		$this->general_lib->set_sub_acc_amount_extra($this->input->post('amountAccExtras'));
+		$this->general_lib->set_checkin_date_accommodation($this->input->post('checkIn'));
+		$this->general_lib->set_checkout_date_accommodation($this->input->post('checkOut'));
+		$this->general_lib->set_single_room_accommodation($this->input->post('single'));
+		$this->general_lib->set_double_room_1bed_accommodation($this->input->post('double_room_1bed'));
+		$this->general_lib->set_double_room_2beds_accommodation($this->input->post('double_room_2beds'));
+		$this->general_lib->set_people_accommodation($this->input->post('peopleAccommodation'));
 	}
 	
 	/*select sub accommodation */
@@ -625,6 +747,36 @@ class Site extends MU_Controller {
 		}
 		return $tp_data;
 	}
+
+	public function clickCustomizeTransportation() {
+		if ($this->input->post('checkbox_transportation')) {
+			foreach ($this->input->post('checkbox_transportation') as $element) {
+				$arr_transportation = $this->general_lib->get_transportation();
+		        $new_arr_transportation = $this->insertArrayIndex($arr_transportation, $element, $element);
+		        $this->general_lib->set_transportation($new_arr_transportation);
+			}
+		}
+		if ($this->input->post('sub_trans_extra_product')) {
+			foreach ($this->input->post('sub_trans_extra_product') as $element) {
+				$arr_extra_trans = $this->general_lib->get_sub_trans_extr_product();
+		        $new_arr_extra_trans = $this->insertArrayIndex($arr_extra_trans, $element, $element);
+		        $this->general_lib->set_sub_trans_extr_product($new_arr_extra_trans);
+			}
+		}
+		if ($this->input->post('checkbox_subTrans')) {
+			foreach ($this->input->post('checkbox_subTrans') as $element) {
+				$arr_extra_sub_trans = $this->general_lib->get_sub_transportation();
+		        $new_arr_extra_sub_trans = $this->insertArrayIndex($arr_extra_sub_trans, $element, $element);
+		        $this->general_lib->set_sub_transportation($new_arr_extra_sub_trans);
+			}
+		}
+		$this->general_lib->set_departure_transportation($this->input->post('trans_departure'));	
+		$this->general_lib->set_return_date_transportation($this->input->post('trans_return'));
+		$this->general_lib->set_people_transportation($this->input->post('peopleTransportation'));	
+		$this->general_lib->set_people_sub_transportation($this->input->post('peopleSubTransportation'));
+		$this->general_lib->set_sub_trans_amount_extra($this->input->post('amountTransExtras'));
+	}
+
 	public function customizeExtra_service(){
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 		$ext_records = $this->mod_fecustomize->selectExtraProdcuts();
@@ -640,8 +792,66 @@ class Site extends MU_Controller {
 		}
 		return $extra_data;
 	}
-	public function customizePersonal_info(){ }
+	public function clickCustomizeExtraService() {
+		$this->general_lib->set_extra_services($this->input->post('checkbox_extra_service'));
+		$this->general_lib->set_num_extra_services($this->input->post('amountExpAmount'));
+	}
+	public function customizePersonal_info(){ 
+		$new_sess_passenger = $this->session->userdata('new_passenger_id');
+		$sess_passenger = $this->session->userdata("passenger");
+		$passenger_id = $sess_passenger ? $sess_passenger['pass_id'] : $new_sess_passenger ? $new_sess_passenger['pass_id'] : -1;
+		return $this->mod_fecustomize->customizePersonal_info($passenger_id);
+	}
+
+
+
+
+	/*
+	* public function customize_more_passenger
+	* load template fe_more_passenger
+	*/
+	public function customize_more_passenger() {
+		$new_sess_passenger = $this->session->userdata('new_passenger_id');
+		$login_sess_passenger = $this->session->userdata("passenger");
+		$pass_addby = $login_sess_passenger ? $login_sess_passenger['pass_id'] : $new_sess_passenger ? $new_sess_passenger['pass_id'] : 0;
+		$passengerInfo = array(
+			'pass_addby' => $pass_addby,
+			'pass_fname'        => $this->input->post('pfname'),
+            'pass_lname'        => $this->input->post('plname'),
+            'pass_email'        => $this->input->post('pemail'),
+            'pass_phone'        => $this->input->post('phphone'),
+            'pass_mobile'       => $this->input->post('pmobile'),
+            'pass_country'      => $this->input->post('pcountry'),
+            'pass_address'      => $this->input->post('paddress'),
+            'pass_company'      => $this->input->post('pcompany'),
+            'pass_gender'       => $this->input->post('pgender'),
+            'pass_status'       => 1,
+            'pass_deleted'      => 0,
+		);
+		$result  = $this->mod_fecustomize->personal_information($passengerInfo);
+		if (!$result) {
+			$arr_errors = array(
+				"success" => false,
+				"sms_type" => "danger",
+				"sms_title" => "Error!",
+				"sms_value" => "Sorry! That email is already registered. Please login before you booking."
+			);
+			echo json_encode($arr_errors);
+		} else {
+			$arr_errors = array(
+				"success" => true,
+				"sms_type" => "success",
+				"sms_title" => "Congradulation!",
+				"sms_value" => "You have been added a passenger with successfully."
+			);
+			echo json_encode($arr_errors);
+		}
+
+	}
 	
+
+
+
 	/*
 	* public function packages
 	* @param $display_page default (false)

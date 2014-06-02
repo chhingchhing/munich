@@ -66,7 +66,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 	   						'id' => "checkbox_accommodation"
 	   					);
 	   					?> 
-	   				<h4 id="<?php echo "main_act_order_$accOrder"; ?>" order="<?php echo $accOrder; ?>">
+	   				<h4 class="fe_customize" id="<?php echo "main_act_order_$accOrder"; ?>" order="<?php echo $accOrder; ?>">
 	   					<?php echo form_checkbox($checkbox_accommodation).nbs(); ?>
 	   					<?php echo $acc['clf_name'];?>
 	   				</h4>
@@ -80,11 +80,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				   				if ($check_in_date != '') { 
 				   					if (isset($check_in_date[$accOrder-1])) {
 				   						$start_date = $check_in_date[$accOrder-1];
-				   					} else {
-				   						$start_date = date('Y-m-d');
 				   					}
-			   					} else {
-			   						$start_date = date('Y-m-d');
 			   					}
 			                    $checkIn = array(
 			                    	'id'=>'start_date_'.$accOrder, 
@@ -149,8 +145,8 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				        </div>
 			    	</div>
 			    	<div class="form-group room_types">
-				        <label class="col-sm-3 control-label">Single Room (1 Bed, 1 Guest):</label>
-				        <div class="col-sm-9" id='single'>
+				        <label class="col-sm-5 control-label">Single Room (1 Bed, 1 Guest) :</label>
+				        <div class="col-sm-7" id='single'>
 				        	<?php 
 				        	$single_selected = 0;
 				        	$single_rooms = $this->general_lib->get_single_room_accommodation();
@@ -164,8 +160,8 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				        </div>
 			    	</div>
 			    	<div class="form-group room_types">
-				        <label class="col-sm-3 control-label"><?php echo $acc['rt_name'];?> Double Room (1 Bed, 2 Guests) :</label>
-				        <div class="col-sm-9" id="double_room_1bed">
+				        <label class="col-sm-5 control-label">Double Room (1 Bed, 2 Guests) :</label>
+				        <div class="col-sm-7" id="double_room_1bed">
 				        	<?php 
 				        	$double1bed_selected = 0;
 				        	$double1bed_rooms = $this->general_lib->get_double_room_1bed_accommodation();
@@ -184,8 +180,8 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				        </div>
 			    	</div>
 			    	<div class="form-group room_types">
-				        <label class="col-sm-3 control-label">Double Room (2 Beds, 2 Guests) :</label>
-				        <div class="col-sm-9" id="double_room_2beds">
+				        <label class="col-sm-5 control-label">Double Room (2 Beds, 2 Guests) :</label>
+				        <div class="col-sm-7" id="double_room_2beds">
 				        	<?php 
 				        	$double2beds_selected = 0;
 				        	$double2beds_rooms = $this->general_lib->get_double_room_2beds_accommodation();
@@ -261,7 +257,11 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 								}
 							}
 					    ?>
-					    <?php foreach ($extra as $ep_result) {?>
+					    <?php 
+					    $accExtraOrder = 0;
+					    foreach ($extra as $ep_result) {
+					    	$accExtraOrder++;
+					    ?>
 						    <div class="col-sm-12">
 					    		<div class="col-sm-3">
 					   				<?php $extras = array('src' => 'user_uploads/thumbnail/original/'.$ep_result['pho_source'],'alt' => 'customize','class' => 'img-thumbnail images-dashboard','title' => 'Customize');?>
@@ -270,18 +270,49 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 					   			<div class="col-sm-7">
 					   				<label>
 					   					<?php 
-					   					$checked = $this->session->userdata('extraactivity');
-					   					$checkbox_extra = array('value' => $ep_result['ep_id'], 'checked' => !$checked ? false : true, 'class' => 'check_sub_element', 'name' => 'checkbox_extra[]', 'id' => 'checkbox_extra');
-					   					echo form_checkbox($checkbox_extra);
-					   					?>
+					   					$sub_acc_extra_pro = $this->general_lib->get_sub_acc_extr_product();
+					   					$checked = false;
+					   					if ($sub_acc_extra_pro != '') { 
+					   						if (isset($sub_acc_extra_pro[$ep_result['ep_id']])) {
+					   							if ($sub_acc_extra_pro[$ep_result['ep_id']] == $ep_result['ep_id']) {
+							   						$checked = true;
+							   					}
+					   						}
+					   					}
+
+					   					$checkbox_sub_acc = array(
+					   						'value' => $ep_result['ep_id'], 
+					   						'checked' => $checked, 
+					   						'class' => 'check_sub_element checkbox_subactivity', 
+					   						'name' => 'sub_acc_extra_product[]', 
+					   						'id' => 'checkbox_subactivity_'.$accExtraOrder,
+					   						'order' => $accExtraOrder
+					   					);
+					   					echo form_checkbox($checkbox_sub_acc);
+					   				?> 
 					   					<?php echo $ep_result['ep_name'];?>
 					   				</label>
 					   				<p><?php echo $ep_result['ep_bookingtext']; ?></p>
 					   			</div>
 					   			<div class="col-sm-2">
 					   				<label>Amount of Extra Product</label>
-					   				<input type="text" name="amountextras[]" class="form-control amount_extras" />
-					   				<?php ?>
+					   				<?php
+					   				$value = "";
+					   				$amountExtras = $this->general_lib->get_sub_acc_amount_extra();
+				   					if (isset($amountExtras[$ep_result['ep_id']])) {
+					   					$main_value = $amountExtras[$ep_result['ep_id']["0"]];
+					   					foreach ($main_value as $val) {
+					   						$value = $val;
+					   					}
+					   				}
+
+				   					$input = array(
+				   							"name"=>"amountAccExtras[".$ep_result['ep_id']."][]",
+				   							"class"=>"form-control amount_extras", 
+				   							"value"=> $value
+				   						);
+				   					echo form_input($input);
+					   				?>
 					   			</div>
 					   			<div class="clear_both"></div>
 							</div>
@@ -289,7 +320,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 	   			</div>
 	   			<?php }?>	
 	   		</div> 			
-	   		<?php echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-info btn-sm')); ?>
+	   		<?php echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
 			<?php $input = array('name' => 'btnAccommodation', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
 			<p></p>
 	   </div> 
