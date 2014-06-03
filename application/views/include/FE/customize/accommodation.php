@@ -147,10 +147,67 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 			    	<div class="form-group room_types">
 				        <label class="col-sm-2 control-label">Room :</label>
 				        <div class="col-sm-10">
-				        	<?php
-				        	$selected = $this->general_lib->get_room_type_accommodation();
-				        	echo form_multiselect("multi_select_rooms[]", $opt_room_types, $selected, "class='form-control room_types' ");
-				        	?>
+				        	<div class="panel-group" id="accordion">
+							  <div class="panel panel-success">
+							    <div class="panel-heading">
+							      <h4 class="panel-title">
+							        <a data-toggle="collapse" data-parent="#accordion" href="#roomType">
+							          Room <span class="caret"></span>
+							        </a>
+							      </h4>
+							    </div>
+							    <div id="roomType" class="panel-collapse collapse">
+							      <div class="panel-body">
+							        <?php 
+							        foreach ($room_types->result() as $item) {
+							        	?>
+							        	<div class='row'>
+							        		<div class="col-xs-10">
+							        			<span>
+									        		<?php 
+									        		$rooms = $this->general_lib->get_room_type_accommodation();
+								   					$checked = false;
+								   					if ($rooms != '') {
+								   						if (isset($rooms[$item->rt_id])) {
+								   							if ($rooms[$item->rt_id] == $item->rt_id) {
+										   						$checked = true;
+										   					}
+								   						}
+								   					}
+									        		$room_type_checked = array(
+								   						'value' => $item->rt_id, 
+								   						'checked' => $checked, 
+								   						'class' => 'check_main_element', 
+								   						'name' => 'room_type_checked['.$item->rt_id.']', 
+								   						'id' => "room_type_checked"
+								   					);
+									        		echo form_checkbox($room_type_checked);
+									        		echo nbs();
+									        		echo $item->rt_name;
+									        		echo nbs(5);
+									        		echo '(Amount people per room: '.$item->rt_people_per_room.')';
+									        		?>
+									        	</span>
+							        		</div>
+								        	<div class="col-xs-2">
+								        		<?php 
+								        		$amount_rooms_booked = $this->general_lib->get_amount_book_room();
+								        		$input = array(
+								        			'name' => 'amount_book_room['.$item->rt_id.']',
+								        			'class' => 'form-control input-sm',
+								        			'value' => $amount_rooms_booked[$item->rt_id]
+								        			);
+								        		echo form_input($input); 
+								        		?>
+								        	</div>
+							        	</div>
+							        	<?php
+							        }
+							        ?>
+							      </div>
+							    </div>
+							  </div>
+							</div>
 				        </div>
 			    	</div>
 			    	
