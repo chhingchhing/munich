@@ -288,6 +288,8 @@ class Site extends MU_Controller {
      	$this->general_lib->empty_accommodation();
      	$this->general_lib->empty_checkin_date_accommodation();
      	$this->general_lib->empty_checkout_date_accommodation();
+     	$this->general_lib->empty_room_type_accommodation();
+     	$this->general_lib->empty_amount_book_room();
      	$this->general_lib->empty_sub_acc_amount_extra();
      	$this->general_lib->empty_sub_acc_extr_product();
      }
