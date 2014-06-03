@@ -259,18 +259,14 @@
 					   				<?php 
 						   				$value = "";
 						   				$amountExtras = $this->general_lib->get_sub_trans_amount_extra();
-
-										/*if (isset($amountExtras[$ep_result['ep_id']])) {
-						   					$main_value = $amountExtras[$ep_result['ep_id']["0"]];
-						   					foreach ($main_value as $val) {
-						   						$value = $val;
-						   					}
-						   				}*/
+										if (isset($amountExtras[$ep_result['ep_id']])) {
+						   					$value = $amountExtras[$ep_result['ep_id']];
+						   				}
 
 					   					$input = array(
 					   							"name"=>"amountTransExtras[".$ep_result['ep_id']."]",
 					   							"class"=>"form-control amount_extras", 
-					   							"value"=> $amountExtras[$ep_result['ep_id']]
+					   							"value"=> $value
 					   						);
 					   					echo form_input($input);
 					   				?>

@@ -151,12 +151,12 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 							  <div class="panel panel-success">
 							    <div class="panel-heading">
 							      <h4 class="panel-title">
-							        <a data-toggle="collapse" data-parent="#accordion" href="#roomType">
+							        <a data-toggle="collapse" data-parent="#accordion" href="#roomType_<?php echo $accOrder; ?>">
 							          Room <span class="caret"></span>
 							        </a>
 							      </h4>
 							    </div>
-							    <div id="roomType" class="panel-collapse collapse">
+							    <div id="roomType_<?php echo $accOrder; ?>" class="panel-collapse collapse">
 							      <div class="panel-body">
 							        <?php 
 							        foreach ($room_types->result() as $item) {
@@ -192,10 +192,14 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 								        	<div class="col-xs-2">
 								        		<?php 
 								        		$amount_rooms_booked = $this->general_lib->get_amount_book_room();
+								        		$value = '';
+								        		if (isset($amount_rooms_booked[$item->rt_id])) {
+								        			$value = $amount_rooms_booked[$item->rt_id];
+								        		}
 								        		$input = array(
 								        			'name' => 'amount_book_room['.$item->rt_id.']',
 								        			'class' => 'form-control input-sm',
-								        			'value' => $amount_rooms_booked[$item->rt_id]
+								        			'value' => $value
 								        			);
 								        		echo form_input($input); 
 								        		?>
