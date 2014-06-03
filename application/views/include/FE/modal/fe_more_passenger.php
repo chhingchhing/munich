@@ -8,7 +8,7 @@
                 <h2>Personal Information</h2>
                 <hr>        
                 <div class="col-sm-12">
-                  <div class="form-group" id="feedback_bar"></div>
+                  <div class="form-group" id="feedback_bar_modal"></div>
 
                   <div class="form-group">
                     <label class="col-sm-3 control-label">Passenger firstname <span class="require">*</span>:</label>
@@ -19,7 +19,7 @@
                           'name' => 'pfname', 
                           'class' => 'form-control input_require', 
                           'placeholder' => 'Passenger firstname',
-                          'value' => $passenger_info->pass_fname
+                          'value' => ''
                           ); 
                           echo form_input($pfname); 
                         ?>
@@ -33,7 +33,7 @@
                           'name' => 'plname', 
                           'class' => 'form-control input_require', 
                           'placeholder' => 'Passenger lastname',
-                          'value' => $passenger_info->pass_lname
+                          'value' => ''
                           ); 
                           echo form_input($plname); 
                          ?>
@@ -48,7 +48,7 @@
                           'name' => 'pemail', 
                           'class' => 'form-control input_email',
                           'placeholder' => 'Email',
-                          'value' => $passenger_info->pass_email
+                          'value' => ''
                           ); 
                           echo form_input($pemail); 
                         ?>
@@ -63,7 +63,7 @@
                           'name' => 'phphone', 
                           'class' => 'form-control input_require', 
                           'placeholder' => 'Home phone',
-                          'value' => $passenger_info->pass_phone
+                          'value' => ''
                           ); 
                           echo form_input($phphone); 
                          ?>
@@ -77,7 +77,7 @@
                           'name' => 'pmobile', 
                           'class' => 'form-control', 
                           'placeholder' => 'Mobile phone ',
-                          'value' => $passenger_info->pass_mobile
+                          'value' => ''
                           ); 
                           echo form_input($pmobile); 
                          ?>
@@ -90,7 +90,7 @@
                           'name' => 'pcompany', 
                           'class' => 'form-control', 
                           'placeholder' => 'Company',
-                          'value'=> $passenger_info->pass_company
+                          'value'=> ''
                           ); 
                           echo form_input($pcompany); 
                         ?>
@@ -103,7 +103,7 @@
                           'name' => 'pcountry', 
                           'class' => 'form-control input_require', 
                           'placeholder' => 'Country',
-                          'value' => $passenger_info->pass_country
+                          'value' => ''
                           ); 
                           echo form_input($pcountry); 
                          ?>
@@ -115,7 +115,7 @@
                     <div class="col-sm-5">
                          <?php 
                          $pgender = array('selected' => '--- selected --- ','F' => 'Female' , 'M' => 'Male'); 
-                         echo form_dropdown("gender", $pgender, $passenger_info->pass_gender,"class = form-control"); 
+                         echo form_dropdown("gender", $pgender, '',"class = form-control"); 
                          ?>
                     </div>
                     <p class="help-block error"></p>
@@ -128,7 +128,7 @@
                           'class' => 'form-control input_require', 
                           'placeholder' => 'Passenger Address', 
                           'rows' => '3',
-                          'valu' => $passenger_info->pass_address
+                          'valu' => ''
                           ); 
                           echo form_textarea($paddress); 
                          ?>
@@ -147,7 +147,8 @@
                       $people = array(
                       'name' => 'add_pass_amount_pass', 
                       'class' => 'form-control add_pass_amount_pass', 
-                      'value' => $this->session->userdata("people")
+                      'value' => $this->session->userdata("people"),
+                      'id' => 'add_pass_amount_pass'
                       ); 
                       echo form_input($people); 
                     ?>

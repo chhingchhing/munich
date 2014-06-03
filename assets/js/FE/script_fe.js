@@ -267,9 +267,26 @@ $(function() {
     	$('input.add_pass_amount_pass').prop("disabled", false);
     });
 
-    $("body").on("change", "input[name='add_pass_amount_pass']", function(event) {
+    $("body").on("change", "input#add_pass_amount_pass", function(event) {
     	event.preventDefault();
-    	alert("json");
+    	var url = $('form[name="frm_personal_info_modal"]').attr("action");
+    	var amount_changed = $(this).val();
+    	url = url.replace('customize_more_passenger', 'update_sess_amount_people');
+    	$.ajax({
+    		type: "POST",
+    		url: url,
+    		dataType: "json",
+    		data: {"term" : amount_changed},
+    		success: function(response){
+    			if (response) {
+					var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
+					div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
+					div_sms += '</div>';
+					$("div#feedback_bar_modal").append(div_sms);
+				}
+    		}
+    	});
     });
 
 	// Check passenger exists in Customize FE
@@ -283,14 +300,11 @@ $(function() {
 			data: data,
 			success: function(response) {
 				if (response) {
-					if (response.sms_type == 'warning') {
-
-					};
 					var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
 					div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
 					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
 					div_sms += '</div>';
-					$("div#feedback_bar").append(div_sms);
+					$("div#feedback_bar_modal").append(div_sms);
 				}
 			}
 		});

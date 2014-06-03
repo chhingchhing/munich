@@ -180,7 +180,7 @@ class Mod_FeCustomize extends MU_model {
     */
     public function personal_information($passengerInfo){
         // Plus 1 more is trip leader
-        $amount_people = $this->count_all_passenger_by_pass_addby($passengerInfo['pass_addby']) + 1;
+        $amount_people = $this->get_all_member_by_pass_addby($passengerInfo['pass_addby'])->num_rows() + 1;
         if ($amount_people < $this->session->userdata("people")) {
             if ($this->exist_passenger_by_email($passengerInfo['pass_email'])) {
                 return false;
@@ -200,9 +200,9 @@ class Mod_FeCustomize extends MU_model {
     /*
     * Count all passengers who added by a trip leader
     */
-    function count_all_passenger_by_pass_addby($pass_addby) {
+    function get_all_member_by_pass_addby($pass_addby) {
         $query = $this->db->where("pass_addby", $pass_addby)->get("passenger");
-        return $query->num_rows();
+        return $query;
     }
 
     /*
