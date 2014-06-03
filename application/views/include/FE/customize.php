@@ -113,6 +113,7 @@
 						$amountTpExtra = $this->general_lib->get_sub_trans_amount_extra();
 						$tpExtraOrder = 0;
 						foreach ($tpExtra as $key => $amountExtras) {
+							var_dump($amountTpExtra[$amountExtras]);
 							$tpExtraOrder++;
 							echo '<b> Extra Products : </b>'.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $amountExtras), 'ep_name');
 							$tpExtrasPrice = MU_Model::getForiegnTableName('extraproduct', array('ep_id'=> $amountExtras), 'ep_saleprice');

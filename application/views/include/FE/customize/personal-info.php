@@ -154,12 +154,12 @@ if (isset($arr_messages)) {
 					  <div class="panel panel-success">
 					    <div class="panel-heading">
 					      <h4 class="panel-title">
-					        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-					          Members of trip
+					        <a data-toggle="collapse" data-parent="#accordion" href="#members">
+					          Members of trip <span class="caret"></span>
 					        </a>
 					      </h4>
 					    </div>
-					    <div id="collapseOne" class="panel-collapse collapse in">
+					    <div id="members" class="panel-collapse collapse in">
 					      <div class="panel-body">
 					        <?php 
 					        foreach ($members->result() as $item) {
