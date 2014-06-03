@@ -387,7 +387,6 @@ class General_lib
 	function empty_sub_trans_amount_extra() {
 		$this->CI->session->unset_userdata('amount_trans_extra');
 	}
-
 	// Extra-service session
 	function get_extra_services()
 	{

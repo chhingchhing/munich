@@ -141,10 +141,8 @@
 				}
 				$total = 0;
 				if(isset($tpPrice)){
-					$total = $actPrice + $subActPrice + $epPrice + $tpPrice + $subTpPrice + $tpExtrasPrice + $exPrice;
+					$total += $actPrice + $subActPrice + $epPrice + $tpPrice + $subTpPrice + $tpExtrasPrice + $exPrice;
 					echo '<h3> Total : $'.$total.'</h3>';
-				}else{
-					echo "<br> Total = 0";
 				}
 
 			?>
