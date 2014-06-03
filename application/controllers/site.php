@@ -378,9 +378,22 @@ class Site extends MU_Controller {
 			}
 		}
 		if ($display_page == "personal-info") {
-			if ($this->session->userdata('new_passenger_id') OR $this->session->userdata('passenger')) {
+			$login_sess_passenger = $this->session->userdata('passenger');
+	        $new_sess_passenger = $this->session->userdata('new_passenger_id');
+	        $pass_id = -1;
+			if ($new_sess_passenger OR $login_sess_passenger) {
 				$this->general_lib->empty_personalInfo_message();
+
+				if ($new_sess_passenger != '') {
+	        		$pass_id = $new_sess_passenger['pass_id'];
+	        	}
+	        	if ($login_sess_passenger != '') {
+	        		$pass_id = $login_sess_passenger['pass_id'];
+	        	}
+	        	$fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
 			}
+	        
+
 			if($this->input->post('btnPersonalInfo')){	
 				$this->general_lib->empty_personalInfo_message();
 				// $this->clear_all_for_personal_info();
@@ -833,6 +846,21 @@ class Site extends MU_Controller {
 			echo json_encode($arr_errors);
 		}
 
+	}
+
+	/*
+	* Change session amount of people
+	*/
+	function update_sess_amount_people() {
+		$this->session->set_userdata('people', $this->input->post('term'));
+		$arr_errors = array(
+			"success" => true,
+			"sms_type" => "success",
+			"sms_title" => "Congradulation!",
+			"sms_value" => "Now you can add your friend(s) more for this booking.",
+			"amount_people" =>$this->session->userdata('people')
+		);
+		echo json_encode($arr_errors);
 	}
 	
 
