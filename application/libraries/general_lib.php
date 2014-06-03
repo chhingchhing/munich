@@ -219,6 +219,20 @@ class General_lib
 		$this->CI->session->unset_userdata('room_types_acc');
 	}
 
+	function get_amount_book_room()
+	{
+		if(!$this->CI->session->userdata('amount_book_room'))
+			$this->set_amount_book_room('');
+		return $this->CI->session->userdata('amount_book_room');
+	}
+	function set_amount_book_room($amount_book_room)
+	{
+		$this->CI->session->set_userdata('amount_book_room',$amount_book_room);
+	}
+	function empty_amount_book_room() {
+		$this->CI->session->unset_userdata('amount_book_room');
+	}
+
 	/*function get_single_room_accommodation()
 	{
 		if(!$this->CI->session->userdata('single_room_accommodation'))

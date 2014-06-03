@@ -664,7 +664,8 @@ class Site extends MU_Controller {
 		$this->general_lib->set_checkin_date_accommodation($this->input->post('checkIn'));
 		$this->general_lib->set_checkout_date_accommodation($this->input->post('checkOut'));
 		$this->general_lib->set_people_accommodation($this->input->post('peopleAccommodation'));
-		$this->general_lib->set_room_type_accommodation($this->input->post('multi_select_rooms'));
+		$this->general_lib->set_room_type_accommodation($this->input->post('room_type_checked'));
+		$this->general_lib->set_amount_book_room($this->input->post('amount_book_room'));
 	}
 	
 	/*select sub accommodation */
