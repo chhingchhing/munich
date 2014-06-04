@@ -277,7 +277,7 @@
 						<?php } ?>
 	   			</div>
 	   			<?php }?>	
-	   		</div> 			
+	   		</div>			
 	   		<?php echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
 			<?php $input = array('name' => 'btnAccommodation', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
 			<p></p>
