@@ -1,20 +1,4 @@
 <!-- start accommodation -->
-<?php
-$option[] = "-- Select --";
-for ($i=1; $i <= $this->session->userdata("people"); $i++) {
-	$option[$i] = "$i Room(s), $i Guest(s)";
-}
-
-$double_room_1bed[] = "-- Select --";
-for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
-	$double_room_1bed[$i] = "$i Room(s), ".($i * 2)." Guest(s)";
-}
-
-$double_room_2beds[] = "-- Select --";
-for ($i=1; $i <= $this->session->userdata("people")/2; $i++) { 
-	$double_room_2beds[$i] = "$i Room(s), ".($i * 2)." Guest(s)";
-}
-?>
 <?php  echo form_open_multipart('site/customizes/accommodation', 'class="form-horizontal"'); ?>
 	   <div class="col-sm-12 form-booking" id="accommodation">
 	   		<h2>Choose Accommodation</h2>
@@ -159,6 +143,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 							    <div id="roomType_<?php echo $accOrder; ?>" class="panel-collapse collapse">
 							      <div class="panel-body">
 							        <?php 
+							        $room_types = $this->mod_fecustomize->getAllRoomType();
 							        foreach ($room_types->result() as $item) {
 							        	?>
 							        	<div class='row'>

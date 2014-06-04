@@ -344,14 +344,7 @@ class Site extends MU_Controller {
  
 				redirect('site/customizes/transportation');
 			}else{
-				$fe_data['opt_room_types'] = array("" => "-- Select --");
-		        foreach ($this->mod_fecustomize->getAllRoomType()->result() as $room_type)
-		        {
-		            // $fe_data['opt_room_types'][$room_type->rt_id] = $room_type->rt_name ." (Amount People: $room_type->rt_people_per_room : $room_type->rt_description) ";
-		            $fe_data['opt_room_types'][$room_type->rt_id] = "- ".$room_type->rt_name ." (Amount People: $room_type->rt_people_per_room) ";
-		        }
-
-		        $fe_data['room_types'] = $this->mod_fecustomize->getAllRoomType();
+		        // $fe_data['room_types'] = $this->mod_fecustomize->getAllRoomType();
 				$fe_data['recordAccommodation'] = $this->customizeAccommodation();
 			}	
 		}
