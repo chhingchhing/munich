@@ -10,11 +10,6 @@
 	   			foreach ($recordAccommodation as $acc) {
 	   				$accOrder++;
 
-/*echo form_input('test[]['.$acc['acc_id'].']');
-echo form_input('test[]['.$acc['acc_id'].']');
-echo form_input('test[]['.$acc['acc_id'].']');*/
-
-
 	   				// Disable day of a week
 		   			$daysOfWeekDisabled = '';
 		   			if ($recordAccommodation[$accOrder-1]['sunday'] == 0) $daysOfWeekDisabled .= "0, ";

@@ -211,7 +211,7 @@
 						} ?>
 			      	</table>
 			      	<?php //echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
-			      	<?php $input = array('name' => 'btnEachTransportation', 'class' => 'btn btn-default btn-sm', 'value' => ' Next '); echo form_submit($input);?>
+			      	<?php $input = array('name' => 'btnEachTransportation', 'class' => 'btn btn-default btn-sm', 'value' => ' Save '); echo form_submit($input);?>
 			      	<?php echo form_close(); ?>
 			      </div>
 			    </div>
@@ -276,7 +276,7 @@
 			      	?>
 					</table>
 					<?php //echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
-					<?php $input = array('name' => 'btnEachSubAccommodation', 'class' => 'btn btn-default btn-sm', 'value' => ' Next '); echo form_submit($input);?>
+					<?php $input = array('name' => 'btnEachSubAccommodation', 'class' => 'btn btn-default btn-sm', 'value' => ' Save '); echo form_submit($input);?>
 					<?php echo form_close(); ?>
 			      </div>
 			    </div>
@@ -330,7 +330,7 @@
 					} ?>
 				</table>
 				<?php //echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
-				<?php $input = array('name' => 'btnEachSubAccExtraPro', 'class' => 'btn btn-default btn-sm', 'value' => ' Next '); echo form_submit($input);?>
+				<?php $input = array('name' => 'btnEachSubAccExtraPro', 'class' => 'btn btn-default btn-sm', 'value' => ' Save '); echo form_submit($input);?>
 				<?php echo form_close(); ?>
 			      </div>
 			    </div>
@@ -388,7 +388,7 @@
 					} ?>
 					</table>
 					<?php //echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
-					<?php $input = array('name' => 'btnEachSubActivity', 'class' => 'btn btn-default btn-sm', 'value' => ' Next '); echo form_submit($input);?>
+					<?php $input = array('name' => 'btnEachSubActivity', 'class' => 'btn btn-default btn-sm', 'value' => ' Save '); echo form_submit($input);?>
 					<?php echo form_close(); ?>
 			      </div>
 			    </div>
@@ -442,7 +442,7 @@
 					} ?>
 				</table>
 				<?php //echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
-				<?php $input = array('name' => 'btnEachSubActExtraPro', 'class' => 'btn btn-default btn-sm', 'value' => ' Next '); echo form_submit($input);?>
+				<?php $input = array('name' => 'btnEachSubActExtraPro', 'class' => 'btn btn-default btn-sm', 'value' => ' Save '); echo form_submit($input);?>
 				<?php echo form_close(); ?>
 			      </div>
 			    </div>
@@ -512,7 +512,7 @@
 				} ?>
 			</table>
 			<?php //echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
-			<?php $input = array('name' => 'btnEachExtrapService', 'class' => 'btn btn-default btn-sm', 'value' => ' Next '); echo form_submit($input);?>
+			<?php $input = array('name' => 'btnEachExtrapService', 'class' => 'btn btn-default btn-sm', 'value' => ' Save '); echo form_submit($input);?>
 			<?php echo form_close(); ?>
 		      </div>
 		    </div>
