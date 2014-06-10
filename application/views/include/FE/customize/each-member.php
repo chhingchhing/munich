@@ -11,7 +11,7 @@
     </div>
     <div id="personal_info" class="panel-collapse collapse in">
       <div class="panel-body">
-      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_personal_info" '); ?>
 	   		<div class="col-sm-12">
 	   			<div class='col-sm-9'>
 		   			<div class="form-group">
@@ -175,7 +175,7 @@
 			    </div>
 			    <div id="extra_transport" class="panel-collapse collapse in">
 			      <div class="panel-body">
-			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_trans_extra_pro" '); ?>
 			      	<table class='table'>
 			      		<tr>
 			      			<th>Item</th>
@@ -245,7 +245,7 @@
 			    </div>
 			    <div id="sub_acc" class="panel-collapse collapse in">
 			      <div class="panel-body">
-			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_acc" '); ?>
 			      	<table class='table'>
 			      		<tr>
 				      		<th>Room</th>
@@ -294,7 +294,7 @@
 			    </div>
 			    <div id="extra_acc" class="panel-collapse collapse in">
 			      <div class="panel-body">
-			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_acc_extra_pro" '); ?>
 			      	<table class='table'>
 			      		<tr>
 			      			<th>Item</th>
@@ -365,7 +365,7 @@
 			    </div>
 			    <div id="sub_activity" class="panel-collapse collapse in">
 			      <div class="panel-body">
-			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_act" '); ?>
 			      	<table class='table'>
 			      	<?php 
 			      	$activities = $this->general_lib->get_sub_activities();
@@ -406,7 +406,7 @@
 			    </div>
 			    <div id="extra_act" class="panel-collapse collapse in">
 			      <div class="panel-body">
-			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_act_extra_pro" '); ?>
 			      	<table class='table'>
 			      		<tr>
 			      			<th>Item</th>
@@ -476,7 +476,7 @@
 		    </div>
 		    <div id="extra_services" class="panel-collapse collapse in">
 		      <div class="panel-body">
-		      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+		      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_extra_service" '); ?>
 		      	<table class='table'>
 		      		<tr>
 		      			<th>Item</th>
