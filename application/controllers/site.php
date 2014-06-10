@@ -321,7 +321,7 @@ class Site extends MU_Controller {
 	* @param $display_page default (false)
 	* load template customizes and include customize
 	*/
-	public function customizes($display_page = false){
+	public function customizes($display_page = false, $pass_id = false){
 		// $this->session->sess_destroy();
 		if($display_page == "customizeTrip"){
 			$this->customizeTrip();
@@ -385,8 +385,8 @@ class Site extends MU_Controller {
 	        	if ($login_sess_passenger != '') {
 	        		$pass_id = $login_sess_passenger['pass_id'];
 	        	}
-	        	$fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
 			}
+			$fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
 	        
 
 			if($this->input->post('btnPersonalInfo')){	
@@ -416,7 +416,7 @@ class Site extends MU_Controller {
 					$this->general_lib->set_personalInfo_message($arr_errors);
 
 					$fe_data['arr_messages'] = $this->general_lib->get_personalInfo_message();
-					$fe_data['passenger_info'] = $this->customizePersonal_info();
+					$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id);
 				}else{	
 					$passengerInfo = array(
 						'pass_fname'        => $this->input->post('pfname'),
@@ -437,7 +437,7 @@ class Site extends MU_Controller {
 							"success" => false,
 							"sms_type" => "danger",
 							"sms_title" => "Error!",
-							"sms_value" => "Sorry! That email is already registered. Please login before you booking"
+							"sms_value" => "Sorry! That email is already registered. Please check your email again or login before you booking"
 						);
 						$this->general_lib->set_personalInfo_message($arr_errors);
 						redirect('site/customizes/personal-info');
@@ -452,9 +452,14 @@ class Site extends MU_Controller {
 
 			}else{
 				$fe_data['arr_messages'] = $this->general_lib->get_personalInfo_message();
-				$fe_data['passenger_info'] = $this->customizePersonal_info(); 
+				$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id); 
 			}
 		}
+
+		if ($display_page == 'each-member') {
+			$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id);
+		}
+
 		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
 		$fe_data['site_setting'] = "customizes";
 
@@ -659,6 +664,7 @@ class Site extends MU_Controller {
 		        $this->general_lib->set_accommodation($new_arr_accommodation);
 			}
 		}
+
 		if ($this->input->post('sub_acc_extra_product')) {
 			foreach ($this->input->post('sub_acc_extra_product') as $element) {
 				$arr_extra_acc = $this->general_lib->get_sub_acc_extr_product();
@@ -666,7 +672,6 @@ class Site extends MU_Controller {
 		        $this->general_lib->set_sub_acc_extr_product($new_arr_extra_acc);
 			}
 		}
-
 
 		$this->general_lib->set_sub_acc_amount_extra($this->input->post('amountAccExtras'));
 		$this->general_lib->set_checkin_date_accommodation($this->input->post('checkIn'));
@@ -773,16 +778,7 @@ class Site extends MU_Controller {
 		$this->general_lib->set_extra_services($this->input->post('checkbox_extra_service'));
 		$this->general_lib->set_num_extra_services($this->input->post('amountExpAmount'));
 	}
-	public function customizePersonal_info(){ 
-		$new_sess_passenger = $this->session->userdata('new_passenger_id');
-		$sess_passenger = $this->session->userdata("passenger");
-		if ($new_sess_passenger) {
-			$passenger_id = $new_sess_passenger['pass_id'];
-		} else if($sess_passenger) {
-			$passenger_id = $sess_passenger['pass_id'];
-		} else {
-			$passenger_id = -1;
-		}
+	public function customizePersonal_info($passenger_id){ 
 		return $this->mod_fecustomize->customizePersonal_info($passenger_id);
 	}
 

@@ -115,7 +115,7 @@
                     <div class="col-sm-5">
                          <?php 
                          $pgender = array('selected' => '--- selected --- ','F' => 'Female' , 'M' => 'Male'); 
-                         echo form_dropdown("gender", $pgender, '',"class = form-control"); 
+                         echo form_dropdown("pgender", $pgender, '',"class = form-control"); 
                          ?>
                     </div>
                     <p class="help-block error"></p>

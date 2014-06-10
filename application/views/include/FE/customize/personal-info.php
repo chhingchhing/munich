@@ -126,7 +126,7 @@ if (isset($arr_messages)) {
 		   				<div class="col-sm-7">
 					         <?php 
 					         $pgender = array('selected' => '--- selected --- ','F' => 'Female' , 'M' => 'Male'); 
-					         echo form_dropdown("gender", $pgender, $passenger_info->pass_gender,"class = 'form-control' "); 
+					         echo form_dropdown("pgender", $pgender, $passenger_info->pass_gender,"class = 'form-control' "); 
 					         ?>
 					    </div>
 					    <p class="help-block error"></p>
@@ -162,10 +162,14 @@ if (isset($arr_messages)) {
 					    <div id="members" class="panel-collapse collapse in">
 					      <div class="panel-body">
 					        <?php 
-					        foreach ($members->result() as $item) {
-					        ?>
-					        	<p><?php echo ucwords($item->pass_fname." ".$item->pass_lname); ?></p>
-					        <?php
+					        if (isset($members)) {
+					        	if ($members->num_rows() > 0) {
+						        	foreach ($members->result() as $item) {
+						        		echo anchor('site/customizes/each-member/'.$item->pass_id, ucwords($item->pass_fname." ".$item->pass_lname));
+						    		}
+						    	}
+					        } else {
+					        	echo "No member(s) added for this booking.";
 					        }
 					        ?>
 					      </div>
