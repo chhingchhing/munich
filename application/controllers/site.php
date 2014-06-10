@@ -325,46 +325,48 @@ class Site extends MU_Controller {
 		// $this->session->sess_destroy();
 		if($display_page == "customizeTrip"){
 			$this->customizeTrip();
-			redirect('site/customizes/activities');
-		}
-		if ($display_page == "activities") {
-			if($this->input->post('btnActivity')){
-				$this->clear_all_for_activity();
-				$this->clickCustomizeActivity();
-
-				redirect('site/customizes/accommodation');
-			}else{
-				$fe_data['recordActivities'] = $this->customizeActivity();
-			}
-		}
-		if ($display_page == "accommodation") {
-			if($this->input->post('btnAccommodation')){	
-				$this->clear_all_for_accommodation();
-				$this->clickCustomizeAccommodation();
- 
-				redirect('site/customizes/transportation');
-			}else{
-				$fe_data['opt_room_types'] = array("" => "-- Select --");
-		        foreach ($this->mod_fecustomize->getAllRoomType()->result() as $room_type)
-		        {
-		            // $fe_data['opt_room_types'][$room_type->rt_id] = $room_type->rt_name ." (Amount People: $room_type->rt_people_per_room : $room_type->rt_description) ";
-		            $fe_data['opt_room_types'][$room_type->rt_id] = "- ".$room_type->rt_name ." (Amount People: $room_type->rt_people_per_room) ";
-		        }
-
-		        $fe_data['room_types'] = $this->mod_fecustomize->getAllRoomType();
-				$fe_data['recordAccommodation'] = $this->customizeAccommodation();
-			}	
+			redirect('site/customizes/transportation');
 		}
 		if($display_page == "transportation"){
 			if($this->input->post('btnTransportation')){
 				$this->clear_all_for_transportation();
 				$this->clickCustomizeTransportation();
 
-				redirect('site/customizes/extra-service');
+				redirect('site/customizes/accommodation');
 			}else{
 				$fe_data['recordTransportation'] = $this->customizeTransportation();
 			}
 		}
+
+		if ($display_page == "accommodation") {
+			if($this->input->post('btnAccommodation')){	
+				$this->clear_all_for_accommodation();
+				$this->clickCustomizeAccommodation();
+ 
+				redirect('site/customizes/activities');
+			}else{
+				$fe_data['opt_room_types'] = array("" => "-- Select --");
+		        foreach ($this->mod_fecustomize->getAllRoomType()->result() as $room_type)
+		        {
+		           $fe_data['opt_room_types'][$room_type->rt_id] = "- ".$room_type->rt_name ." (Amount People: $room_type->rt_people_per_room) ";
+		        }
+
+		        $fe_data['room_types'] = $this->mod_fecustomize->getAllRoomType();
+				$fe_data['recordAccommodation'] = $this->customizeAccommodation();
+			}	
+		}
+
+		if ($display_page == "activities") {
+			if($this->input->post('btnActivity')){
+				$this->clear_all_for_activity();
+				$this->clickCustomizeActivity();
+
+				redirect('site/customizes/extra-service');
+			}else{
+				$fe_data['recordActivities'] = $this->customizeActivity();
+			}
+		}
+		
 		if($display_page == "extra-service"){
 			if($this->input->post('btnExtraService')){
 				$this->clear_all_for_extra_services();
