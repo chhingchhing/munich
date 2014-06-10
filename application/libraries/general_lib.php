@@ -233,48 +233,6 @@ class General_lib
 		$this->CI->session->unset_userdata('amount_book_room');
 	}
 
-	/*function get_single_room_accommodation()
-	{
-		if(!$this->CI->session->userdata('single_room_accommodation'))
-			$this->set_single_room_accommodation('');
-		return $this->CI->session->userdata('single_room_accommodation');
-	}
-	function set_single_room_accommodation($single_room_accommodation)
-	{
-		$this->CI->session->set_userdata('single_room_accommodation',$single_room_accommodation);
-	}
-	function empty_single_room_accommodation() {
-		$this->CI->session->unset_userdata('single_room_accommodation');
-	}
-
-	function get_double_room_1bed_accommodation()
-	{
-		if(!$this->CI->session->userdata('double_room_1bed_accommodation'))
-			$this->set_double_room_1bed_accommodation('');
-		return $this->CI->session->userdata('double_room_1bed_accommodation');
-	}
-	function set_double_room_1bed_accommodation($double_room_1bed_accommodation)
-	{
-		$this->CI->session->set_userdata('double_room_1bed_accommodation',$double_room_1bed_accommodation);
-	}
-	function empty_double_room_1bed_accommodation() {
-		$this->CI->session->unset_userdata('double_room_1bed_accommodation');
-	}
-
-	function get_double_room_2beds_accommodation()
-	{
-		if(!$this->CI->session->userdata('double_room_2beds_accommodation'))
-			$this->set_double_room_2beds_accommodation('');
-		return $this->CI->session->userdata('double_room_2beds_accommodation');
-	}
-	function set_double_room_2beds_accommodation($double_room_2beds_accommodation)
-	{
-		$this->CI->session->set_userdata('double_room_2beds_accommodation',$double_room_2beds_accommodation);
-	}
-	function empty_double_room_2beds_accommodation() {
-		$this->CI->session->unset_userdata('double_room_2beds_accommodation');
-	}*/
-
 	// Transportation session
 	function get_transportation()
 	{

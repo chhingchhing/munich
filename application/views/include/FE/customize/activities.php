@@ -196,12 +196,12 @@
 				                }
 				                $amountPeople = $this->general_lib->get_people_sub_activity();
 				                if ($amountPeople != '') {
-				                	if (isset($amountPeople[$subActOrder-1])) {
-				                		$selectPeople = $amountPeople[$subActOrder-1];
+				                	if (isset($amountPeople[$sub_activity['act_id']])) {
+				                		$selectPeople = $amountPeople[$sub_activity['act_id']];
 				                	}
 				                }
 				                echo form_dropdown(
-				                	'actPeopleSubActivity[]', 
+				                	'actPeopleSubActivity['.$sub_activity['act_id'].']', 
 				                	$amount_people, 
 				                	$selectPeople, 
 				                	'class="form-control people_sub_activity" id="subPeople"'
@@ -271,12 +271,12 @@
 				   				$value = "";
 				   				$amountextras = $this->general_lib->get_amount_extra();
 				   				if ($amountextras != '') { 
-				   					if (isset($amountextras[$extraOrder-1])) {
-				   						$value = $amountextras[$extraOrder-1];
+				   					if (isset($amountextras[$ep_result['ep_id']])) {
+				   						$value = $amountextras[$ep_result['ep_id']];
 				   					}
 			   					}
 			   					$input = array(
-			   							"name"=>"amountextras[]",
+			   							"name"=>"amountextras[".$ep_result['ep_id']."]",
 			   							"class"=>"form-control amount_extras", 
 			   							"value"=> $value
 			   						);

@@ -341,6 +341,15 @@ $(function() {
 		$(this).tooltip('show');
 	});
 
+	// Check room type and set default value of a room type
+	$("body").on("change", "#room_type_checked", function() {
+		if ($(this).is(':checked')) {
+			$(this).parent().parent().next().find("input").val(1);
+		} else {
+			$(this).parent().parent().next().find("input").val('');
+		}
+	});
+
 });
 
 // Validate Email input

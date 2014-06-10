@@ -243,12 +243,57 @@ class Mod_FeCustomize extends MU_model {
     /*
     Returns all the room types
     */
-    function getAllRoomType($col='rt_name',$order='asc')
+    function getAllRoomType($ht_id, $classification_id)
     {
         $data = $this->db
-            ->order_by($col, $order)
-            ->get("room_types");
+            ->join('hotel_detail', 'hotel.ht_id = hotel_detail.dhht_id')
+            ->join('room_types', 'room_types.rt_id = hotel_detail.dhrt_id')
+            ->where('dhcl_id', $classification_id)
+            ->where('dhht_id', $ht_id)
+            ->get("hotel");
         return $data;
+    }
+
+    // Get all room type when each passenger
+    function getAllRoomTypeEachPassenger($rt_id)
+    {
+        $data = $this->db
+            ->join('hotel', 'hotel.ht_id = hotel_detail.dhht_id')
+            ->join('room_types', 'room_types.rt_id = hotel_detail.dhrt_id')
+            ->where('dhrt_id', $rt_id)
+            ->get("hotel_detail");
+        return $data;
+    }
+
+    //Get all hotels
+    function getAllHotels($classification_id) {
+        $data = $this->db
+            ->where('dhcl_id', $classification_id)
+            ->group_by('dhht_id')
+            ->get("hotel_detail");
+        return $data;
+    }
+
+    // Get information of item
+    function get_info_of_main_obj($table, $col, $id) {
+        $query = $this->db
+            ->where($col, $id)
+            ->get($table);
+        if ($query->num_rows() == 1) {
+            return $query->row();
+        } else {
+            //Get empty base parent object, as $item_id is NOT an item
+            $object = new stdClass();
+
+            //Get all the fields from items table
+            $fields = $this->db->list_fields($table);
+
+            foreach ($fields as $field)
+            {
+                $object->$field='';
+            }
+            return $object;
+        }
     }
     
 }

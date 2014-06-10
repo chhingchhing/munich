@@ -1,20 +1,4 @@
 <!-- start accommodation -->
-<?php
-$option[] = "-- Select --";
-for ($i=1; $i <= $this->session->userdata("people"); $i++) {
-	$option[$i] = "$i Room(s), $i Guest(s)";
-}
-
-$double_room_1bed[] = "-- Select --";
-for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
-	$double_room_1bed[$i] = "$i Room(s), ".($i * 2)." Guest(s)";
-}
-
-$double_room_2beds[] = "-- Select --";
-for ($i=1; $i <= $this->session->userdata("people")/2; $i++) { 
-	$double_room_2beds[$i] = "$i Room(s), ".($i * 2)." Guest(s)";
-}
-?>
 <?php  echo form_open_multipart('site/customizes/accommodation', 'class="form-horizontal"'); ?>
 	   <div class="col-sm-12 form-booking" id="accommodation">
 	   		<h2>Choose Accommodation</h2>
@@ -25,6 +9,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 	   			$accOrder = 0;
 	   			foreach ($recordAccommodation as $acc) {
 	   				$accOrder++;
+
 	   				// Disable day of a week
 		   			$daysOfWeekDisabled = '';
 		   			if ($recordAccommodation[$accOrder-1]['sunday'] == 0) $daysOfWeekDisabled .= "0, ";
@@ -144,41 +129,55 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 				        ?>
 				        </div>
 			    	</div>
+			    	<div class='form-group'>
+			    		<label class="col-sm-2 control-label">Room Offer :</label>
+			    	</div>
+
+			    	<?php 
+			        $hotels = $this->mod_fecustomize->getAllHotels($acc['classification_id']);
+			        $htOrder = 0;
+			        foreach ($hotels->result() as $hotel) {
+			        	$htOrder++;
+			        	?>
 			    	<div class="form-group room_types">
-				        <label class="col-sm-2 control-label">Room :</label>
-				        <div class="col-sm-10">
+				        <div class="col-sm-12">
 				        	<div class="panel-group" id="accordion">
 							  <div class="panel panel-success">
 							    <div class="panel-heading">
 							      <h4 class="panel-title">
 							        <a data-toggle="collapse" data-parent="#accordion" href="#roomType_<?php echo $accOrder; ?>">
-							          Room <span class="caret"></span>
+							          Offer <?php echo $htOrder; ?><span class="caret"></span>
 							        </a>
 							      </h4>
 							    </div>
-							    <div id="roomType_<?php echo $accOrder; ?>" class="panel-collapse collapse">
+							    <div id="roomType_<?php echo $accOrder; ?>" class="panel-collapse collapse in">
 							      <div class="panel-body">
 							        <?php 
+							        $room_types = $this->mod_fecustomize->getAllRoomType($hotel->dhht_id, $acc['classification_id']);
 							        foreach ($room_types->result() as $item) {
 							        	?>
 							        	<div class='row'>
-							        		<div class="col-xs-10">
+							        		<div class="col-xs-9">
 							        			<span>
 									        		<?php 
 									        		$rooms = $this->general_lib->get_room_type_accommodation();
 								   					$checked = false;
 								   					if ($rooms != '') {
-								   						if (isset($rooms[$item->rt_id])) {
-								   							if ($rooms[$item->rt_id] == $item->rt_id) {
-										   						$checked = true;
-										   					}
+								   						if (isset($rooms[$acc['acc_id']])) {
+								   							foreach ($rooms[$acc['acc_id']] as $rm_hotel) {
+								   								foreach ($rm_hotel as $each_item) {
+								   									if ($each_item == $item->rt_id) {
+												   						$checked = true;
+												   					}
+								   								}
+								   							}
 								   						}
 								   					}
 									        		$room_type_checked = array(
 								   						'value' => $item->rt_id, 
 								   						'checked' => $checked, 
 								   						'class' => 'check_main_element', 
-								   						'name' => 'room_type_checked['.$item->rt_id.']', 
+								   						'name' => 'room_type_checked['.$acc['acc_id'].']['.$hotel->dhht_id.']['.$item->rt_id.']', 
 								   						'id' => "room_type_checked"
 								   					);
 									        		echo form_checkbox($room_type_checked);
@@ -189,7 +188,7 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 									        		?>
 									        	</span>
 							        		</div>
-								        	<div class="col-xs-2">
+								        	<div class="col-xs-3">
 								        		<?php 
 								        		$amount_rooms_booked = $this->general_lib->get_amount_book_room();
 								        		$value = '';
@@ -198,8 +197,12 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 								        		}
 								        		$input = array(
 								        			'name' => 'amount_book_room['.$item->rt_id.']',
-								        			'class' => 'form-control input-sm',
-								        			'value' => $value
+								        			'class' => 'form-control input-sm theTooltip',
+								        			'placeholder' => 'Amount Room',
+								        			'value' => $value,
+								        			'data-toggle' => 'tooltip',
+								        			'data-placement' => 'top',
+								        			'title' => 'Amount Room'
 								        			);
 								        		echo form_input($input); 
 								        		?>
@@ -214,6 +217,9 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 							</div>
 				        </div>
 			    	</div>
+			    	<?php
+			        }
+			        ?>
 			    	
 				    <h3>Extra Products</h3>
 				    	<?php
@@ -271,12 +277,13 @@ for ($i=1; $i <= $this->session->userdata("people")/2; $i++) {
 					   				<label>Amount of Extra Product</label>
 					   				<?php
 					   				$value = "";
-					   				$amountExtras = $this->general_lib->get_sub_acc_amount_extra();
-				   					if (isset($amountExtras[$ep_result['ep_id']])) {
-					   					$main_value = $amountExtras[$ep_result['ep_id']["0"]];
-					   					foreach ($main_value as $val) {
-					   						$value = $val;
-					   					}
+					   				$amountExtras = $this->general_lib->get_sub_acc_amount_extra();				   			
+					   				if ($amountExtras != "") {
+					   					if (isset($amountExtras[$ep_result['ep_id']])) {
+						   					foreach ($amountExtras[$ep_result['ep_id']] as $val) {
+						   						$value = $val;
+						   					}
+						   				}
 					   				}
 
 				   					$input = array(
