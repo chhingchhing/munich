@@ -44,7 +44,7 @@
 	   						'value' => $rows['act_id'], 
 	   						'checked' => $checked, 
 	   						'class' => 'check_main_element', 
-	   						'name' => 'checkbox_activity[]', 
+	   						'name' => 'checkbox_activity['.$rows['act_id'].']', 
 	   						'id' => "checkbox_main_activity"
 	   					);
 	   					echo form_checkbox($checkbox_activity).nbs();
@@ -59,8 +59,8 @@
 			        		$start_date = date("Y-m-d");
 			        		$txtFrom = $this->general_lib->get_start_date_activity();
 				   				if ($txtFrom != '') { 
-				   					if (isset($txtFrom[$actOrder-1])) {
-				   						$start_date = $txtFrom[$actOrder-1];
+				   					if (isset($txtFrom[$rows['act_id']])) {
+				   						$start_date = $txtFrom[$rows['act_id']];
 				   					} else {
 				   						$start_date = date('Y-m-d');
 				   					}
@@ -70,7 +70,7 @@
 
 			                    $txtFrom = array(
 			                    	'id'=>'start_date_'.$actOrder, 
-			                    	'name' => 'txtFrom[]', 
+			                    	'name' => 'txtFrom['.$rows['act_id'].']', 
 			                    	'class' => 'form-control checkin checkin_'.$actOrder,
 			                    	'data-date-format'=>'yyyy-mm-dd',
 			                    	'value' => $start_date, 
@@ -86,8 +86,8 @@
 								$end_date = date("Y-m-d");
 				        		$txtTo = $this->general_lib->get_end_date_activity();
 				   				if ($txtTo != '') { 
-				   					if (isset($txtTo[$actOrder-1])) {
-				   						$end_date = $txtTo[$actOrder-1];
+				   					if (isset($txtTo[$rows['act_id']])) {
+				   						$end_date = $txtTo[$rows['act_id']];
 				   					} else {
 				   						$end_date = date('Y-m-d');
 				   					}
@@ -96,7 +96,7 @@
 			   					}
 			                    $txtTo = array(
 			                    	'id'=>'end_date_'.$actOrder,
-			                    	'name' => 'txtTo[]', 
+			                    	'name' => 'txtTo['.$rows['act_id'].']', 
 			                    	'class' => 'form-control checkout',
 			                    	'data-date-format'=>'yyyy-mm-dd',
 			                    	'value' => $end_date, 
@@ -114,16 +114,21 @@
 			                for ($i=1; $i <= $this->session->userdata("people"); $i++) { 
 			                		$amount_people[$i] = $i;
 			                }
+
+			                $peopleSelect = $this->session->userdata("people") ? $this->session->userdata("people") : 0;
 			                $amountPeopleMainActivity = $this->general_lib->get_people_main_activity();
 			                if ($amountPeopleMainActivity != '') {
-			                	if (isset($amountPeopleMainActivity[$actOrder-1])) {
-			                		echo form_dropdown('actPeopleMainActivity[]', $amount_people, $amountPeopleMainActivity[$actOrder-1], 'class="form-control people"');
-			                	} else {
-			                		echo form_dropdown('actPeopleMainActivity[]', $amount_people, $this->session->userdata("people") ? $this->session->userdata("people") : 0, 'class="form-control people"');
+			                	if (isset($amountPeopleMainActivity[$rows['act_id']])) {
+			                		foreach ($amountPeopleMainActivity[$rows['act_id']] as $amount) {
+			                			$peopleSelect = $amount;
+			                		}
 			                	}
-			                } else {
-								echo form_dropdown('actPeopleMainActivity[]', $amount_people, $this->session->userdata("people") ? $this->session->userdata("people") : 0, 'class="form-control people"');
 			                }
+			                echo form_dropdown('actPeopleMainActivity['.$rows['act_id'].'][]', 
+								$amount_people, 
+								$peopleSelect, 
+								'class="form-control people"'
+							);
 				            ?>
 				        </div>
 				    </div>
@@ -163,10 +168,12 @@
 					   					$subactivity = $this->general_lib->get_sub_activities();
 					   					$checked = false;
 					   					if ($subactivity != '') { 
-					   						if (isset($subactivity[$sub_activity['act_id']])) {
-					   							if ($subactivity[$sub_activity['act_id']] == $sub_activity['act_id']) {
-							   						$checked = true;
-							   					}
+					   						if (isset($subactivity[$rows['act_id']])) {
+					   							foreach ($subactivity[$rows['act_id']] as $item) {
+				   									if ($item == $sub_activity['act_id']) {
+								   						$checked = true;
+								   					}
+					   							}
 					   						}
 					   					}
 
@@ -174,7 +181,7 @@
 					   						'value' => $sub_activity['act_id'], 
 					   						'checked' => $checked, 
 					   						'class' => 'check_sub_element checkbox_subactivity', 
-					   						'name' => 'checkbox_subactivity[]', 
+					   						'name' => 'checkbox_subactivity['.$rows['act_id'].']['.$sub_activity['act_id'].']', 
 					   						'id' => 'checkbox_subactivity_'.$subActOrder,
 					   						'order' => $subActOrder
 					   					);
@@ -190,18 +197,20 @@
 					        <div class="col-sm-4">
 					        	<?php 
 					            $amount_people[0] = "-- Select --";
-					            $selectPeople = 0;
 				                for ($i=1; $i <= $this->session->userdata("people"); $i++) { 
 				                		$amount_people[$i] = $i;
 				                }
 				                $amountPeople = $this->general_lib->get_people_sub_activity();
+				                $selectPeople = $this->session->userdata("people") ? $this->session->userdata("people") : 0;
 				                if ($amountPeople != '') {
-				                	if (isset($amountPeople[$sub_activity['act_id']])) {
-				                		$selectPeople = $amountPeople[$sub_activity['act_id']];
+				                	if (isset($amountPeople[$rows['act_id']])) {
+				                		foreach ($amountPeople[$rows['act_id']] as $amount) {
+				                			$selectPeople = $amount;
+				                		}
 				                	}
 				                }
 				                echo form_dropdown(
-				                	'actPeopleSubActivity['.$sub_activity['act_id'].']', 
+				                	'actPeopleSubActivity['.$rows['act_id'].']['.$sub_activity['act_id'].']', 
 				                	$amount_people, 
 				                	$selectPeople, 
 				                	'class="form-control people_sub_activity" id="subPeople"'
@@ -245,10 +254,12 @@
 				   					$extra_activity = $this->general_lib->get_extra_activities();
 				   					$checked = false;
 				   					if ($extra_activity != '') { 
-				   						if (isset($extra_activity[$ep_result['ep_id']])) {
-				   							if ($extra_activity[$ep_result['ep_id']] == $ep_result['ep_id']) {
-						   						$checked = true;
-						   					}
+				   						if (isset($extra_activity[$rows['act_id']])) {
+				   							foreach ($extra_activity[$rows['act_id']] as $item) {
+			   									if ($item == $ep_result['ep_id']) {
+							   						$checked = true;
+							   					}
+				   							}
 				   						}
 				   					}
 
@@ -256,7 +267,7 @@
 				   						'value' => $ep_result['ep_id'], 
 				   						'checked' => $checked, 
 				   						'class' => 'check_sub_element', 
-				   						'name' => 'checkbox_extra[]', 
+				   						'name' => 'checkbox_extra['.$rows['act_id'].']['.$ep_result['ep_id'].']', 
 				   						'id' => 'checkbox_extra'
 				   					);
 				   					echo form_checkbox($checkbox_extra);
@@ -270,13 +281,14 @@
 				   				<?php
 				   				$value = "";
 				   				$amountextras = $this->general_lib->get_amount_extra();
-				   				if ($amountextras != '') { 
-				   					if (isset($amountextras[$ep_result['ep_id']])) {
-				   						$value = $amountextras[$ep_result['ep_id']];
+				   				if ($amountextras != '') {
+				   					if (isset($amountextras[$rows['act_id']][$ep_result['ep_id']])) {
+				   						$value = $amountextras[$rows['act_id']][$ep_result['ep_id']];
 				   					}
-			   					}
+				   				}
+
 			   					$input = array(
-			   							"name"=>"amountextras[".$ep_result['ep_id']."]",
+			   							"name"=>"amountextras[".$rows['act_id']."][".$ep_result['ep_id']."]",
 			   							"class"=>"form-control amount_extras", 
 			   							"value"=> $value
 			   						);
@@ -288,7 +300,7 @@
 					<?php } ?>
 	   				</div>
 	   			<?php }?>
-	   			<?php echo anchor("site/customizes/","Previous", array('role'=>'button', 'class'=>'btn btn-default btn-sm')); ?>
+	   			<?php echo anchor("site/customizes/accommodation","Previous", array('role'=>'button', 'class'=>'btn btn-default btn-sm')); ?>
 	   			<?php $input = array('name' => 'btnActivity', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>	   			   			   						
 	   		<p></p>		
 	   </div>

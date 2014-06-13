@@ -284,6 +284,13 @@ $(function() {
 					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
 					div_sms += '</div>';
 					$("div#feedback_bar_modal").append(div_sms);
+					setTimeout(function()
+		            {
+		                $('#each_personalInfo_feedback').slideUp(250, function()
+		                {
+		                    $('#each_personalInfo_feedback').removeClass();
+		                });
+		            },response.sms_value.length*125);
 				}
     		}
     	});
@@ -305,6 +312,13 @@ $(function() {
 					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
 					div_sms += '</div>';
 					$("div#feedback_bar_modal").append(div_sms);
+					setTimeout(function()
+		            {
+		                $('#each_personalInfo_feedback').slideUp(250, function()
+		                {
+		                    $('#each_personalInfo_feedback').removeClass();
+		                });
+		            },response.sms_value.length*125);
 				}
 			}
 		});
@@ -348,6 +362,65 @@ $(function() {
 		} else {
 			$(this).parent().parent().next().find("input").val('');
 		}
+	});
+
+	// Start for each member booking info
+	$("body").on('click', "input[name='btnEachPersonalInfo']", function(event) {
+		event.preventDefault();
+		var url = $(this).parent().attr('action');
+		var data = $(this).parent().serialize();
+		$.ajax({
+			type: "POST",
+			url: url,
+			dataType: "json",
+			data: data,
+			success: function(response) {
+				if (response) {
+					var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
+					div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
+					div_sms += '</div>';
+					$("div#each_personalInfo_feedback").append(div_sms);
+					setTimeout(function()
+		            {
+		                $('#each_personalInfo_feedback').slideUp(250, function()
+		                {
+		                    $('#each_personalInfo_feedback').removeClass();
+		                });
+		            },response.sms_value.length*125);
+				}	
+			}
+		});
+	});
+
+	// Transportation 
+	$("body").on('click', "input[name='btnEachTransportation']", function(event) {
+		event.preventDefault();
+		var url = $(this).parent().attr('action');
+		var data = $(this).parent().serialize();
+		$.ajax({
+			type: "POST",
+			url: url,
+			dataType: "json",
+			data: data,
+			success: function(response) {
+				console.log(response);
+				if (response) {
+					var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
+					div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
+					div_sms += '</div>';
+					$("div#each_trans_feedback").append(div_sms);
+					setTimeout(function()
+		            {
+		                $('#each_trans_feedback').slideUp(250, function()
+		                {
+		                    $('#each_trans_feedback').removeClass();
+		                });
+		            },response.sms_value.length*125);
+				}
+			}
+		});
 	});
 
 });
