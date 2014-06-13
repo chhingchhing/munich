@@ -47,7 +47,7 @@
 	   						'value' => $acc['acc_id'], 
 	   						'checked' => $checked, 
 	   						'class' => 'check_main_element', 
-	   						'name' => 'checkbox_accommodation[]', 
+	   						'name' => 'checkbox_accommodation['.$acc['acc_id'].']', 
 	   						'id' => "checkbox_accommodation"
 	   					);
 	   					?> 
@@ -63,13 +63,13 @@
 					            $start_date = date("Y-m-d");
 				        		$check_in_date = $this->general_lib->get_checkin_date_accommodation();
 				   				if ($check_in_date != '') { 
-				   					if (isset($check_in_date[$accOrder-1])) {
-				   						$start_date = $check_in_date[$accOrder-1];
+				   					if (isset($check_in_date[$acc['acc_id']])) {
+				   						$start_date = $check_in_date[$acc['acc_id']];
 				   					}
 			   					}
 			                    $checkIn = array(
 			                    	'id'=>'start_date_'.$accOrder, 
-			                    	'name' => 'checkIn[]', 
+			                    	'name' => 'checkIn['.$acc['acc_id'].']', 
 			                    	'class' => 'form-control checkin checkin_'.$accOrder,
 			                    	'data-date-format'=>'yyyy-mm-dd',
 			                    	'value' => $start_date, 
@@ -85,8 +85,8 @@
 								$end_date = date("Y-m-d");
 				        		$check_out_date = $this->general_lib->get_checkout_date_accommodation();
 				   				if ($check_out_date != '') { 
-				   					if (isset($check_out_date[$accOrder-1])) {
-				   						$end_date = $check_out_date[$accOrder-1];
+				   					if (isset($check_out_date[$acc['acc_id']])) {
+				   						$end_date = $check_out_date[$acc['acc_id']];
 				   					} else {
 				   						$end_date = date('Y-m-d');
 				   					}
@@ -95,7 +95,7 @@
 			   					}
 			                    $checkOut = array(
 			                    	'id'=>'end_date_'.$accOrder,
-			                    	'name' => 'checkOut[]', 
+			                    	'name' => 'checkOut['.$acc['acc_id'].']', 
 			                    	'class' => 'form-control checkout',
 			                    	'data-date-format'=>'yyyy-mm-dd',
 			                    	'value' => $end_date, 
@@ -117,11 +117,11 @@
 			                $amountPeopleAccommodation = $this->general_lib->get_people_accommodation();
 			                
 			                if ($amountPeopleAccommodation != '') {
-			                	if (isset($amountPeopleAccommodation[$accOrder-1])) {
-			                		$peopleSelect = $amountPeopleAccommodation[$accOrder-1];
+			                	if (isset($amountPeopleAccommodation[$acc['acc_id']])) {
+			                		$peopleSelect = $amountPeopleAccommodation[$acc['acc_id']];
 			                	}
 			                }
-			                echo form_dropdown('peopleAccommodation[]', 
+			                echo form_dropdown('peopleAccommodation['.$acc['acc_id'].'][]', 
 								$amount_people, 
 								$peopleSelect, 
 								'class="form-control people" id="get_amount_people_room"'
@@ -252,10 +252,12 @@
 					   					$sub_acc_extra_pro = $this->general_lib->get_sub_acc_extr_product();
 					   					$checked = false;
 					   					if ($sub_acc_extra_pro != '') { 
-					   						if (isset($sub_acc_extra_pro[$ep_result['ep_id']])) {
-					   							if ($sub_acc_extra_pro[$ep_result['ep_id']] == $ep_result['ep_id']) {
-							   						$checked = true;
-							   					}
+					   						if (isset($sub_acc_extra_pro[$acc['acc_id']])) {
+					   							foreach ($sub_acc_extra_pro[$acc['acc_id']] as $item) {
+				   									if ($item == $ep_result['ep_id']) {
+								   						$checked = true;
+								   					}
+					   							}
 					   						}
 					   					}
 
@@ -263,7 +265,7 @@
 					   						'value' => $ep_result['ep_id'], 
 					   						'checked' => $checked, 
 					   						'class' => 'check_sub_element checkbox_subactivity', 
-					   						'name' => 'sub_acc_extra_product[]', 
+					   						'name' => 'sub_acc_extra_product['.$acc['acc_id'].']['.$ep_result['ep_id'].']', 
 					   						'id' => 'checkbox_subactivity_'.$accExtraOrder,
 					   						'order' => $accExtraOrder
 					   					);
@@ -300,7 +302,7 @@
 	   			</div>
 	   			<?php }?>	
 	   		</div>			
-	   		<?php echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
+	   		<?php echo anchor("site/customizes/transportation","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
 			<?php $input = array('name' => 'btnAccommodation', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
 			<p></p>
 	   </div> 

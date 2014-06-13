@@ -43,15 +43,15 @@
 	   					<?php
 			   				$value = "";
 			   				$amountExtras = $this->general_lib->get_num_extra_services();
-
 			   				if (isset($amountExtras[$extra['ep_id']])) {
-			   					$main_value = $amountExtras[$extra['ep_id']["0"]];
+			   					$main_value = $amountExtras[$extra['ep_id']];
 			   					foreach ($main_value as $val) {
 			   						$value = $val;
 			   					}
 			   				}
 		   					$input = array(
 		   							"name"=>"amountExpAmount[".$extra['ep_id']."][]",
+		   							// "name"=>"amountExpAmount[".$extra['ep_id']."]",
 		   							"class"=>"form-control amount_extras", 
 		   							"value"=> $value,
 		   							"id" => "amount_extra_".$order
@@ -62,7 +62,7 @@
 	   				<div class="clear_both"></div>
 	   			<?php } ?>
 	   		</div>
-	   		<?php echo anchor("site/customizes/transportation","Previous", array('role' => 'button', 'name' => 'btnExtraService', 'class' => 'btn btn-default btn-sm')); ?>
+	   		<?php echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'name' => 'btnExtraService', 'class' => 'btn btn-default btn-sm')); ?>
 	   		<?php $input = array('name' => 'btnExtraService', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
 <p></p>
 <?php echo form_close(); ?>

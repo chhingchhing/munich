@@ -178,7 +178,30 @@ class Mod_FeCustomize extends MU_model {
     * public function add information of passenger to table passenger
     * @param parameter $pfname, $plname, $pgender, $pdob, $pmobile, $phphone, $paddress, $pcode, $pcity, $pcountry, $pnumber
     */
-    public function personal_information($passengerInfo){
+    public function personal_information($passengerInfo, $pass_id=false){
+        if (!$pass_id or !$this->exist_passenger_by_id($pass_id)) {
+            // Plus 1 more is trip leader
+            $amount_people = $this->get_all_member_by_pass_addby($passengerInfo['pass_addby'])->num_rows() + 1;
+            if ($amount_people < $this->session->userdata("people")) {
+                if ($this->exist_passenger_by_email($passengerInfo['pass_email'])) {
+                    return false;
+                } else {
+                    if($this->db->insert('passenger', $passengerInfo))
+                    {
+                        return $passengerInfo['pass_id'] = $this->db->insert_id();
+                    } 
+                    return false;
+                }
+            } else {
+                return "over_number";
+            }
+        } else {
+            $this->db->where('pass_id', $pass_id);
+            return $this->db->update('passenger',$passengerInfo);
+        }
+        return false;
+    }
+    /*public function personal_information($passengerInfo){
         // Plus 1 more is trip leader
         $amount_people = $this->get_all_member_by_pass_addby($passengerInfo['pass_addby'])->num_rows() + 1;
         if ($amount_people < $this->session->userdata("people")) {
@@ -194,8 +217,7 @@ class Mod_FeCustomize extends MU_model {
         } else {
             return "over_number";
         }
-        
-    }
+    }*/
 
     /*
     * Count all passengers who added by a trip leader
@@ -211,6 +233,16 @@ class Mod_FeCustomize extends MU_model {
     function exist_passenger_by_email($email) {
         $query = $this->db
             ->where("pass_email", $email)
+            ->get("passenger");
+        return ($query->num_rows() == 1);
+    }
+
+    /*
+    * Check existing passenger by id
+    */
+    function exist_passenger_by_id($id) {
+        $query = $this->db
+            ->where("pass_id", $id)
             ->get("passenger");
         return ($query->num_rows() == 1);
     }

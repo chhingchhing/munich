@@ -11,7 +11,8 @@
     </div>
     <div id="personal_info" class="panel-collapse collapse in">
       <div class="panel-body">
-      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+      	<div id="each_personalInfo_feedback"></div>
+      	<?php echo form_open_multipart('site/member_personal_info_customize_bk/'.$passenger_info->pass_id, 'class="form-horizontal" name="form_each_personal_info" '); ?>
 	   		<div class="col-sm-12">
 	   			<div class='col-sm-9'>
 		   			<div class="form-group">
@@ -143,7 +144,7 @@
 	   			<div style='clear: both'></div>
 	   		</div>
 	   		<?php //echo anchor("site/customizes/activities","Previous", array('role' => 'button', 'class' => 'btn btn-default btn-sm')); ?>
-	   		<?php $input = array('name' => 'btnEachPersonalInfo', 'class' => 'btn btn-default btn-sm', 'value' => ' Next '); echo form_submit($input);?>
+	   		<?php $input = array('name' => 'btnEachPersonalInfo', 'class' => 'btn btn-default btn-sm', 'value' => ' Save '); echo form_submit($input);?>
 	   	<?php echo form_close(); ?>
       </div>
     </div>
@@ -164,6 +165,7 @@
     </div>
     <div id="transportation" class="panel-collapse collapse">
       <div class="panel-body">
+      	<div id="each_trans_feedback"></div>
       	<div class='col-sm-12'>
       		<div class="panel panel-info">
 			    <div class="panel-heading">
@@ -175,14 +177,16 @@
 			    </div>
 			    <div id="extra_transport" class="panel-collapse collapse in">
 			      <div class="panel-body">
-			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+			      	<?php echo form_open_multipart('site/each_member_transportation/extra-pro', 'class="form-horizontal" name="form_each_trans_extra_pro" '); ?>
 			      	<table class='table'>
 			      		<tr>
 			      			<th>Item</th>
-			      			<th>Amount</th>
+			      			<th>Amount Book</th>
+			      			<th>Yours</th>
 			      		</tr>
 			      	<?php 
 				      	$extra_trans = $this->general_lib->get_sub_trans_extr_product();
+				      	var_dump($extra_trans);
 				      	if ($extra_trans != "") {
 					      	foreach($extra_trans as $ep_id) {
 					      		$exact_info = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $ep_id);
@@ -198,10 +202,19 @@
 								$amount_exta = $this->general_lib->get_sub_acc_amount_extra();
 									$input = array(
 										'value' => $amount_exta[$ep_id][0],
-										'name' => 'origin_extra',
+										'name' => 'amountTransExtras['.$ep_id.']',
 										'class' => 'form-control input-sm'
 										);
 									echo form_input($input); 
+									?>
+								</td>
+								<td>
+									<?php 
+									$inputYours = array(
+										'name' => 'own_extra_amount['.$ep_id.'][]',
+										'class' => 'form-control input-sm'
+										);
+									echo form_input($inputYours); 
 									?>
 								</td>
 							</tr>
@@ -245,7 +258,7 @@
 			    </div>
 			    <div id="sub_acc" class="panel-collapse collapse in">
 			      <div class="panel-body">
-			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_acc" '); ?>
 			      	<table class='table'>
 			      		<tr>
 				      		<th>Room</th>
@@ -294,7 +307,7 @@
 			    </div>
 			    <div id="extra_acc" class="panel-collapse collapse in">
 			      <div class="panel-body">
-			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_acc_extra_pro" '); ?>
 			      	<table class='table'>
 			      		<tr>
 			      			<th>Item</th>
@@ -365,7 +378,7 @@
 			    </div>
 			    <div id="sub_activity" class="panel-collapse collapse in">
 			      <div class="panel-body">
-			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_act" '); ?>
 			      	<table class='table'>
 			      	<?php 
 			      	$activities = $this->general_lib->get_sub_activities();
@@ -406,7 +419,7 @@
 			    </div>
 			    <div id="extra_act" class="panel-collapse collapse in">
 			      <div class="panel-body">
-			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+			      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_act_extra_pro" '); ?>
 			      	<table class='table'>
 			      		<tr>
 			      			<th>Item</th>
@@ -476,7 +489,7 @@
 		    </div>
 		    <div id="extra_services" class="panel-collapse collapse in">
 		      <div class="panel-body">
-		      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
+		      	<?php echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="form_each_extra_service" '); ?>
 		      	<table class='table'>
 		      		<tr>
 		      			<th>Item</th>

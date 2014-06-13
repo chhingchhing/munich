@@ -44,7 +44,7 @@
 	   						'value' => $tp_record['tp_id'], 
 	   						'checked' => $checked, 
 	   						'class' => 'check_main_element', 
-	   						'name' => 'checkbox_transportation[]', 
+	   						'name' => 'checkbox_transportation['.$tp_record['tp_id'].']', 
 	   						'id' => "checkbox_transportation"
 	   					);
 	   					echo form_checkbox($checkbox_transportation);
@@ -58,13 +58,13 @@
 				            	$start_date = date("Y-m-d");
 				        		$departure_date = $this->general_lib->get_departure_transportation();
 				   				if ($departure_date != '') { 
-				   					if (isset($departure_date[$transOrder-1])) {
-				   						$start_date = $departure_date[$transOrder-1];
+				   					if (isset($departure_date[$tp_record['tp_id']])) {
+				   						$start_date = $departure_date[$tp_record['tp_id']];
 				   					}
 			   					}
 			                    $departure = array(
 			                    	'id'=>'start_date_'.$transOrder, 
-			                    	'name' => 'trans_departure[]', 
+			                    	'name' => 'trans_departure['.$tp_record['tp_id'].']', 
 			                    	'class' => 'form-control checkin checkin_'.$transOrder,
 			                    	'data-date-format'=>'yyyy-mm-dd',
 			                    	'value' => $start_date, 
@@ -80,13 +80,13 @@
 				            $end_date = date("Y-m-d");
 				        		$return_date = $this->general_lib->get_return_date_transportation();
 				   				if ($return_date != '') { 
-				   					if (isset($return_date[$transOrder-1])) {
-				   						$end_date = $return_date[$transOrder-1];
+				   					if (isset($return_date[$tp_record['tp_id']])) {
+				   						$end_date = $return_date[$tp_record['tp_id']];
 				   					}
 			   					}
 			                    $return = array(
 			                    	'id'=>'end_date_'.$transOrder, 
-			                    	'name' => 'trans_return[]', 
+			                    	'name' => 'trans_return['.$tp_record['tp_id'].']', 
 			                    	'class' => 'form-control checkout',
 			                    	'data-date-format'=>'yyyy-mm-dd',
 			                    	'value' => $end_date, 
@@ -108,11 +108,13 @@
 			                $peopleSelect = $this->session->userdata("people") ? $this->session->userdata("people") : 0;
 			                $amountPeopleTransport = $this->general_lib->get_people_transportation();
 			                if ($amountPeopleTransport != '') {
-			                	if (isset($amountPeopleTransport[$transOrder-1])) {
-			                		$peopleSelect = $amountPeopleTransport[$transOrder-1];
+			                	if (isset($amountPeopleTransport[$tp_record['tp_id']])) {
+			                		foreach ($amountPeopleTransport[$tp_record['tp_id']] as $amount) {
+			                			$peopleSelect = $amount;
+			                		}
 			                	}
 			                }
-			                echo form_dropdown('peopleTransportation[]', 
+			                echo form_dropdown('peopleTransportation['.$tp_record['tp_id'].'][]', 
 								$amount_people, 
 								$peopleSelect, 
 								'class="form-control people" id="amount_people_transport"'
@@ -157,10 +159,12 @@
 				   					$subTrans = $this->general_lib->get_sub_transportation();
 				   					$checked = false;
 				   					if ($subTrans != '') { 
-				   						if (isset($subTrans[$sub_transportation['tp_id']])) {
-				   							if ($subTrans[$sub_transportation['tp_id']] == $sub_transportation['tp_id']) {
-						   						$checked = true;
-						   					}
+				   						if (isset($subTrans[$tp_record['tp_id']])) {
+				   							foreach ($subTrans[$tp_record['tp_id']] as $item) {
+			   									if ($item == $sub_transportation['tp_id']) {
+							   						$checked = true;
+							   					}
+				   							}
 				   						}
 				   					}
 
@@ -168,7 +172,7 @@
 				   						'value' => $sub_transportation['tp_id'], 
 				   						'checked' => $checked, 
 				   						'class' => 'check_sub_element checkbox_sub_trans', 
-				   						'name' => 'checkbox_subTrans[]', 
+				   						'name' => 'checkbox_subTrans['.$tp_record['tp_id'].']['.$sub_transportation['tp_id'].']', 
 				   						'id' => 'checkbox_sub_trans_'.$subActOrder,
 				   						'order' => $subActOrder
 				   					);
@@ -183,16 +187,18 @@
 			    				<?php
 						        	$amount_people[0] = "-- Select --";
 					                for ($i=1; $i <= $this->session->userdata("people"); $i++) { 
-					                		$amount_people[$i] = $i;
+					                	$amount_people[$i] = $i;
 					                }
 					                $peopleSelect = $this->session->userdata("people") ? $this->session->userdata("people") : 0;
 					                $amountPeopleSubTransport = $this->general_lib->get_people_sub_transportation();
 					                if ($amountPeopleSubTransport != '') {
-					                	if (isset($amountPeopleSubTransport[$transOrder-1])) {
-					                		$peopleSelect = $amountPeopleSubTransport[$transOrder-1];
+					                	if (isset($amountPeopleSubTransport[$sub_transportation['tp_id']])) {
+					                		foreach ($amountPeopleSubTransport[$sub_transportation['tp_id']] as $amount) {
+					                			$peopleSelect = $amount;
+					                		}
 					                	}
 					                }
-					                echo form_dropdown('peopleSubTransportation[]', 
+					                echo form_dropdown('peopleSubTransportation['.$sub_transportation['tp_id'].'][]', 
 										$amount_people, 
 										$peopleSelect, 
 										'class="form-control col-sm-4 people" id="amount_sub_people_transport"'
@@ -233,10 +239,12 @@
 					   					$sub_trans_extra_pro = $this->general_lib->get_sub_trans_extr_product();
 					   					$checked = false;
 					   					if ($sub_trans_extra_pro != '') { 
-					   						if (isset($sub_trans_extra_pro[$ep_result['ep_id']])) {
-					   							if ($sub_trans_extra_pro[$ep_result['ep_id']] == $ep_result['ep_id']) {
-							   						$checked = true;
-							   					}
+					   						if (isset($sub_trans_extra_pro[$tp_record['tp_id']])) {
+					   							foreach ($sub_trans_extra_pro[$tp_record['tp_id']] as $item) {
+				   									if ($item == $ep_result['ep_id']) {
+								   						$checked = true;
+								   					}
+					   							}
 					   						}
 					   					}
 
@@ -244,7 +252,7 @@
 					   						'value' => $ep_result['ep_id'], 
 					   						'checked' => $checked, 
 					   						'class' => 'check_sub_element checkbox_subactivity', 
-					   						'name' => 'sub_trans_extra_product[]', 
+					   						'name' => 'sub_trans_extra_product['.$tp_record['tp_id'].']['.$ep_result['ep_id'].']', 
 					   						'id' => 'checkbox_subactivity_'.$accExtraOrder,
 					   						'order' => $accExtraOrder
 					   					);
@@ -259,12 +267,14 @@
 					   				<?php 
 						   				$value = "";
 						   				$amountExtras = $this->general_lib->get_sub_trans_amount_extra();
-										if (isset($amountExtras[$ep_result['ep_id']])) {
-						   					$value = $amountExtras[$ep_result['ep_id']];
+						   				if ($amountExtras != '') {
+						   					if (isset($amountExtras[$tp_record['tp_id']][$ep_result['ep_id']])) {
+						   						$value = $amountExtras[$tp_record['tp_id']][$ep_result['ep_id']];
+						   					}
 						   				}
 
 					   					$input = array(
-					   							"name"=>"amountTransExtras[".$ep_result['ep_id']."]",
+					   							"name"=>"amountTransExtras[".$tp_record['tp_id']."][".$ep_result['ep_id']."]",
 					   							"class"=>"form-control amount_extras", 
 					   							"value"=> $value
 					   						);

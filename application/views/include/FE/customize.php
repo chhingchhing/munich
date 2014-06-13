@@ -59,12 +59,14 @@
 					echo "<dt>Transportations:</dt>";
 					foreach ($tps as $key => $tpsID) {
 						$tpOrder++;
-						echo "<dd>- ". MU_Model::getForiegnTableName('transportation', array('tp_id' => $tpsID), 'tp_name');
-						$tpPrice = MU_Model::getForiegnTableName('transportation', array('tp_id' => $tpsID), 'tp_saleprice');
-						$tpPrice = $tpPrice * $tpPeople[$tpOrder-1];
-						$tpSum += $tpPrice;
-						echo ' $ ' .$tpPrice;
-						echo "<dd>";
+						foreach ($tpPeople[$tpsID] as $person) {
+							echo "<dd>- ". MU_Model::getForiegnTableName('transportation', array('tp_id' => $tpsID), 'tp_name');
+							$tpPrice = MU_Model::getForiegnTableName('transportation', array('tp_id' => $tpsID), 'tp_saleprice');
+							$tpPrice = $tpPrice * $person;
+							$tpSum += $tpPrice;
+							echo ' $ ' .$tpPrice;
+							echo "<dd>";
+						}
 					}
 					echo "</dl>";
 
@@ -75,15 +77,18 @@
 						echo "<dt>Extra Products:</dt>";
 						$amountTpExtra = $this->general_lib->get_sub_trans_amount_extra();
 						$tpExtraOrder = 0;
-						// $sumTpExt = 0;
 						foreach ($tpExtra as $key => $amountExtras) {
-							$tpExtraOrder++;
-							echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $amountExtras), 'ep_name');
-							$tpExtrasPrice = MU_Model::getForiegnTableName('extraproduct', array('ep_id'=> $amountExtras), 'ep_saleprice');
-							$tpExtrasPrice = $tpExtrasPrice * $amountTpExtra[$amountExtras];
-							$sumTpExt += $tpExtrasPrice;
-							echo ': $'.$tpExtrasPrice;
-							echo "</dd>";
+							foreach ($amountExtras as $id) {
+								foreach ($amountTpExtra as $arrAmount) {
+									$tpExtraOrder++;
+									echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $id), 'ep_name');
+									$tpExtrasPrice = MU_Model::getForiegnTableName('extraproduct', array('ep_id'=> $id), 'ep_saleprice');
+									$tpExtrasPrice = $tpExtrasPrice * $arrAmount[$id];
+									$sumTpExt += $tpExtrasPrice;
+									echo ': $'.$tpExtrasPrice;
+									echo "</dd>";
+								}
+							}
 						}
 						echo "</dl>";
 					}
@@ -128,19 +133,20 @@
 							$order++;
 							$amountExtra = 0;
 							if ($amountextra != '') {
-								if ($amountextra[$extPro]) {
-									foreach ($amountextra[$extPro] as $val) {
-										$amountExtra = $val;
+								foreach ($extPro as $id) {
+									if ($amountextra[$id]) {
+										foreach ($amountextra[$id] as $val) {
+											$amountExtra = $val;
+										}
 									}
+									echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $id), 'ep_name');
+									$priceExtra = 	MU_Model::getForiegnTableName('extraproduct', array('ep_id'=>$id), 'ep_saleprice');
+									$priceExtra = $priceExtra * $amountExtra;
+									$sumActExt += $priceExtra;
+									echo ': $'.$priceExtra;
+									echo '</dd>';
 								}
 							}
-							
-							echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $extPro), 'ep_name');
-							$priceExtra = 	MU_Model::getForiegnTableName('extraproduct', array('ep_id'=>$extPro), 'ep_saleprice');
-							$priceExtra = $priceExtra * $amountExtra;
-							$sumActExt += $priceExtra;
-							echo ': $'.$priceExtra;
-							echo '</dd>';
 						}
 						echo "</dl>";
 					}
@@ -150,14 +156,15 @@
 				$acts = $this->general_lib->get_main_activities();
 				if($acts != ''){
 					$actPeople = $this->general_lib->get_people_main_activity();
-					$order = 0;
 					echo "<dl>";
 					echo "<dt>Activities:</dt>";
 					foreach($acts as $key => $actsID){
-						$order++; 
+						foreach ($actPeople[$actsID] as $amount) {
+							$passAmount = $amount;
+						}
 						echo '<dd>- '.MU_Model::getForiegnTableName('activities', array('act_id'=>$actsID), 'act_name');
 						$actPrice = MU_Model::getForiegnTableName('activities', array('act_id'=>$actsID), 'act_saleprice');
-						$actPrice = $actPrice * $actPeople[$order-1];
+						$actPrice = $actPrice * $passAmount;
 						$sumAct += $actPrice;
 						echo ': $'.$actPrice;
 						echo "</dd>";
@@ -166,17 +173,20 @@
 					$sub = $this->general_lib->get_sub_activities();
 					if($sub != ""){
 						$actPeople = $this->general_lib->get_people_sub_activity();
-						$order = 0;
 						echo "<dl>";
 						echo "<dt>Sub Activities:</dt>";
-						foreach ($sub as $key => $actsID) {
-							$order++;
-							echo '<dd>- '.MU_Model::getForiegnTableName('activities', array('act_id' => $actsID), 'act_name');
-							$subActPrice = MU_Model::getForiegnTableName('activities', array('act_id'=>$actsID), 'act_saleprice');
-							$subActPrice = $subActPrice * $actPeople[$actsID];
-							$sumSubAct += $subActPrice;
-							echo ': $'.$subActPrice;
-							echo '</dd>';
+						foreach ($sub as $key => $arrActs) {
+							foreach ($arrActs as $actsID) {
+								foreach ($actPeople as $amount) {
+									$passSubAmount = $amount[$actsID];
+								}
+								echo '<dd>- '.MU_Model::getForiegnTableName('activities', array('act_id' => $actsID), 'act_name');
+								$subActPrice = MU_Model::getForiegnTableName('activities', array('act_id'=>$actsID), 'act_saleprice');
+								$subActPrice = $subActPrice * $passSubAmount;
+								$sumSubAct += $subActPrice;
+								echo ': $'.$subActPrice;
+								echo '</dd>';
+							}
 						}
 						echo "</dl>";
 					}
@@ -189,12 +199,17 @@
 						$order = 0;
 						foreach ($extraactivity as $key => $extPro) {
 							$order++;
-							echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $extPro), 'ep_name');
-							$epPrice = 	MU_Model::getForiegnTableName('extraproduct', array('ep_id'=>$extPro), 'ep_saleprice');
-							$epPrice = $epPrice * $amountextra[$extPro];
-							$sumActExt += $epPrice;
-							echo ': $'.$epPrice;
-							echo '</dd>';
+							foreach ($extPro as $id) {
+								foreach ($amountextra as $items) {
+									echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $id), 'ep_name');
+									$epPrice = 	MU_Model::getForiegnTableName('extraproduct', array('ep_id'=>$id), 'ep_saleprice');
+									$epPrice = $epPrice * $items[$id];
+									$sumActExt += $epPrice;
+									echo ': $'.$epPrice;
+									echo '</dd>';
+								}
+								
+							}
 						}
 						echo "</dl>";
 					}
