@@ -1,4 +1,4 @@
-<div class="modal fade addmorepassenger" tabindex="-1" role="dialog" aria-labelledby="subscribeModalLabel" aria-hidden="true">
+<div class="modal fade addmorepassenger_modal" tabindex="-1" role="dialog" aria-labelledby="subscribeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 
