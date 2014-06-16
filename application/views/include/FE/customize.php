@@ -238,10 +238,9 @@
 						echo "</dd>";
 					}
 					echo "</dl>";
-					echo "<b> Sub Total : </b>$".$sumExtp;
 				}
 				$total = 0;
-				$total += $sumAct + $sumSubAct + $sumActExt + $tpSum + $tpSubSum + $sumTpExt + $sumExtp;
+				$total += $sumAct + $sumSubAct + $sumActExt + $sumAcc + $tpSum + $tpSubSum + $sumTpExt + $sumExtp;
 				echo '<h3> Total : $'.$total.'</h3>';
 
 			?>

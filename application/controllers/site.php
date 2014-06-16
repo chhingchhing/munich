@@ -405,39 +405,12 @@ class Site extends MU_Controller {
 			}
 			$fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
 	        
-
-
-
 	        /*$array = array();
 	        foreach ($fe_data['members']->result() as $item) {
 	        	$array[] = $item->pass_id;
 	        }
 	        echo serialize($array); die();*/
-
-echo "transportation";
-var_dump($this->general_lib->get_transportation());
-var_dump($this->general_lib->get_sub_trans_extr_product());
-var_dump($this->general_lib->get_sub_trans_amount_extra());
-var_dump($this->general_lib->get_departure_transportation());
-var_dump($this->general_lib->get_return_date_transportation());
-var_dump($this->general_lib->get_people_transportation());	
-var_dump($this->general_lib->get_people_sub_transportation());
-echo "===============<br/>";
-echo "acc";
-var_dump($this->general_lib->get_accommodation());
-var_dump($this->general_lib->get_sub_acc_extr_product());
-var_dump($this->general_lib->get_sub_acc_amount_extra());
-var_dump($this->general_lib->get_room_type_accommodation());
-var_dump($this->general_lib->get_amount_book_room());
-echo "===============<br/>";
-echo "activites";
-var_dump($this->general_lib->get_sub_activities());
-var_dump($this->general_lib->get_extra_activities());
-echo "===============<br/>";
-echo "extra services";
-var_dump($this->general_lib->get_extra_services());
-var_dump($this->general_lib->get_amount_extra());
-// var_dump($this->general_lib->get_transportation());
+			// var_dump($this->general_lib->get_transportation());
 
 	        $moreservices = array(
 				'transportation' => array(
