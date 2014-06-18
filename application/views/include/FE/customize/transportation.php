@@ -98,7 +98,7 @@
 				        </div>
 			    	</div>
 			    	<div class="form-group">
-				        <label class="col-sm-4 control-label">Number of Passenger :</label>
+				        <label class="col-sm-4 control-label">Amount of Seat :</label>
 				        <div class="col-sm-3">
 				        <?php
 				        	$amount_people[0] = "-- Select --";
@@ -122,7 +122,7 @@
 				        ?>
 				        </div>
 			    	</div>
-			    	<h3>Sub Transportations</h3>
+			    	<!--<h3>Sub Transportations</h3>
 			    	<?php
 				    		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 							$subTransportation = mod_feCustomize::selectSubTransportation($this->session->userdata('ftvID'), $this->session->userdata('lcID'), $tp_record['tp_id']);
@@ -207,7 +207,7 @@
 			    		</div>
 			    		<div class="clear_both"></div>
 			    	</div>
-			    	<?php }?>
+			    	<?php }?>-->
 			    	<h3>Extra Products</h3>
 				    	<?php
 				    		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));

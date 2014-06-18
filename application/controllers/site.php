@@ -177,6 +177,21 @@ class Site extends MU_Controller {
             $fe_data['old_txtStatus'] = array('0' => 'Unpublished','1' => 'Published');
             $fe_data['profile'] = $this->mod_profilefe->pass_profilefe($passegnger_id);
             $fe_data['passengerbooking_info'] = $this->mod_profilefe->passenger_bookedform($passegnger_id);
+			// add select more passengers that booking by team leader
+			$login_sess_passenger = $this->session->userdata('passenger');
+	        $new_sess_passenger = $this->session->userdata('new_passenger_id');
+	        $pass_id = -1;
+			if ($new_sess_passenger OR $login_sess_passenger) {
+				$this->general_lib->empty_personalInfo_message();
+
+				if ($new_sess_passenger != '') {
+	        		$pass_id = $new_sess_passenger['pass_id'];
+	        	}
+	        	if ($login_sess_passenger != '') {
+	        		$pass_id = $login_sess_passenger['pass_id'];
+	        	}
+			}
+			$fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
             $this->load->view('index',$fe_data);
             if ($this->input->post('frm_profile')){      
                     $fname      =   $this->input->post('old_firstname');

@@ -165,7 +165,7 @@ if (isset($arr_messages)) {
 					        if (isset($members)) {
 					        	if ($members->num_rows() > 0) {
 						        	foreach ($members->result() as $item) {
-						        		echo anchor('site/customizes/each-member/'.$item->pass_id, ucwords($item->pass_fname." ".$item->pass_lname));
+						        		echo anchor('site/customizes/each-member/'.$item->pass_id, ucwords($item->pass_fname." ".$item->pass_lname)).'</br>';
 						    		}
 						    	}
 					        } else {
@@ -193,7 +193,7 @@ if (isset($arr_messages)) {
 				echo anchor(
 					"#", 
 					"Add info all passengers!", 
-					"class='btn btn-success btn-sm' data-target='.addmorepassenger' data-toggle='modal'"
+					"class='btn btn-success btn-sm' data-target='.addmorepassenger_modal' data-toggle='modal'"
 					); 
 			}
 			?>

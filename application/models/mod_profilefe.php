@@ -41,6 +41,16 @@ if (!defined('BASEPATH'))
                 $this->db->where('pass_id', $passegnger_id);
                 return $this->db->update('passenger', $data);
               }
+              // select all team members of team leader booking of customize
+              public function select_team_memeber_of_passengers($team_member_id){
+                $sub_members = $this->db->select('*')
+                                ->from('passenger')
+                                ->where('pass_addby', $team_member_id)
+                                ->from('pass_deleted',0)
+                                ->get();
+              var_dump($sub_members); die();
+                return $sub_members;
+              }
        
 	}
 
