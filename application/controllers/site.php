@@ -280,7 +280,6 @@ class Site extends MU_Controller {
         $array[$index] = $new_element;
         return $array;
      }
-
      /**
 	 * Clear all session of storing array
      */
@@ -428,7 +427,7 @@ class Site extends MU_Controller {
 						'label' => 'Passenger lastname',
 						'rules' => 'trim|required'
 					), 
-					);	
+				);	
 				$this->form_validation->set_rules($addpassenger);
 				if($this->form_validation->run() == FALSE){
 					$arr_errors = array(
@@ -511,7 +510,8 @@ class Site extends MU_Controller {
 				$this->session->set_userdata('txtTo', $this->input->post('txtTo'));
 			}else{
 				$this->session->set_userdata('txtTo', "");
-			}	
+			}
+
 		}
 		return true;	
 	} 
@@ -687,7 +687,6 @@ class Site extends MU_Controller {
 		return $subAccommodation;
 	}
 	
-	
 	public function selectSubTransportation($sub_act){
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 		$subTransportation = mod_fecustomize::selectSubTransportation($this->session->userdata('ftvID'), $this->session->userdata('lcID'), $tp_record['tp_id']);
@@ -705,7 +704,7 @@ class Site extends MU_Controller {
 	}
 	public function customizeTransportation(){
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
-		$transportation = $this->mod_fecustomize->transportation($this->session->userdata('ftvID'), $this->session->userdata('lcID'));
+		$transportation = $this->mod_fecustomize->transportation($this->session->userdata('ftvID'), $this->session->userdata('lcID'));		
 		$tp_data = array();
 		if($transportation->num_rows() > 0){
 			foreach($transportation->result() as $tp){

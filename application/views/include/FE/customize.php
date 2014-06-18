@@ -17,7 +17,7 @@
 			   <li><?php echo anchor("site/customizes/personal-info","Personal Information"); ?></li>
 			   <li><?php echo anchor("site/customizes/payments","Payment"); ?></li>
 			</ul>			
-		<hr>
+			<hr>
 			<div class="tab-content">
 			   	<?php 
 			   		if($this->uri->segment(4)){
@@ -35,13 +35,13 @@
 			<?php 
 
 			// Initialize variable
-			$sumAct = 0;
-			$sumAcc = 0;
-			$sumSubAct = 0;
-			$sumActExt = 0;
 			$tpSum = 0;
 			$tpSubSum = 0;
 			$sumTpExt = 0;
+			$sumAcc = 0;
+			$sumAct = 0;
+			$sumSubAct = 0;
+			$sumActExt = 0;
 			$sumExtp = 0;
 
 				if($this->session->userdata('ftvID')) echo '<b>Festival : </b>'.MU_Model::getForiegnTableName('festival', array('ftv_id'=>$this->session->userdata('ftvID')), 'ftv_name').'<br/>';
@@ -152,6 +152,7 @@
 					}
 				}
 
+				// get main activities and calculate price of amounts of activities
 				echo '<h4>Activities : </h4>';
 				$acts = $this->general_lib->get_main_activities();
 				if($acts != ''){
@@ -170,6 +171,7 @@
 						echo "</dd>";
 					}
 					echo "</dl>";
+					/*   calculation price of sub activities */        
 					$sub = $this->general_lib->get_sub_activities();
 					if($sub != ""){
 						$actPeople = $this->general_lib->get_people_sub_activity();
@@ -231,7 +233,7 @@
 		   					}
 		   				}
 						echo "<dd>- ". MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $extID), 'ep_name');
-						$exPrice = MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $extID) , 'ep_saleprice');
+						$exPrice = MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $extID), 'ep_saleprice');
 						$price = $exPrice * $value;
 						$sumExtp += $price;
 						echo ' $ ' .$price;
@@ -244,15 +246,12 @@
 				$this->session->set_userdata('total', $total);
 				echo '<h3> Total : $'.$total.'</h3>';
 
-			?>
-			
+			?>			
 		</div>
 		<!-- end calculate form order -->		
 	</div>
-	<hr>
-	
+	<hr>	
 	<!-- I am in include/fe/customize.php -->
 </div>
-
 <?php $this->load->view(INCLUDE_FE.'after_content'); ?>
 

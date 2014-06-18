@@ -2,6 +2,10 @@
 <div class="tab-pane col-sm-12 active form-booking" id="trip_info">
 	   		<h2>Trip Informations</h2>
 	   		<hr>
+	   		<?php 
+
+			
+	   		?>
 	   		<div class="col-sm-12">
 		   		<div class="form-group">
 			        <label class="col-sm-3 control-label">From :</label>
