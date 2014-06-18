@@ -62,6 +62,7 @@ class Mod_FeCustomize extends MU_model {
             ->join('photo','photo.photo_id = accommodation.photo_id')
             ->join('room_types','room_types.rt_id = accommodation.acc_rt_id')
             ->join('classification','classification.clf_id = accommodation.classification_id')
+            ->join('hotel_detail','hotel_detail.dhrt_id = room_types.rt_id')
             ->where('accommodation.acc_deleted',0)
             ->where('accommodation.acc_subof', 0)
             ->where('accommodation.acc_ftv_id', $ftvID)
@@ -69,6 +70,20 @@ class Mod_FeCustomize extends MU_model {
             ->get('accommodation');
             return $accommodation;
     }
+    /*public function accommodation($ftvID, $lcId){
+        $accommodation = $this->db->select('*')
+            ->join('acc_calendar','accommodation.acc_id = acc_calendar.accomodations_id')
+            ->join('calendar_available', 'calendar_available.ca_id = acc_calendar.calendar_available_id')
+            ->join('photo','photo.photo_id = accommodation.photo_id')
+            ->join('room_types','room_types.rt_id = accommodation.acc_rt_id')
+            ->join('classification','classification.clf_id = accommodation.classification_id')
+            ->where('accommodation.acc_deleted',0)
+            ->where('accommodation.acc_subof', 0)
+            ->where('accommodation.acc_ftv_id', $ftvID)
+            ->where('accommodation.location_id', $lcId)
+            ->get('accommodation');
+            return $accommodation;
+    }*/
 
     /* * public function select sub accommodation
     * @param parameter $ftvID, $lcId
@@ -307,8 +322,9 @@ class Mod_FeCustomize extends MU_model {
     }
 
     // Get information of item
-    function get_info_of_main_obj($table, $col, $id) {
+    function get_info_of_main_obj($table, $col, $id, $field_select) {
         $query = $this->db
+            ->select($field_select)
             ->where($col, $id)
             ->get($table);
         if ($query->num_rows() == 1) {
@@ -326,6 +342,40 @@ class Mod_FeCustomize extends MU_model {
             }
             return $object;
         }
+    }
+
+    function get_info_hotel($rt_id) {
+        $query = $this->db
+            ->join('hotel_detail', 'hotel.ht_id = hotel_detail.dhht_id')
+            ->join('room_types', 'room_types.rt_id = hotel_detail.dhrt_id')
+            ->where('dhrt_id', $rt_id)
+            ->get("hotel");
+        if ($query->num_rows() == 1) {
+            return $query->row();
+        }
+        return false;
+    }
+
+    /*
+    * Inserting data into table booking
+    */
+    function insertBookingInfo(&$bk_info) {
+        if ($this->db->insert('booking', $bk_info)) {
+            $bk_info['bk_id'] = $this->db->insert_id();
+            return true;
+        }
+        return false;
+    }
+
+    /*
+    * Inserting data into table Passenger booking
+    */
+    function insertPassengerBookingInfo(&$pass_bk_info) {
+        if ($this->db->insert('passenger_booking', $pass_bk_info)) {
+            $pass_bk_info['pbk_id'] = $this->db->insert_id();
+            return true;
+        }
+        return false;
     }
     
 }

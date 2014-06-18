@@ -322,7 +322,6 @@ class Site extends MU_Controller {
 	* load template customizes and include customize
 	*/
 	public function customizes($display_page = false, $pass_id = false){
-		// $this->session->sess_destroy();
 		if($display_page == "customizeTrip"){
 			$this->customizeTrip();
 			redirect('site/customizes/transportation');
@@ -375,88 +374,8 @@ class Site extends MU_Controller {
 			}
 		}
 		if ($display_page == "personal-info") {
-			$login_sess_passenger = $this->session->userdata('passenger');
-	        $new_sess_passenger = $this->session->userdata('new_passenger_id');
-	        $pass_id = -1;
-			if ($new_sess_passenger OR $login_sess_passenger) {
-				$this->general_lib->empty_personalInfo_message();
-
-				if ($new_sess_passenger != '') {
-	        		$pass_id = $new_sess_passenger['pass_id'];
-	        	}
-	        	if ($login_sess_passenger != '') {
-	        		$pass_id = $login_sess_passenger['pass_id'];
-	        	}
-			}
+			$pass_id = $this->getCurrentPassengerId();
 			$fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
-	        
-
-
-
-	        /*$array = array();
-	        foreach ($fe_data['members']->result() as $item) {
-	        	$array[] = $item->pass_id;
-	        }
-	        echo serialize($array); die();*/
-
-echo "transportation";
-var_dump($this->general_lib->get_transportation());
-var_dump($this->general_lib->get_sub_trans_extr_product());
-var_dump($this->general_lib->get_sub_trans_amount_extra());
-var_dump($this->general_lib->get_departure_transportation());
-var_dump($this->general_lib->get_return_date_transportation());
-var_dump($this->general_lib->get_people_transportation());	
-var_dump($this->general_lib->get_people_sub_transportation());
-echo "===============<br/>";
-echo "acc";
-var_dump($this->general_lib->get_accommodation());
-var_dump($this->general_lib->get_sub_acc_extr_product());
-var_dump($this->general_lib->get_sub_acc_amount_extra());
-var_dump($this->general_lib->get_room_type_accommodation());
-var_dump($this->general_lib->get_amount_book_room());
-echo "===============<br/>";
-echo "activites";
-var_dump($this->general_lib->get_sub_activities());
-var_dump($this->general_lib->get_extra_activities());
-echo "===============<br/>";
-echo "extra services";
-var_dump($this->general_lib->get_extra_services());
-var_dump($this->general_lib->get_amount_extra());
-// var_dump($this->general_lib->get_transportation());
-
-	        $moreservices = array(
-				'transportation' => array(
-					'sub' => array(
-						$this->general_lib->get_transportation()
-					),
-					'extra_pro' => array(
-						$this->general_lib->get_sub_trans_extr_product()
-					)
-				),
-				'accommodation' => array(
-					'sub' => array(
-						$this->general_lib->get_accommodation()
-					),
-					'extra_pro' => array(
-						$this->general_lib->get_sub_acc_extr_product()
-					)
-				),
-				'activites' => array(
-					'sub' => array(
-						$this->general_lib->get_sub_activities()
-					),
-					'extra_pro' => array(
-						$this->general_lib->get_extra_activities()
-					)
-				),
-				'extra_service' => array(
-					'extra_pro' => array(
-						$this->general_lib->get_extra_services()
-					)
-				)
-			);
-
-
 
 			if($this->input->post('btnPersonalInfo')){	
 				$this->general_lib->empty_personalInfo_message();
@@ -649,10 +568,10 @@ var_dump($this->general_lib->get_amount_extra());
     }
 	public function customizeActivity(){
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
-		$activites = $this->mod_fecustomize->trip_information($this->session->userdata('ftvID'), $this->session->userdata('lcID'));
+		$activities = $this->mod_fecustomize->trip_information($this->session->userdata('ftvID'), $this->session->userdata('lcID'));
 		$records = array();
-		if($activites->num_rows() > 0){
-			foreach($activites->result() as $act){
+		if($activities->num_rows() > 0){
+			foreach($activities->result() as $act){
 				$recodeavaliable = $this->convertDateToRange($findate, $act->start_date, $act->end_date);				
 				if($recodeavaliable){
 					$avRecord = json_decode(json_encode($act), true); 
@@ -921,41 +840,11 @@ var_dump($this->general_lib->get_amount_extra());
 		echo json_encode($arr_errors);
 	}
 
-// $this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')
 	function pay_later_customize() {
-		
-		$moreservices = array(
-			'transportation' => array(
-				'sub' => array(
-					$this->general_lib->get_transportation()
-				),
-				'extra_pro' => array(
-					$this->general_lib->get_sub_trans_extr_product()
-				)
-			),
-			'accommodation' => array(
-				'sub' => array(
-					$this->general_lib->get_accommodation()
-				),
-				'extra_pro' => array(
-					$this->general_lib->get_sub_acc_extr_product()
-				)
-			),
-			'activites' => array(
-				'sub' => array(
-					$this->general_lib->get_sub_activities()
-				),
-				'extra_pro' => array(
-					$this->general_lib->get_extra_activities()
-				)
-			),
-			'extra_service' => array(
-				'extra_pro' => array(
-					$this->general_lib->get_extra_services()
-				)
-			)
-		);	
-
+		$dataTransportation = $this->getSessionTransportations();
+		$dataAccommodation = $this->getSessionAccommodation();
+		$dataActivity = $this->getSessionActivities();
+		$dataExtraService = $this->getSessionExtraServices();
 
 		$bk_info = array(
 			'bk_type' => 'customize',
@@ -963,10 +852,264 @@ var_dump($this->general_lib->get_amount_extra());
 			'bk_arrival_date' => $this->session->userdata('txtFrom'),
 			'bk_return_date' => $this->session->userdata('txtTo'),
 			'bk_total_people' => $this->session->userdata('people'),
-			'bk_addmoreservice' => '',
+			'bk_addmoreservice' => serialize($dataExtraService),
+		);
+		$bk_inserted = $this->mod_fecustomize->insertBookingInfo($bk_info);
+		if (!$bk_inserted) {
+			echo "false";
+		}
+
+		$pass_id = $this->getCurrentPassengerId();
+		$members = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
+		$pass_come_with = array();
+		foreach ($members->result() as $pass) {
+			$pass_come_with[$pass->pass_id] = $pass->pass_id;
+		}
+		$pass_bk_info = array(
+			'pbk_pass_come_with' => serialize($pass_come_with),
+			'pbk_pass_id' => $pass_id,
+			'pbk_bk_id' => $bk_info['bk_id']
+		);
+		$pbk_inserted = $this->mod_fecustomize->insertPassengerBookingInfo($pass_bk_info);
+		if (!$pbk_inserted) {
+			echo "false on pbk";
+		}
+
+		$cuscon_info = array(
+			'cuscon_start_date' => $this->session->userdata('txtFrom'),
+			'cuscon_end_date' => $this->session->userdata('txtTo'),
+			'cuscon_totalprice' => '',
+			'cuscon_accomodation' => serialize($dataAccommodation),
+			'cuscon_activities' => serialize($dataActivity),
+			'cuscon_transportation' => serialize($dataTransportation),
+			'cuscon_ftv_id' => $this->session->userdata('ftvID'),
+			'cuscon_lt_id' => $this->session->userdata('lcID'),
+		);
+	}
+
+	/*
+	* Get current user by login or just registered
+	*/
+	function getCurrentPassengerId() {
+		$login_sess_passenger = $this->session->userdata('passenger');
+        $new_sess_passenger = $this->session->userdata('new_passenger_id');
+        $pass_id = -1;
+		if ($new_sess_passenger OR $login_sess_passenger) {
+			$this->general_lib->empty_personalInfo_message();
+
+			if ($new_sess_passenger != '') {
+        		$pass_id = $new_sess_passenger['pass_id'];
+        	}
+        	if ($login_sess_passenger != '') {
+        		$pass_id = $login_sess_passenger['pass_id'];
+        	}
+		}
+		return $pass_id;
+	}
+
+	/*
+	* Get transportation as array for inserting into database
+	*/
+	function getSessionTransportations () {
+		$arrTransportations = array();
+		$departure =  $this->general_lib->get_departure_transportation();
+		$return_date = $this->general_lib->get_return_date_transportation();
+		$pass_joined = $this->general_lib->get_people_transportation();
+		// $sub_trans = $this->general_lib->get_sub_transportation();
+		// $passSub = $this->general_lib->get_people_sub_transportation();
+		$extra_pro = $this->general_lib->get_sub_trans_extr_product();
+		$amount_extra_pro = $this->general_lib->get_sub_trans_amount_extra();
+
+		foreach ($this->general_lib->get_transportation() as $id) {
+			$field_select = 'tp_id, tp_name, tp_purchaseprice, tp_saleprice, tp_actualstock, tp_texteticket';
+			$object = $this->mod_fecustomize->get_info_of_main_obj('transportation', 'tp_id', $id, $field_select);
+			$products = array();
+			$num_people = array();
+			if (isset($pass_joined[$id])) {
+				foreach ($pass_joined[$id] as $people) {
+					$temp = array(
+						$id => $people
+					);
+					array_push($num_people, $temp);
+				}
+			}
+			if (isset($extra_pro[$id])) {
+				foreach ($extra_pro[$id] as $product_id) {
+					$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
+					$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
+					$product->amount_bked = $amount_extra_pro[$id][$product_id];
+					array_push($products, $product);
+				}
+			}
+
+			$arrTransportation = array(
+				$id => array(
+					'info' => $object,
+					'departure' => $departure[$id],
+					'return_date' => $return_date[$id],
+					'pass_joined' => $num_people,
+					'extra_pro' => $products
+				)
 			);
+			array_push($arrTransportations, $arrTransportation);
+		}
+		return $arrTransportations;
 	}
 	
+	/*
+	* Get accommodation as array for inserting into database
+	*/
+	function getSessionAccommodation () {
+		$departure =  $this->general_lib->get_checkin_date_accommodation();
+		$return_date = $this->general_lib->get_checkout_date_accommodation();
+		$pass_joined = $this->general_lib->get_people_accommodation();
+		$room_type = $this->general_lib->get_room_type_accommodation();
+		$amount_room_book = $this->general_lib->get_amount_book_room();
+		$extra_pro = $this->general_lib->get_sub_acc_extr_product();
+		$amount_extra_pro = $this->general_lib->get_sub_acc_amount_extra();
+
+		$arraAccommodations = array();
+		foreach ($this->general_lib->get_accommodation() as $id) {
+			$field_select = 'acc_id, acc_name, acc_texteticket, acc_purchaseprice, acc_saleprice, acc_actualstock, classification_id';
+			$object = $this->mod_fecustomize->get_info_of_main_obj('accommodation', 'acc_id', $id, $field_select);
+			$num_people = array();
+			$products = array();
+			$arr_rooms = array();
+			$amount_rm_bked = array();
+			if (isset($pass_joined[$id])) {
+				foreach ($pass_joined[$id] as $people) {
+					$temp = array(
+						$id => $people
+					);
+					array_push($num_people, $temp);
+				}
+			}
+			
+			if (isset($extra_pro[$id])) {
+				foreach ($extra_pro[$id] as $product_id) {
+					$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
+					$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
+					$product->amount_bked = $amount_extra_pro[$id][$product_id];
+					array_push($products, $product);
+				}
+			}
+			if (isset($room_type[$id])) {
+				foreach ($room_type[$id] as $items) {
+					foreach ($items as $rt_id) {
+						$room = $this->mod_fecustomize->get_info_hotel($rt_id);
+						if (isset($amount_room_book[$id])) {
+							foreach ($amount_room_book[$id] as $arra_room_nums) {
+								foreach ($arra_room_nums as $num) {
+									if ($num[$rt_id] != '') {
+										$room->amount_bked = $num[$rt_id];
+										array_push($arr_rooms, $room);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			$arraAccommodation = array(
+				$id => array(
+					'info' => $object,
+					'departure' => $departure[$id],
+					'return_date' => $return_date[$id],
+					'pass_joined' => $num_people,
+					'extra_pro' => $products,
+					'accom' => $arr_rooms
+				)
+			);
+			array_push($arraAccommodations, $arraAccommodation);
+		}
+		return $arraAccommodations;
+	}
+
+	/*
+	* Get activities as array for inserting into database
+	*/
+	protected function getSessionActivities() {
+		$departure =  $this->general_lib->get_start_date_activity();
+		$return_date = $this->general_lib->get_end_date_activity();
+		$pass_joined = $this->general_lib->get_people_main_activity();
+		$sub_activities = $this->general_lib->get_sub_activities();
+		$sub_act_people = $this->general_lib->get_people_sub_activity();
+		$extra_pro = $this->general_lib->get_extra_activities();
+		$amount_extra_pro = $this->general_lib->get_amount_extra();
+
+		$arraActivities = array();
+		foreach ($this->general_lib->get_main_activities() as $id) {
+			$field_select = 'act_id, act_name, act_texteticket, act_purchaseprice, act_saleprice, act_actualstock';
+			$object = $this->mod_fecustomize->get_info_of_main_obj('activities', 'act_id', $id, $field_select);
+			$num_people = array();
+			$products = array();
+			$sub_acts = array();
+			$amount_extras = array();
+			$arr_rooms = array();
+			$amount_rm_bked = array();
+			if (isset($pass_joined[$id])) {
+				foreach ($pass_joined[$id] as $people) {
+					$temp = array(
+						$id => $people
+					);
+					array_push($num_people, $temp);
+				}
+			}
+
+			if (isset($sub_activities[$id])) {
+				foreach ($sub_activities[$id] as $sub_act_id) {
+					$field_select = 'act_id, act_name, act_texteticket, act_purchaseprice, act_saleprice, act_actualstock';
+					$sub_act = $this->mod_fecustomize->get_info_of_main_obj('activities', 'act_id', $sub_act_id, $field_select);
+					$sub_act->amount_bked = $sub_act_people[$id][$sub_act_id];
+					array_push($sub_acts, $sub_act);
+				}
+
+			}
+
+			if (isset($extra_pro[$id])) {
+				foreach ($extra_pro[$id] as $product_id) {
+					$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
+					$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
+					$product->amount_bked = $amount_extra_pro[$id][$product_id];
+					array_push($products, $product);
+				}
+			}
+
+			$arraActivity = array(
+				$id => array(
+					'info' => $object,
+					'departure' => $departure[$id],
+					'return_date' => $return_date[$id],
+					'pass_joined' => $num_people,
+					'extra_pro' => $products,
+					'activity' => $sub_acts
+				)
+			);
+			array_push($arraActivities, $arraActivity);
+		}
+		return $arraActivities;
+	}
+
+	/*
+	* Get extra-services as array for inserting into database
+	*/
+	protected function getSessionExtraServices () {
+		$extra_services = $this->general_lib->get_extra_services();
+		$amount_extra_pro = $this->general_lib->get_num_extra_services();
+
+		$arraExtServices = array();
+		foreach ($extra_services as $id) {
+			$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
+			$object = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $id, $field_select);
+			$object->amount_bked = $amount_extra_pro[$id][0];
+			$arraExtService = array(
+				$id => $object
+			);
+			array_push($arraExtServices, $arraExtService);
+		}
+		return $arraExtServices;
+	}
 
 
 
