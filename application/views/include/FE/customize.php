@@ -96,6 +96,8 @@
 				if($acc != ''){
 					$amount_room_booked = $this->general_lib->get_amount_book_room();
 					$rooms = $this->general_lib->get_room_type_accommodation();
+					$check_in_date = $this->general_lib->get_checkin_date_accommodation();
+			   		$check_out_date = $this->general_lib->get_checkout_date_accommodation();
 					echo "<dl>";
 					echo "<dt>Hotel:</dt>";
 					if ($rooms != "") {
@@ -111,10 +113,21 @@
 												}
 											}
 										}
+										if ($check_in_date != '') { 
+						   					if (isset($check_in_date[$accom_id])) {
+						   						$start_date = $check_in_date[$accom_id];
+						   					}
+					   					}
+										if ($check_out_date != '') { 
+						   					if (isset($check_out_date[$accom_id])) {
+						   						$end_date = $check_out_date[$accom_id];
+						   					} 
+					   					}
+					   					$nights = $this->general_lib->getAmountDaysBetweenDates($start_date, $end_date);
 									}
 									$roomType = $this->mod_fecustomize->getAllRoomTypeEachPassenger($rtID)->result();
 									foreach ($roomType as $item) {
-										$accPrice = $item->dhht_price * $room;
+										$accPrice = ($item->dhht_price * $room) * $nights;
 										$sumAcc += $accPrice;
 										echo "<dd>- ".$item->rt_name." (<b>".$item->ht_alias."</b>): $".$accPrice."</dd>";
 									}
@@ -151,7 +164,6 @@
 						echo "</dl>";
 					}
 				}
-
 				// get main activities and calculate price of amounts of activities
 				echo '<h4>Activities : </h4>';
 				$acts = $this->general_lib->get_main_activities();
