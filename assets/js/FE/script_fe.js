@@ -404,7 +404,6 @@ $(function() {
 			dataType: "json",
 			data: data,
 			success: function(response) {
-				console.log(response);
 				if (response) {
 					var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
 					div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
@@ -418,6 +417,42 @@ $(function() {
 		                    $('#each_trans_feedback').removeClass();
 		                });
 		            },response.sms_value.length*125);
+				}
+			}
+		});
+	});
+
+	// Finish booking of customize on fe side
+	$('body').on('click', 'a#pay_later', function(event) {
+		event.preventDefault();
+		var url = $(this).parent().attr('action');
+		$.ajax({
+			type: "POST",
+			url: url,
+			dataType: "json",
+			success: function(response) {
+				if (response) {
+					var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
+					div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
+					div_sms += '</div>';
+					$("div#pay_feedback").append(div_sms);
+					setTimeout(function()
+		            {
+		                $('#pay_feedback').slideUp(250, function()
+		                {
+		                    $('#pay_feedback').removeClass();
+		                });
+		            },response.sms_value.length*125);
+				}
+				if (response.sms_type == 'success') {
+					setTimeout(
+					  function() 
+					  {
+					    window.location.reload(true);
+					  }, 5000);
+				} else {
+					return false;
 				}
 			}
 		});

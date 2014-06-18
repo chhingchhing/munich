@@ -377,6 +377,28 @@ class Mod_FeCustomize extends MU_model {
         }
         return false;
     }
+
+    /*
+    * Inserting data into table customize conjection
+    */
+    function insertCustomizeConjectionInfo(&$cuscon_info) {
+        if ($this->db->insert('customize_conjection', $cuscon_info)) {
+            $cuscon_info['cuscon_id'] = $this->db->insert_id();
+            return true;
+        }
+        return false;
+    }
+
+    /*
+    * Inserting data into table sale customize
+    */
+    function insertSaleCustomizeInfo(&$salecus_info) {
+        if ($this->db->insert('sale_customize', $salecus_info)) {
+            $salecus_info['salecus_id'] = $this->db->insert_id();
+            return true;
+        }
+        return false;
+    }
     
 }
 

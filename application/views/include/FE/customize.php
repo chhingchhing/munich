@@ -241,6 +241,7 @@
 				}
 				$total = 0;
 				$total += $sumAct + $sumSubAct + $sumActExt + $sumAcc + $tpSum + $tpSubSum + $sumTpExt + $sumExtp;
+				$this->session->set_userdata('total', $total);
 				echo '<h3> Total : $'.$total.'</h3>';
 
 			?>

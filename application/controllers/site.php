@@ -330,6 +330,27 @@ class Site extends MU_Controller {
 		$this->general_lib->empty_extra_services();
 		$this->general_lib->empty_num_extra_services();
 	}
+
+	/*
+	* Clear all session of a whole customize booking process.
+	*/
+	protected function clear_all_customize() {
+		$this->clear_all_for_activity();
+		$this->clear_all_for_accommodation();
+		$this->clear_all_for_transportation();
+		$this->clear_all_for_extra_services();
+		// Unset sessions after booking finished
+		$items_sess = array(
+			'ftvID' => '',
+			'lcID' => '',
+			'total' => '',
+			'txtFrom' => '',
+			'txtTo' => '',
+			'people' => '',
+			'each_member_extra_of_trans' => ''
+		);
+		$this->session->unset_userdata($items_sess);
+	}
         
     /*
 	* public function customize
@@ -856,50 +877,106 @@ class Site extends MU_Controller {
 	}
 
 	function pay_later_customize() {
-		$dataTransportation = $this->getSessionTransportations();
-		$dataAccommodation = $this->getSessionAccommodation();
-		$dataActivity = $this->getSessionActivities();
-		$dataExtraService = $this->getSessionExtraServices();
+		if ($this->session->userdata('ftvID') == "") {
+			$arr_errors = array(
+				"success" => false,
+				"sms_type" => "danger",
+				"sms_title" => "Sorry!",
+				"sms_value" => "Please make a booking before you try to submit."
+			);
+			echo json_encode($arr_errors);
+		} else {
+			$dataTransportation = $this->getSessionTransportations();
+			$dataAccommodation = $this->getSessionAccommodation();
+			$dataActivity = $this->getSessionActivities();
+			$dataExtraService = $this->getSessionExtraServices();
 
-		$bk_info = array(
-			'bk_type' => 'customize',
-			'bk_date' => date("Y-m-d"),
-			'bk_arrival_date' => $this->session->userdata('txtFrom'),
-			'bk_return_date' => $this->session->userdata('txtTo'),
-			'bk_total_people' => $this->session->userdata('people'),
-			'bk_addmoreservice' => serialize($dataExtraService),
-		);
-		$bk_inserted = $this->mod_fecustomize->insertBookingInfo($bk_info);
-		if (!$bk_inserted) {
-			echo "false";
-		}
+			$bk_info = array(
+				'bk_type' => 'customize',
+				'bk_date' => date("Y-m-d"),
+				'bk_arrival_date' => $this->session->userdata('txtFrom'),
+				'bk_return_date' => $this->session->userdata('txtTo'),
+				'bk_total_people' => $this->session->userdata('people'),
+				'bk_addmoreservice' => serialize($dataExtraService),
+			);
+			$bk_inserted = $this->mod_fecustomize->insertBookingInfo($bk_info);
+			if (!$bk_inserted) {
+				$arr_errors = array(
+					"success" => false,
+					"sms_type" => "danger",
+					"sms_title" => "Sorry!",
+					"sms_value" => "Your process has been failed for transection."
+				);
+				echo json_encode($arr_errors);
+			}
 
-		$pass_id = $this->getCurrentPassengerId();
-		$members = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
-		$pass_come_with = array();
-		foreach ($members->result() as $pass) {
-			$pass_come_with[$pass->pass_id] = $pass->pass_id;
-		}
-		$pass_bk_info = array(
-			'pbk_pass_come_with' => serialize($pass_come_with),
-			'pbk_pass_id' => $pass_id,
-			'pbk_bk_id' => $bk_info['bk_id']
-		);
-		$pbk_inserted = $this->mod_fecustomize->insertPassengerBookingInfo($pass_bk_info);
-		if (!$pbk_inserted) {
-			echo "false on pbk";
-		}
+			$pass_id = $this->getCurrentPassengerId();
+			$members = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
+			$pass_come_with = array();
+			foreach ($members->result() as $pass) {
+				$pass_come_with[$pass->pass_id] = $pass->pass_id;
+			}
+			$pass_bk_info = array(
+				'pbk_pass_come_with' => serialize($pass_come_with),
+				'pbk_pass_id' => $pass_id,
+				'pbk_bk_id' => $bk_info['bk_id']
+			);
+			$pbk_inserted = $this->mod_fecustomize->insertPassengerBookingInfo($pass_bk_info);
+			if (!$pbk_inserted) {
+				$arr_errors = array(
+					"success" => false,
+					"sms_type" => "danger",
+					"sms_title" => "Sorry!",
+					"sms_value" => "Your process has been failed for transection."
+				);
+				echo json_encode($arr_errors);
+			}
 
-		$cuscon_info = array(
-			'cuscon_start_date' => $this->session->userdata('txtFrom'),
-			'cuscon_end_date' => $this->session->userdata('txtTo'),
-			'cuscon_totalprice' => '',
-			'cuscon_accomodation' => serialize($dataAccommodation),
-			'cuscon_activities' => serialize($dataActivity),
-			'cuscon_transportation' => serialize($dataTransportation),
-			'cuscon_ftv_id' => $this->session->userdata('ftvID'),
-			'cuscon_lt_id' => $this->session->userdata('lcID'),
-		);
+			$cuscon_info = array(
+				'cuscon_start_date' => $this->session->userdata('txtFrom'),
+				'cuscon_end_date' => $this->session->userdata('txtTo'),
+				'cuscon_totalprice' => $this->session->userdata('total'),
+				'cuscon_accomodation' => serialize($dataAccommodation),
+				'cuscon_activities' => serialize($dataActivity),
+				'cuscon_transportation' => serialize($dataTransportation),
+				'cuscon_ftv_id' => $this->session->userdata('ftvID'),
+				'cuscon_lt_id' => $this->session->userdata('lcID'),
+			);
+			$cuscon_inserted = $this->mod_fecustomize->insertCustomizeConjectionInfo($cuscon_info);
+			if (!$cuscon_inserted) {
+				$arr_errors = array(
+					"success" => false,
+					"sms_type" => "danger",
+					"sms_title" => "Sorry!",
+					"sms_value" => "Your process has been failed for transection."
+				);
+				echo json_encode($arr_errors);
+			}
+
+			$salecus_info = array(
+				'salecus_bk_id' => $bk_info['bk_id'],
+				'salecus_cuscon_id' => $cuscon_info['cuscon_id']
+			);
+			$salecus_inserted = $this->mod_fecustomize->insertSaleCustomizeInfo($salecus_info);
+			if (!$salecus_inserted) {
+				$arr_errors = array(
+					"success" => false,
+					"sms_type" => "danger",
+					"sms_title" => "Sorry!",
+					"sms_value" => "Your process has been failed for transection."
+				);
+				echo json_encode($arr_errors);
+			} else {
+				$this->clear_all_customize();
+				$arr_errors = array(
+					"success" => true,
+					"sms_type" => "success",
+					"sms_title" => "Congradulation!",
+					"sms_value" => "Your process has been success for transection to pay later."
+				);
+				echo json_encode($arr_errors);
+			}
+		}
 	}
 
 	/*
@@ -919,6 +996,9 @@ class Site extends MU_Controller {
         		$pass_id = $login_sess_passenger['pass_id'];
         	}
 		}
+		if ($this->session->userdata('ftvID') == '') {
+			$pass_id =  -1;
+		}
 		return $pass_id;
 	}
 
@@ -935,38 +1015,40 @@ class Site extends MU_Controller {
 		$extra_pro = $this->general_lib->get_sub_trans_extr_product();
 		$amount_extra_pro = $this->general_lib->get_sub_trans_amount_extra();
 
-		foreach ($this->general_lib->get_transportation() as $id) {
-			$field_select = 'tp_id, tp_name, tp_purchaseprice, tp_saleprice, tp_actualstock, tp_texteticket';
-			$object = $this->mod_fecustomize->get_info_of_main_obj('transportation', 'tp_id', $id, $field_select);
-			$products = array();
-			$num_people = array();
-			if (isset($pass_joined[$id])) {
-				foreach ($pass_joined[$id] as $people) {
-					$temp = array(
-						$id => $people
-					);
-					array_push($num_people, $temp);
+		if ($this->general_lib->get_transportation() != "") {
+			foreach ($this->general_lib->get_transportation() as $id) {
+				$field_select = 'tp_id, tp_name, tp_purchaseprice, tp_saleprice, tp_actualstock, tp_texteticket';
+				$object = $this->mod_fecustomize->get_info_of_main_obj('transportation', 'tp_id', $id, $field_select);
+				$products = array();
+				$num_people = array();
+				if (isset($pass_joined[$id])) {
+					foreach ($pass_joined[$id] as $people) {
+						$temp = array(
+							$id => $people
+						);
+						array_push($num_people, $temp);
+					}
 				}
-			}
-			if (isset($extra_pro[$id])) {
-				foreach ($extra_pro[$id] as $product_id) {
-					$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
-					$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
-					$product->amount_bked = $amount_extra_pro[$id][$product_id];
-					array_push($products, $product);
+				if (isset($extra_pro[$id])) {
+					foreach ($extra_pro[$id] as $product_id) {
+						$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
+						$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
+						$product->amount_bked = $amount_extra_pro[$id][$product_id];
+						array_push($products, $product);
+					}
 				}
-			}
 
-			$arrTransportation = array(
-				$id => array(
-					'info' => $object,
-					'departure' => $departure[$id],
-					'return_date' => $return_date[$id],
-					'pass_joined' => $num_people,
-					'extra_pro' => $products
-				)
-			);
-			array_push($arrTransportations, $arrTransportation);
+				$arrTransportation = array(
+					$id => array(
+						'info' => $object,
+						'departure' => $departure[$id],
+						'return_date' => $return_date[$id],
+						'pass_joined' => $num_people,
+						'extra_pro' => $products
+					)
+				);
+				array_push($arrTransportations, $arrTransportation);
+			}
 		}
 		return $arrTransportations;
 	}
@@ -984,59 +1066,61 @@ class Site extends MU_Controller {
 		$amount_extra_pro = $this->general_lib->get_sub_acc_amount_extra();
 
 		$arraAccommodations = array();
-		foreach ($this->general_lib->get_accommodation() as $id) {
-			$field_select = 'acc_id, acc_name, acc_texteticket, acc_purchaseprice, acc_saleprice, acc_actualstock, classification_id';
-			$object = $this->mod_fecustomize->get_info_of_main_obj('accommodation', 'acc_id', $id, $field_select);
-			$num_people = array();
-			$products = array();
-			$arr_rooms = array();
-			$amount_rm_bked = array();
-			if (isset($pass_joined[$id])) {
-				foreach ($pass_joined[$id] as $people) {
-					$temp = array(
-						$id => $people
-					);
-					array_push($num_people, $temp);
+		if ($this->general_lib->get_accommodation() != "") {
+			foreach ($this->general_lib->get_accommodation() as $id) {
+				$field_select = 'acc_id, acc_name, acc_texteticket, acc_purchaseprice, acc_saleprice, acc_actualstock, classification_id';
+				$object = $this->mod_fecustomize->get_info_of_main_obj('accommodation', 'acc_id', $id, $field_select);
+				$num_people = array();
+				$products = array();
+				$arr_rooms = array();
+				$amount_rm_bked = array();
+				if (isset($pass_joined[$id])) {
+					foreach ($pass_joined[$id] as $people) {
+						$temp = array(
+							$id => $people
+						);
+						array_push($num_people, $temp);
+					}
 				}
-			}
-			
-			if (isset($extra_pro[$id])) {
-				foreach ($extra_pro[$id] as $product_id) {
-					$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
-					$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
-					$product->amount_bked = $amount_extra_pro[$id][$product_id];
-					array_push($products, $product);
+				
+				if (isset($extra_pro[$id])) {
+					foreach ($extra_pro[$id] as $product_id) {
+						$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
+						$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
+						$product->amount_bked = $amount_extra_pro[$id][$product_id];
+						array_push($products, $product);
+					}
 				}
-			}
-			if (isset($room_type[$id])) {
-				foreach ($room_type[$id] as $items) {
-					foreach ($items as $rt_id) {
-						$room = $this->mod_fecustomize->get_info_hotel($rt_id);
-						if (isset($amount_room_book[$id])) {
-							foreach ($amount_room_book[$id] as $arra_room_nums) {
-								foreach ($arra_room_nums as $num) {
-									if ($num[$rt_id] != '') {
-										$room->amount_bked = $num[$rt_id];
-										array_push($arr_rooms, $room);
+				if (isset($room_type[$id])) {
+					foreach ($room_type[$id] as $items) {
+						foreach ($items as $rt_id) {
+							$room = $this->mod_fecustomize->get_info_hotel($rt_id);
+							if (isset($amount_room_book[$id])) {
+								foreach ($amount_room_book[$id] as $arra_room_nums) {
+									foreach ($arra_room_nums as $num) {
+										if ($num[$rt_id] != '') {
+											$room->amount_bked = $num[$rt_id];
+											array_push($arr_rooms, $room);
+										}
 									}
 								}
 							}
 						}
 					}
 				}
-			}
 
-			$arraAccommodation = array(
-				$id => array(
-					'info' => $object,
-					'departure' => $departure[$id],
-					'return_date' => $return_date[$id],
-					'pass_joined' => $num_people,
-					'extra_pro' => $products,
-					'accom' => $arr_rooms
-				)
-			);
-			array_push($arraAccommodations, $arraAccommodation);
+				$arraAccommodation = array(
+					$id => array(
+						'info' => $object,
+						'departure' => $departure[$id],
+						'return_date' => $return_date[$id],
+						'pass_joined' => $num_people,
+						'extra_pro' => $products,
+						'accom' => $arr_rooms
+					)
+				);
+				array_push($arraAccommodations, $arraAccommodation);
+			}
 		}
 		return $arraAccommodations;
 	}
@@ -1054,54 +1138,56 @@ class Site extends MU_Controller {
 		$amount_extra_pro = $this->general_lib->get_amount_extra();
 
 		$arraActivities = array();
-		foreach ($this->general_lib->get_main_activities() as $id) {
-			$field_select = 'act_id, act_name, act_texteticket, act_purchaseprice, act_saleprice, act_actualstock';
-			$object = $this->mod_fecustomize->get_info_of_main_obj('activities', 'act_id', $id, $field_select);
-			$num_people = array();
-			$products = array();
-			$sub_acts = array();
-			$amount_extras = array();
-			$arr_rooms = array();
-			$amount_rm_bked = array();
-			if (isset($pass_joined[$id])) {
-				foreach ($pass_joined[$id] as $people) {
-					$temp = array(
-						$id => $people
-					);
-					array_push($num_people, $temp);
-				}
-			}
-
-			if (isset($sub_activities[$id])) {
-				foreach ($sub_activities[$id] as $sub_act_id) {
-					$field_select = 'act_id, act_name, act_texteticket, act_purchaseprice, act_saleprice, act_actualstock';
-					$sub_act = $this->mod_fecustomize->get_info_of_main_obj('activities', 'act_id', $sub_act_id, $field_select);
-					$sub_act->amount_bked = $sub_act_people[$id][$sub_act_id];
-					array_push($sub_acts, $sub_act);
+		if ($this->general_lib->get_main_activities() != "") {
+			foreach ($this->general_lib->get_main_activities() as $id) {
+				$field_select = 'act_id, act_name, act_texteticket, act_purchaseprice, act_saleprice, act_actualstock';
+				$object = $this->mod_fecustomize->get_info_of_main_obj('activities', 'act_id', $id, $field_select);
+				$num_people = array();
+				$products = array();
+				$sub_acts = array();
+				$amount_extras = array();
+				$arr_rooms = array();
+				$amount_rm_bked = array();
+				if (isset($pass_joined[$id])) {
+					foreach ($pass_joined[$id] as $people) {
+						$temp = array(
+							$id => $people
+						);
+						array_push($num_people, $temp);
+					}
 				}
 
-			}
+				if (isset($sub_activities[$id])) {
+					foreach ($sub_activities[$id] as $sub_act_id) {
+						$field_select = 'act_id, act_name, act_texteticket, act_purchaseprice, act_saleprice, act_actualstock';
+						$sub_act = $this->mod_fecustomize->get_info_of_main_obj('activities', 'act_id', $sub_act_id, $field_select);
+						$sub_act->amount_bked = $sub_act_people[$id][$sub_act_id];
+						array_push($sub_acts, $sub_act);
+					}
 
-			if (isset($extra_pro[$id])) {
-				foreach ($extra_pro[$id] as $product_id) {
-					$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
-					$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
-					$product->amount_bked = $amount_extra_pro[$id][$product_id];
-					array_push($products, $product);
 				}
-			}
 
-			$arraActivity = array(
-				$id => array(
-					'info' => $object,
-					'departure' => $departure[$id],
-					'return_date' => $return_date[$id],
-					'pass_joined' => $num_people,
-					'extra_pro' => $products,
-					'activity' => $sub_acts
-				)
-			);
-			array_push($arraActivities, $arraActivity);
+				if (isset($extra_pro[$id])) {
+					foreach ($extra_pro[$id] as $product_id) {
+						$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
+						$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
+						$product->amount_bked = $amount_extra_pro[$id][$product_id];
+						array_push($products, $product);
+					}
+				}
+
+				$arraActivity = array(
+					$id => array(
+						'info' => $object,
+						'departure' => $departure[$id],
+						'return_date' => $return_date[$id],
+						'pass_joined' => $num_people,
+						'extra_pro' => $products,
+						'activity' => $sub_acts
+					)
+				);
+				array_push($arraActivities, $arraActivity);
+			}
 		}
 		return $arraActivities;
 	}
@@ -1114,14 +1200,16 @@ class Site extends MU_Controller {
 		$amount_extra_pro = $this->general_lib->get_num_extra_services();
 
 		$arraExtServices = array();
-		foreach ($extra_services as $id) {
-			$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
-			$object = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $id, $field_select);
-			$object->amount_bked = $amount_extra_pro[$id][0];
-			$arraExtService = array(
-				$id => $object
-			);
-			array_push($arraExtServices, $arraExtService);
+		if ($extra_services != "") {
+			foreach ($extra_services as $id) {
+				$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
+				$object = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $id, $field_select);
+				$object->amount_bked = $amount_extra_pro[$id][0];
+				$arraExtService = array(
+					$id => $object
+				);
+				array_push($arraExtServices, $arraExtService);
+			}
 		}
 		return $arraExtServices;
 	}
