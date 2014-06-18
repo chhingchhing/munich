@@ -402,6 +402,14 @@ class General_lib
 	function empty_personalInfo_message() {
 		$this->CI->session->unset_userdata('personalInfo_sms');
 	}
+
+	// Get amount days of between dates, checkin and checkout
+	function getAmountDaysBetweenDates($start, $end) {
+		$start_ts = strtotime($start);
+		$end_ts = strtotime($end);
+		$diff = $end_ts - $start_ts;
+		return round($diff / 86400)+1;
+	}
         
 }
 ?>
