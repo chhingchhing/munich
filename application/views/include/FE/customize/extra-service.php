@@ -51,7 +51,6 @@
 			   				}
 		   					$input = array(
 		   							"name"=>"amountExpAmount[".$extra['ep_id']."][]",
-		   							// "name"=>"amountExpAmount[".$extra['ep_id']."]",
 		   							"class"=>"form-control amount_extras", 
 		   							"value"=> $value,
 		   							"id" => "amount_extra_".$order

@@ -136,7 +136,7 @@
 			    	<?php 
 			        $hotels = $this->mod_fecustomize->getAllHotels($acc['classification_id']);
 			        $htOrder = 0;
-			        foreach ($hotels->result() as $hotel) {
+			        // foreach ($hotels->result() as $hotel) {
 			        	$htOrder++;
 			        	?>
 			    	<div class="form-group room_types">
@@ -153,7 +153,7 @@
 							    <div id="roomType_<?php echo $accOrder; ?>" class="panel-collapse collapse in">
 							      <div class="panel-body">
 							        <?php 
-							        $room_types = $this->mod_fecustomize->getAllRoomType($hotel->dhht_id, $acc['classification_id']);
+							        $room_types = $this->mod_fecustomize->getAllRoomType($acc['dhht_id'], $acc['classification_id']);
 							        foreach ($room_types->result() as $item) {
 							        	?>
 							        	<div class='row'>
@@ -177,7 +177,7 @@
 								   						'value' => $item->rt_id, 
 								   						'checked' => $checked, 
 								   						'class' => 'check_main_element', 
-								   						'name' => 'room_type_checked['.$acc['acc_id'].']['.$hotel->dhht_id.']['.$item->rt_id.']', 
+								   						'name' => 'room_type_checked['.$acc['acc_id'].']['.$acc['dhht_id'].']['.$item->rt_id.']', 
 								   						'id' => "room_type_checked"
 								   					);
 									        		echo form_checkbox($room_type_checked);
@@ -192,11 +192,16 @@
 								        		<?php 
 								        		$amount_rooms_booked = $this->general_lib->get_amount_book_room();
 								        		$value = '';
-								        		if (isset($amount_rooms_booked[$item->rt_id])) {
-								        			$value = $amount_rooms_booked[$item->rt_id];
+								        		if (isset($amount_rooms_booked[$acc['acc_id']])) {
+								        			foreach ($amount_rooms_booked[$acc['acc_id']] as $item_arra) {
+									        			if (isset($item_arra[$acc['dhcl_id']][$item->rt_id])) {
+									        				$value = $item_arra[$acc['dhcl_id']][$item->rt_id];
+									        			}
+									        		}
 								        		}
+								        		
 								        		$input = array(
-								        			'name' => 'amount_book_room['.$item->rt_id.']',
+								        			'name' => 'amount_book_room['.$acc['acc_id'].']['.$acc['dhht_id'].']['.$acc['dhcl_id'].']['.$item->rt_id.']',
 								        			'class' => 'form-control input-sm theTooltip',
 								        			'placeholder' => 'Amount Room',
 								        			'value' => $value,
@@ -218,7 +223,7 @@
 				        </div>
 			    	</div>
 			    	<?php
-			        }
+			        // }
 			        ?>
 			    	
 				    <h3>Extra Products</h3>
@@ -280,16 +285,14 @@
 					   				<?php
 					   				$value = "";
 					   				$amountExtras = $this->general_lib->get_sub_acc_amount_extra();				   			
-					   				if ($amountExtras != "") {
-					   					if (isset($amountExtras[$ep_result['ep_id']])) {
-						   					foreach ($amountExtras[$ep_result['ep_id']] as $val) {
-						   						$value = $val;
+					   					if ($amountExtras != '') {
+						   					if (isset($amountExtras[$acc['acc_id']][$ep_result['ep_id']])) {
+						   						$value = $amountExtras[$acc['acc_id']][$ep_result['ep_id']];
 						   					}
 						   				}
-					   				}
 
 				   					$input = array(
-				   							"name"=>"amountAccExtras[".$ep_result['ep_id']."][]",
+				   							"name"=>"amountAccExtras[".$acc['acc_id']."][".$ep_result['ep_id']."]",
 				   							"class"=>"form-control amount_extras", 
 				   							"value"=> $value
 				   						);

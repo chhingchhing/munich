@@ -54,11 +54,9 @@
 					$tpPeople = $this->general_lib->get_people_transportation();
 					$tpDepartureDate = $this->general_lib->get_departure_transportation();
 					$tpReturnDate = $this->general_lib->get_return_date_transportation();
-					$tpOrder = 0;
 					echo "<dl>";
 					echo "<dt>Transportations:</dt>";
 					foreach ($tps as $key => $tpsID) {
-						$tpOrder++;
 						foreach ($tpPeople[$tpsID] as $person) {
 							echo "<dd>- ". MU_Model::getForiegnTableName('transportation', array('tp_id' => $tpsID), 'tp_name');
 							$tpPrice = MU_Model::getForiegnTableName('transportation', array('tp_id' => $tpsID), 'tp_saleprice');
@@ -76,11 +74,9 @@
 						echo "<dl>";
 						echo "<dt>Extra Products:</dt>";
 						$amountTpExtra = $this->general_lib->get_sub_trans_amount_extra();
-						$tpExtraOrder = 0;
 						foreach ($tpExtra as $key => $amountExtras) {
 							foreach ($amountExtras as $id) {
 								foreach ($amountTpExtra as $arrAmount) {
-									$tpExtraOrder++;
 									echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $id), 'ep_name');
 									$tpExtrasPrice = MU_Model::getForiegnTableName('extraproduct', array('ep_id'=> $id), 'ep_saleprice');
 									$tpExtrasPrice = $tpExtrasPrice * $arrAmount[$id];
@@ -105,12 +101,20 @@
 					if ($rooms != "") {
 						foreach ($acc as $accom_id) {
 							foreach ($rooms[$accom_id] as $main_acc) {
-								$no = 0;
 								foreach ($main_acc as $rtID) {
-									$no++;
+									$room = 0;
+									foreach ($amount_room_booked[$accom_id] as $array) {
+										foreach ($array as $sub_arr) {
+											foreach ($sub_arr as $num_rm) {
+												if ($num_rm != '') {
+													$room = $num_rm;
+												}
+											}
+										}
+									}
 									$roomType = $this->mod_fecustomize->getAllRoomTypeEachPassenger($rtID)->result();
 									foreach ($roomType as $item) {
-										$accPrice = $item->dhht_price * $amount_room_booked[$item->rt_id];
+										$accPrice = $item->dhht_price * $room;
 										$sumAcc += $accPrice;
 										echo "<dd>- ".$item->rt_name." (<b>".$item->ht_alias."</b>): $".$accPrice."</dd>";
 									}
@@ -128,16 +132,12 @@
 						echo "<dl>";
 						echo "<dt>Extra Products:</dt>";
 						$amountextra = $this->general_lib->get_sub_acc_amount_extra();
-						$order = 0;
 						foreach ($extraAcc as $key => $extPro) {
-							$order++;
 							$amountExtra = 0;
 							if ($amountextra != '') {
 								foreach ($extPro as $id) {
-									if ($amountextra[$id]) {
-										foreach ($amountextra[$id] as $val) {
-											$amountExtra = $val;
-										}
+									foreach ($amountextra as $items) {
+										$amountExtra = $items[$id];
 									}
 									echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $id), 'ep_name');
 									$priceExtra = 	MU_Model::getForiegnTableName('extraproduct', array('ep_id'=>$id), 'ep_saleprice');
