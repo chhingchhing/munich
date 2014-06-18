@@ -222,7 +222,6 @@
 				$extraProducts = $this->general_lib->get_extra_services();
 				if ($extraProducts !='') {
 					echo "<dl>";
-					echo "<dt>Products:</dt>";
 					$amountExtraProducts = $this->general_lib->get_num_extra_services();
 					$expOrder = 0;
 					foreach ($extraProducts as $key => $extID) {
