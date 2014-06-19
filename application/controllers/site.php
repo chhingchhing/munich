@@ -646,6 +646,9 @@ class Site extends MU_Controller {
 	public function customizeAccommodation(){
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 		$accommodation = $this->mod_fecustomize->accommodation($this->session->userdata('ftvID'), $this->session->userdata('lcID'));
+		// $start = $this->general_lib->get_room_type_accommodation();
+		// echo $start;
+		// $end = $this->session->userdata('txtTo');
 		$data = array();
 		if($accommodation->num_rows() > 0){
 			foreach($accommodation->result() as $acc){
