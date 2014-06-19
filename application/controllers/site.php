@@ -40,7 +40,6 @@ class Site extends MU_Controller {
 		$passID = $this->session->userdata('passengerid');
 		$bkID = $this->input->post('txtBooking');
 		if ($this->input->post('addmore_profile')) {
-			// var_dump($this->input->post()); die();
 			$config = array(
 			  array(
 			  	'field' => 'fname',
@@ -261,8 +260,6 @@ class Site extends MU_Controller {
 			}
 			$fe_data['include_type'] = $include;
 		}else{
-			// if($this->session->userdata('ftvID')) $this->session->unset_userdata('ftvID');
-			// if($this->session->userdata('lcID')) $this->session->unset_userdata('lcID');
 			$fe_data['include_type'] = 'first';
 			$fe_data['festival'] = $this->mod_booking->getFestival();
 		}
@@ -414,7 +411,6 @@ class Site extends MU_Controller {
 
 			if($this->input->post('btnPersonalInfo')){	
 				$this->general_lib->empty_personalInfo_message();
-				// $this->clear_all_for_personal_info();
 
 				$addpassenger  = array(
 					array(
@@ -530,7 +526,8 @@ class Site extends MU_Controller {
             return true;
         }
         return false;
-    } 
+    }
+     
 	// function convertDateToRangeSub for customize on the front end
     function convertDateToRangeSub($findDate, $from_date, $end_date, $step = '+1 day', $format = 'Y-m-d' ) {
         $dates = array();
@@ -547,6 +544,7 @@ class Site extends MU_Controller {
         }
         return false;
     } 
+
 	// function convertDateToRangeFromFE for customize on the front end
     function convertDateToRangeFromFE($avalableday, $from_date, $end_date, $step = '+1 day', $format = 'Y-m-d' ) {
         $dates = array();
@@ -602,6 +600,7 @@ class Site extends MU_Controller {
         }
   		return $avalableOption;
     }
+
 	public function customizeActivity(){
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 		$activities = $this->mod_fecustomize->trip_information($this->session->userdata('ftvID'), $this->session->userdata('lcID'));
@@ -617,6 +616,7 @@ class Site extends MU_Controller {
 		}
 		return $records;
 	}
+
 	public function clickCustomizeActivity() {
 		$this->general_lib->set_main_activities($this->input->post('checkbox_activity'));
 		$this->general_lib->set_start_date_activity($this->input->post('txtFrom'));
@@ -643,12 +643,10 @@ class Site extends MU_Controller {
 		}
 		return $subactivity;
 	}
+
 	public function customizeAccommodation(){
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 		$accommodation = $this->mod_fecustomize->accommodation($this->session->userdata('ftvID'), $this->session->userdata('lcID'));
-		// $start = $this->general_lib->get_room_type_accommodation();
-		// echo $start;
-		// $end = $this->session->userdata('txtTo');
 		$data = array();
 		if($accommodation->num_rows() > 0){
 			foreach($accommodation->result() as $acc){
@@ -683,7 +681,7 @@ class Site extends MU_Controller {
 				$recodeavaliable = site::convertDateToRangeSub($findate, $subacc->start_date, $subacc->end_date);	
 				if ($recodeavaliable) {
 					$avRecord = json_decode(json_encode($subacc), true);
-					array_push($subAccommodation, $avRecord);
+						array_push($subAccommodation, $avRecord);
 				}
 			}
 		}
@@ -705,6 +703,7 @@ class Site extends MU_Controller {
 		}
 		return $subtransportation;
 	}
+
 	public function customizeTransportation(){
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 		$transportation = $this->mod_fecustomize->transportation($this->session->userdata('ftvID'), $this->session->userdata('lcID'));		
@@ -747,10 +746,12 @@ class Site extends MU_Controller {
 		}
 		return $extra_data;
 	}
+
 	public function clickCustomizeExtraService() {
 		$this->general_lib->set_extra_services($this->input->post('checkbox_extra_service'));
 		$this->general_lib->set_num_extra_services($this->input->post('amountExpAmount'));
 	}
+
 	public function customizePersonal_info($passenger_id){ 
 		return $this->mod_fecustomize->customizePersonal_info($passenger_id);
 	}
@@ -826,6 +827,7 @@ class Site extends MU_Controller {
 		);
 		echo json_encode($arr_errors);
 	}
+
 	/*
 	* Save all data of each member for customize booking info
 	*/
@@ -861,6 +863,7 @@ class Site extends MU_Controller {
 		}	
 		echo json_encode($arr_errors);
 	}
+
 	/*
 	*	Save extra products for transportation
 	*/
@@ -1012,8 +1015,6 @@ class Site extends MU_Controller {
 		$departure =  $this->general_lib->get_departure_transportation();
 		$return_date = $this->general_lib->get_return_date_transportation();
 		$pass_joined = $this->general_lib->get_people_transportation();
-		// $sub_trans = $this->general_lib->get_sub_transportation();
-		// $passSub = $this->general_lib->get_people_sub_transportation();
 		$extra_pro = $this->general_lib->get_sub_trans_extr_product();
 		$amount_extra_pro = $this->general_lib->get_sub_trans_amount_extra();
 
@@ -1216,8 +1217,6 @@ class Site extends MU_Controller {
 		return $arraExtServices;
 	}
 
-
-
 	/*
 	* public function packages
 	* @param $display_page default (false)
@@ -1263,7 +1262,6 @@ class Site extends MU_Controller {
 		$detailpackages = $this->mod_fepackage->getdetailpackages($pk_id);
 		return $detailpackages;
 	}
-
 }
 
 /* End of file site.php */

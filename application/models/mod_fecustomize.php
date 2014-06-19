@@ -70,20 +70,6 @@ class Mod_FeCustomize extends MU_model {
             ->get('accommodation');
             return $accommodation;
     }
-    /*public function accommodation($ftvID, $lcId){
-        $accommodation = $this->db->select('*')
-            ->join('acc_calendar','accommodation.acc_id = acc_calendar.accomodations_id')
-            ->join('calendar_available', 'calendar_available.ca_id = acc_calendar.calendar_available_id')
-            ->join('photo','photo.photo_id = accommodation.photo_id')
-            ->join('room_types','room_types.rt_id = accommodation.acc_rt_id')
-            ->join('classification','classification.clf_id = accommodation.classification_id')
-            ->where('accommodation.acc_deleted',0)
-            ->where('accommodation.acc_subof', 0)
-            ->where('accommodation.acc_ftv_id', $ftvID)
-            ->where('accommodation.location_id', $lcId)
-            ->get('accommodation');
-            return $accommodation;
-    }*/
 
     /* * public function select sub accommodation
     * @param parameter $ftvID, $lcId
@@ -216,23 +202,6 @@ class Mod_FeCustomize extends MU_model {
         }
         return false;
     }
-    /*public function personal_information($passengerInfo){
-        // Plus 1 more is trip leader
-        $amount_people = $this->get_all_member_by_pass_addby($passengerInfo['pass_addby'])->num_rows() + 1;
-        if ($amount_people < $this->session->userdata("people")) {
-            if ($this->exist_passenger_by_email($passengerInfo['pass_email'])) {
-                return false;
-            } else {
-                if($this->db->insert('passenger', $passengerInfo))
-                {
-                    return $passengerInfo['pass_id'] = $this->db->insert_id();
-                } 
-                return false;
-            }
-        } else {
-            return "over_number";
-        }
-    }*/
 
     /*
     * Count all passengers who added by a trip leader
