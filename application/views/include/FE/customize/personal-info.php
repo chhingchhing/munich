@@ -16,8 +16,6 @@ if (isset($arr_messages)) {
 <!-- Start Div Control Form Personal Information -->
 <div class="col-sm-12 form-booking" id="personal_info">
 	   		<h2>Personal Information</h2>
-	   		<?php //echo anchor("#", "Edit Personal Info", "id='edit_profile_pass'"); 
-	   		?>
 	   		<hr>
 	   		<div class="col-sm-12">
 	   			<div class='col-sm-9'>
@@ -149,7 +147,7 @@ if (isset($arr_messages)) {
 
 				</div>
 
-	   			<div class='col-sm-3'>
+	   			<!-- <div class='col-sm-3'>
 	   				<div class="panel-group" id="accordion">
 					  <div class="panel panel-success">
 					    <div class="panel-heading">
@@ -162,7 +160,7 @@ if (isset($arr_messages)) {
 					    <div id="members" class="panel-collapse collapse in">
 					      <div class="panel-body">
 					        <?php 
-					        if (isset($members)) {
+					        /*if (isset($members)) {
 					        	if ($members->num_rows() > 0) {
 						        	foreach ($members->result() as $item) {
 						        		echo anchor('site/customizes/each-member/'.$item->pass_id, ucwords($item->pass_fname." ".$item->pass_lname)).'</br>';
@@ -170,14 +168,14 @@ if (isset($arr_messages)) {
 						    	}
 					        } else {
 					        	echo "No member(s) added for this booking.";
-					        }
+					        }*/
 					        ?>
 					      </div>
 					    </div>
 					  </div>
 					</div>
-
-	   			</div>
+	   			</div> -->
+	   			
 	   			<div style='clear: both'></div>
 
 	   		</div>
@@ -190,11 +188,11 @@ if (isset($arr_messages)) {
 			if ($passenger_info->pass_id != "") {
 				echo anchor("site/customizes/payments"," Next ", array('role'=>'button', 'class'=>'btn btn-primary btn-sm'));
 				echo nbs();
-				echo anchor(
+				/*echo anchor(
 					"#", 
 					"Add info all passengers!", 
 					"class='btn btn-success btn-sm' data-target='.addmorepassenger_modal' data-toggle='modal'"
-					); 
+					); */
 			}
 			?>
 <p></p>

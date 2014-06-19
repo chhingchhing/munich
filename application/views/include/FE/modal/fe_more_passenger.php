@@ -14,7 +14,7 @@
                     <label class="col-sm-3 control-label">Passenger firstname <span class="require">*</span>:</label>
                     <div class="col-sm-5">
                         <?php 
-                          echo form_hidden("passenger_id", $passenger_info->pass_id);
+                          // echo form_hidden("passenger_id", $passenger_info->pass_id);
                           $pfname = array(
                           'name' => 'pfname', 
                           'class' => 'form-control input_require', 
