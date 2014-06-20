@@ -48,8 +48,9 @@
             }
             
           public function logout() {
-      		$this->session->set_userdata('sign_out');
-            $this->session->unset_userdata('passenger');
+      		// $this->session->set_userdata('sign_out');
+            // $this->session->unset_userdata('passenger');
+            $this->session->sess_destroy();
             redirect('site');
     	}
     }
