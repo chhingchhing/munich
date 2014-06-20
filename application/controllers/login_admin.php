@@ -42,14 +42,6 @@ class login_admin extends CI_Controller {
                                     'user_email'=> $rows->user_mail
                      );
                    $id = $rows->user_id;
-                   
-                     //        if ($rows->role_alias === 'admin') {
-                     //            $this->session->set_userdata('admin', $id);
-                     //            redirect('admin');
-                     //        } else if ($rows->role_alias === 'simple') {
-                     //                $this->session->set_userdata('simple', $id);
-                     //                redirect('simple');
-                     //        }
                     $this->session->set_userdata('admin', $user);
                     $this->session->set_userdata('success_msg', show_message("Your login was successfully", "success"));
                     redirect('munich_admin/');
