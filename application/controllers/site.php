@@ -342,7 +342,7 @@ class Site extends MU_Controller {
 			'total' => '',
 			'txtFrom' => '',
 			'txtTo' => '',
-			'people' => '',
+			// 'people' => '',
 			'each_member_extra_of_trans' => ''
 		);
 		$this->session->unset_userdata($items_sess);
@@ -406,7 +406,7 @@ class Site extends MU_Controller {
 			}
 		}
 		if ($display_page == "personal-info") {
-			$pass_id = $this->getCurrentPassengerId();
+			$pass_id = $this->mod_fecustomize->getCurrentPassengerId();
 			$fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
 
 			if($this->input->post('btnPersonalInfo')){	
@@ -793,14 +793,14 @@ class Site extends MU_Controller {
 				"sms_value" => "Sorry! That email is already registered. Please login before you booking."
 			);
 			echo json_encode($arr_errors);
-		} else if($result == 'over_number') {
+		/*} else if($result == 'over_number') {
 			$arr_errors = array(
 				"success" => true,
 				"sms_type" => "warning",
 				"sms_title" => "Warning!",
 				"sms_value" => "Your member selected only ".$this->session->userdata('people')." member(s), if you would like to add more, please change amount of passenger.."
 			);
-			echo json_encode($arr_errors);
+			echo json_encode($arr_errors);*/
 		} else {
 			$arr_errors = array(
 				"success" => true,
@@ -915,28 +915,7 @@ class Site extends MU_Controller {
 				echo json_encode($arr_errors);
 			}
 
-			$pass_id = $this->getCurrentPassengerId();
-			$members = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
-			$pass_come_with = array();
-			foreach ($members->result() as $pass) {
-				$pass_come_with[$pass->pass_id] = $pass->pass_id;
-			}
-			$pass_bk_info = array(
-				'pbk_pass_come_with' => serialize($pass_come_with),
-				'pbk_pass_id' => $pass_id,
-				'pbk_bk_id' => $bk_info['bk_id']
-			);
-			$pbk_inserted = $this->mod_fecustomize->insertPassengerBookingInfo($pass_bk_info);
-			if (!$pbk_inserted) {
-				$arr_errors = array(
-					"success" => false,
-					"sms_type" => "danger",
-					"sms_title" => "Sorry!",
-					"sms_value" => "Your process has been failed for transection."
-				);
-				echo json_encode($arr_errors);
-			}
-
+			$this->session->set_userdata('booking_id', $bk_info['bk_id']);
 			$cuscon_info = array(
 				'cuscon_start_date' => $this->session->userdata('txtFrom'),
 				'cuscon_end_date' => $this->session->userdata('txtTo'),
@@ -973,6 +952,7 @@ class Site extends MU_Controller {
 				echo json_encode($arr_errors);
 			} else {
 				$this->clear_all_customize();
+				$this->session->set_userdata('pay_later', true);
 				$arr_errors = array(
 					"success" => true,
 					"sms_type" => "success",
@@ -984,27 +964,9 @@ class Site extends MU_Controller {
 		}
 	}
 
-	/*
-	* Get current user by login or just registered
-	*/
-	function getCurrentPassengerId() {
-		$login_sess_passenger = $this->session->userdata('passenger');
-        $new_sess_passenger = $this->session->userdata('new_passenger_id');
-        $pass_id = -1;
-		if ($new_sess_passenger OR $login_sess_passenger) {
-			$this->general_lib->empty_personalInfo_message();
-
-			if ($new_sess_passenger != '') {
-        		$pass_id = $new_sess_passenger['pass_id'];
-        	}
-        	if ($login_sess_passenger != '') {
-        		$pass_id = $login_sess_passenger['pass_id'];
-        	}
-		}
-		if ($this->session->userdata('ftvID') == '') {
-			$pass_id =  -1;
-		}
-		return $pass_id;
+	// when click on finish button of customize booking
+	function finish_customize_booking() {
+		$this->session->unset_userdata('people');
 	}
 
 	/*

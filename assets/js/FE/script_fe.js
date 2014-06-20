@@ -297,31 +297,53 @@ $(function() {
     });
 
 	// Check passenger exists in Customize FE
+	var num_success = 1;
 	$("body").on("click", "input[name='btnPersonalInfoModal']", function(event) {
 		var url = $('form[name="frm_personal_info_modal"]').attr("action");
 		var data = $('form[name="frm_personal_info_modal"]').serialize();
-		$.ajax({
-			type: "POST",
-			url: url,
-			dataType: "json",
-			data: data,
-			success: function(response) {
-				if (response) {
-					var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
-					div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
-					div_sms += '</div>';
-					$("div#feedback_bar_modal").append(div_sms);
-					setTimeout(function()
-		            {
-		                $('#each_personalInfo_feedback').slideUp(250, function()
-		                {
-		                    $('#each_personalInfo_feedback').removeClass();
-		                });
-		            },response.sms_value.length*125);
+		if (num_success >= $('input#add_pass_amount_pass').val()) {
+			var text = 'You cannot add more passenger than amount you selected.';
+			var div_sms = '<div class="alert alert-warning alert-dismissable">';
+			div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+			div_sms += '<strong>Sorry</strong> '+text;
+			div_sms += '</div>';
+			$("div#feedback_bar_modal").append(div_sms);
+			setTimeout(function()
+            {
+                $('#each_personalInfo_feedback').slideUp(250, function()
+                {
+                    $('#each_personalInfo_feedback').removeClass();
+                });
+            },text.length*125);
+
+            return false;
+		} else {
+			$.ajax({
+				type: "POST",
+				url: url,
+				dataType: "json",
+				data: data,
+				success: function(response) {
+					if (response.sms_type == 'success') {
+						num_success = num_success + 1;
+					};
+					if (response) {
+						var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
+						div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+						div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
+						div_sms += '</div>';
+						$("div#feedback_bar_modal").append(div_sms);
+						setTimeout(function()
+			            {
+			                $('#each_personalInfo_feedback').slideUp(250, function()
+			                {
+			                    $('#each_personalInfo_feedback').removeClass();
+			                });
+			            },response.sms_value.length*125);
+					}
 				}
-			}
-		});
+			});
+		}
 		event.preventDefault();
 	});
 
@@ -457,6 +479,12 @@ $(function() {
 			}
 		});
 	});
+
+	// Click on button finish of customize booking on front-end site
+	/*$('body').on('click', 'button#btnFinishCusBooking', function() {
+		var url = $(this).parent().attr('action');
+		url = 
+	});*/
 
 });
 
