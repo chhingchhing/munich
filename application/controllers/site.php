@@ -958,7 +958,8 @@ class Site extends MU_Controller {
 	function finish_customize_booking() {
 		$items_sess = array(
 			'people' => '',
-			'pay_later' => false
+			'pay_later' => false,
+			'booking_id' => ''
 		);
 		$this->session->unset_userdata($items_sess);
 		$arr_errors = array(
