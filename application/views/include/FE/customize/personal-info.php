@@ -146,36 +146,6 @@ if (isset($arr_messages)) {
 		   			</div>
 
 				</div>
-
-	   			<!-- <div class='col-sm-3'>
-	   				<div class="panel-group" id="accordion">
-					  <div class="panel panel-success">
-					    <div class="panel-heading">
-					      <h4 class="panel-title">
-					        <a data-toggle="collapse" data-parent="#accordion" href="#members">
-					          Members of trip <span class="caret"></span>
-					        </a>
-					      </h4>
-					    </div>
-					    <div id="members" class="panel-collapse collapse in">
-					      <div class="panel-body">
-					        <?php 
-					        /*if (isset($members)) {
-					        	if ($members->num_rows() > 0) {
-						        	foreach ($members->result() as $item) {
-						        		echo anchor('site/customizes/each-member/'.$item->pass_id, ucwords($item->pass_fname." ".$item->pass_lname)).'</br>';
-						    		}
-						    	}
-					        } else {
-					        	echo "No member(s) added for this booking.";
-					        }*/
-					        ?>
-					      </div>
-					    </div>
-					  </div>
-					</div>
-	   			</div> -->
-	   			
 	   			<div style='clear: both'></div>
 
 	   		</div>
@@ -188,11 +158,6 @@ if (isset($arr_messages)) {
 			if ($passenger_info->pass_id != "") {
 				echo anchor("site/customizes/payments"," Next ", array('role'=>'button', 'class'=>'btn btn-primary btn-sm'));
 				echo nbs();
-				/*echo anchor(
-					"#", 
-					"Add info all passengers!", 
-					"class='btn btn-success btn-sm' data-target='.addmorepassenger_modal' data-toggle='modal'"
-					); */
 			}
 			?>
 <p></p>

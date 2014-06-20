@@ -440,6 +440,7 @@ class Site extends MU_Controller {
 					$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id);
 				}else{	
 					$passengerInfo = array(
+						'pass_addby' => '',
 						'pass_fname'        => $this->input->post('pfname'),
 			            'pass_lname'        => $this->input->post('plname'),
 			            'pass_email'        => $this->input->post('pemail'),
@@ -463,7 +464,6 @@ class Site extends MU_Controller {
 						$this->general_lib->set_personalInfo_message($arr_errors);
 						redirect('site/customizes/personal-info');
 					} else {
-
 						$newPass = array(
 							'pass_id' => $result
 						);

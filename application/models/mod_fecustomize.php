@@ -194,9 +194,15 @@ class Mod_FeCustomize extends MU_model {
     * @param parameter $pfname, $plname, $pgender, $pdob, $pmobile, $phphone, $paddress, $pcode, $pcity, $pcountry, $pnumber
     */
     public function personal_information(&$passengerInfo, $pass_id=false){
-        if (!$passengerInfo['pass_addby']) {
-            if($this->db->insert('passenger', $passengerInfo)) {
-                return $passengerInfo['pass_id'] = $this->db->insert_id();
+        if ($passengerInfo['pass_addby'] == '') {
+            if (!$pass_id or !$this->exist_passenger_by_id($pass_id)) {
+                if($this->db->insert('passenger', $passengerInfo)) {
+                    return $passengerInfo['pass_id'] = $this->db->insert_id();
+                }
+            } else {
+                $this->db->where('pass_id', $pass_id);
+                $this->db->update('passenger',$passengerInfo);
+                return $pass_id;
             }
         } else {
             if (!$pass_id or !$this->exist_passenger_by_id($pass_id)) {
