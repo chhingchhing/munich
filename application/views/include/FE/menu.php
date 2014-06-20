@@ -52,20 +52,15 @@
          <li><?php echo anchor("site/feedback", ucfirst("feedback")); ?></li>
         <li><?php echo anchor("site/contact", ucfirst("contact")); ?></li>
         <?php
-                $Menuprofile = $this->uri->segment(3);
-                if($this->session->userdata('passenger')){ 
-                        if($Menuprofile === "profile"){ ?>
-                                <li><?php echo anchor('site/profile/', ucfirst('profile')); ?></li>
-                                <?php 
-                        }
-                }
-        ?>
-        <?php
-            if ($Menuprofile !== "profile") {
-                    echo '<li>'. anchor('fe_login/loginuser','Log In') .'</li>';
-            }else if($Menuprofile === "profile"){ ?>
-                                <li><?php echo anchor('fe_login/logout/', ucfirst('log out')); ?></li>
-                                <?php 
+            $Menuprofile = $this->uri->segment(3);
+            if($this->session->userdata('passenger') != false){ 
+            ?>
+                <li><?php echo anchor('site/profile/', ucfirst('profile')); ?></li>
+                <li><?php echo anchor('fe_login/logout/', ucfirst('log out')); ?></li>
+            <?php 
+            }
+            if (!$this->session->userdata('passenger')) {
+                echo '<li>'. anchor('fe_login/loginuser','Log In') .'</li>';
             }
         ?>
 
