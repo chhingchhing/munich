@@ -194,51 +194,56 @@ class Mod_FeCustomize extends MU_model {
     * @param parameter $pfname, $plname, $pgender, $pdob, $pmobile, $phphone, $paddress, $pcode, $pcity, $pcountry, $pnumber
     */
     public function personal_information(&$passengerInfo, $pass_id=false){
-        if (!$pass_id or !$this->exist_passenger_by_id($pass_id)) {
-            $pass_addby = $passengerInfo['pass_addby'];
-            // Plus 1 more is trip leader
-            $booking_id = $this->session->userdata('booking_id');
-            $amount_people = $this->get_all_member_by_pass_addby($pass_addby, $booking_id);
-            $pass_come_with = array();
-            if ($amount_people->num_rows() > 0) {
-                if ($this->exist_passenger_by_email($passengerInfo['pass_email'])) {
-                    return false;
+        if (!$passengerInfo['pass_addby']) {
+            if($this->db->insert('passenger', $passengerInfo)) {
+                return $passengerInfo['pass_id'] = $this->db->insert_id();
+            }
+        } else {
+            if (!$pass_id or !$this->exist_passenger_by_id($pass_id)) {
+                $pass_addby = $passengerInfo['pass_addby'];
+                $booking_id = $this->session->userdata('booking_id');
+                $amount_people = $this->get_all_member_by_pass_addby($pass_addby, $booking_id);
+                $pass_come_with = array();
+                if ($amount_people->num_rows() > 0) {
+                    if ($this->exist_passenger_by_email($passengerInfo['pass_email'])) {
+                        return false;
+                    } else {
+                        if($this->db->insert('passenger', $passengerInfo))
+                        {
+                            $new_pass_id = $this->db->insert_id();
+                            foreach ($amount_people->result() as $member) {
+                                $get_member = $member->pbk_pass_come_with;
+                            }
+                            $pass_come_with = unserialize($get_member);
+                            $pass_come_with[$new_pass_id] = $new_pass_id;
+                            $pass_bk_info = array(
+                                'pbk_pass_come_with' => serialize($pass_come_with),
+                                'pbk_pass_id' => $pass_addby,
+                                'pbk_bk_id' => $booking_id
+                            );
+                            $pbk_inserted = $this->insertPassengerBookingInfo($pass_bk_info, $pass_addby, $booking_id);
+                            return true;
+                        } 
+                        return false;
+                    }
                 } else {
                     if($this->db->insert('passenger', $passengerInfo))
                     {
-                        $new_pass_id = $this->db->insert_id();
-                        foreach ($amount_people->result() as $member) {
-                            $get_member = $member->pbk_pass_come_with;
-                        }
-                        $pass_come_with = unserialize($get_member);
-                        $pass_come_with[$new_pass_id] = $new_pass_id;
-                        $pass_bk_info = array(
-                            'pbk_pass_come_with' => serialize($pass_come_with),
-                            'pbk_pass_id' => $pass_addby,
-                            'pbk_bk_id' => $booking_id
-                        );
-                        $pbk_inserted = $this->insertPassengerBookingInfo($pass_bk_info, $pass_addby, $booking_id);
+                        $this->passenger_booking($pass_addby, $this->db->insert_id());
                         return true;
                     } 
-                    return false;
                 }
             } else {
-                if($this->db->insert('passenger', $passengerInfo))
-                {
-                    $this->passenger_booking($pass_addby, $this->db->insert_id());
-                    return true;
-                } 
+                $this->db->where('pass_id', $pass_id);
+                return $this->db->update('passenger',$passengerInfo);
             }
-        } else {
-            $this->db->where('pass_id', $pass_id);
-            return $this->db->update('passenger',$passengerInfo);
+            return false;
         }
         return false;
     }
 
     //Insert into passenger_booking table
     function passenger_booking($pass_addby, $pass_id) {
-        // $pass_id = $this->getCurrentPassengerId();
         $booking_id = $this->session->userdata('booking_id');
         $members = $this->get_all_member_by_pass_addby($pass_addby, $booking_id);
         $pass_come_with = array();

@@ -123,7 +123,7 @@ if (isset($arr_messages)) {
 		   				<label class="col-sm-4 control-label">Gender <span class="require">*</span>:</label>
 		   				<div class="col-sm-7">
 					         <?php 
-					         $pgender = array('selected' => '--- selected --- ','F' => 'Female' , 'M' => 'Male'); 
+					         $pgender = array('' => '--- selected --- ','F' => 'Female' , 'M' => 'Male'); 
 					         echo form_dropdown("pgender", $pgender, $passenger_info->pass_gender,"class = 'form-control' "); 
 					         ?>
 					    </div>
