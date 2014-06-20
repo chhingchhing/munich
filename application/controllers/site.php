@@ -729,7 +729,6 @@ class Site extends MU_Controller {
 					}
 				}
 			}
-			// var_dump($tp_data); die();
 			return $tp_data;
 		// }
 	}
