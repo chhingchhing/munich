@@ -119,7 +119,7 @@
                     <label class="col-sm-3 control-label">Gender <span class="require">*</span>:</label>
                     <div class="col-sm-5">
                          <?php 
-                         $pgender = array('selected' => '--- selected --- ','F' => 'Female' , 'M' => 'Male'); 
+                         $pgender = array('' => '--- selected --- ','F' => 'Female' , 'M' => 'Male'); 
                          echo form_dropdown("pgender", $pgender, '',"class = form-control title = Gender"); 
                          ?>
                     </div>
