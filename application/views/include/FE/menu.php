@@ -62,11 +62,10 @@
         ?>
         <?php
             if ($Menuprofile !== "profile") {
-                    echo '<li>'. anchor('fe_login/loginuser','Log In') .'</li>';
+                echo '<li>'. anchor('fe_login/loginuser','Log In') .'</li>';
             }else if($Menuprofile === "profile"){ ?>
-                                <li><?php echo anchor('fe_login/logout/', ucfirst('log out')); ?></li>
-                                <?php 
-            }
+                <li><?php echo anchor('fe_login/logout/', ucfirst('log out')); ?></li>
+            <?php  }
         ?>
 
   	</ul>   
