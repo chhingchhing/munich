@@ -129,6 +129,7 @@
 									foreach ($roomType as $item) {
 										$accPrice = ($item->dhht_price * $room) * $nights;
 										$sumAcc += $accPrice;
+										echo "<dd>- ".$nights. " Nights </dd>";
 										echo "<dd>- ".$item->rt_name." (<b>".$item->ht_alias."</b>): $".$accPrice."</dd>";
 									}
 								}
