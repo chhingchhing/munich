@@ -4,7 +4,6 @@
 	<div id="pay_feedback"></div>
 	<?php 
 	echo form_open('site/pay_later_customize', 'class="form-horizontal" name="frm_pay_later"');
-	// echo anchor("site/customizes/personal-info","Add your member(s)", array('role' => 'button', 'class' => 'btn btn-success btn-sm'));
 	if ($this->session->userdata('pay_later') == true) {
 		echo anchor(
 			"#", 

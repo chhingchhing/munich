@@ -2,7 +2,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
 
-        <?php  echo form_open_multipart('site/customize_more_passenger', 'class="form-horizontal" name="frm_personal_info_modal" '); ?>
+        <?php  echo form_open_multipart('site/customize_more_passenger', 'class="form-horizontal" name="frm_personal_info_modal" id="frm_personal_info_modal" '); ?>
         <!-- Start Div Control Form Personal Information -->
         <div class="col-sm-12 form-booking" id="personal_info">
                 <h2>Personal Information</h2>
@@ -17,6 +17,7 @@
                           // echo form_hidden("passenger_id", $passenger_info->pass_id);
                           $pfname = array(
                           'name' => 'pfname', 
+                          'title' => 'First Name',
                           'class' => 'form-control input_require', 
                           'placeholder' => 'Passenger firstname',
                           'value' => ''
@@ -31,6 +32,7 @@
                     <div class="col-sm-5">
                          <?php $plname = array(
                           'name' => 'plname', 
+                          'title' => 'Last Name',
                           'class' => 'form-control input_require', 
                           'placeholder' => 'Passenger lastname',
                           'value' => ''
@@ -46,6 +48,7 @@
                         <?php $pemail = array(
                           'type' => "email",
                           'name' => 'pemail', 
+                          'title' => 'Email',
                           'class' => 'form-control input_email',
                           'placeholder' => 'Email',
                           'value' => ''
@@ -61,6 +64,7 @@
                     <div class="col-sm-5">
                          <?php $phphone = array(
                           'name' => 'phphone', 
+                          'title' => 'Phone',
                           'class' => 'form-control input_require', 
                           'placeholder' => 'Home phone',
                           'value' => ''
@@ -101,6 +105,7 @@
                     <div class="col-sm-5">
                          <?php $pcountry = array(
                           'name' => 'pcountry', 
+                          'title' => 'Country',
                           'class' => 'form-control input_require', 
                           'placeholder' => 'Country',
                           'value' => ''
@@ -115,7 +120,7 @@
                     <div class="col-sm-5">
                          <?php 
                          $pgender = array('selected' => '--- selected --- ','F' => 'Female' , 'M' => 'Male'); 
-                         echo form_dropdown("pgender", $pgender, '',"class = form-control"); 
+                         echo form_dropdown("pgender", $pgender, '',"class = form-control title = Gender"); 
                          ?>
                     </div>
                     <p class="help-block error"></p>
@@ -125,6 +130,7 @@
                     <div class="col-sm-5">
                          <?php $paddress = array(
                           'name' => 'paddress', 
+                          'title' => 'Address',
                           'class' => 'form-control input_require', 
                           'placeholder' => 'Passenger Address', 
                           'rows' => '3',

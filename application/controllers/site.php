@@ -190,7 +190,7 @@ class Site extends MU_Controller {
 	        		$pass_id = $login_sess_passenger['pass_id'];
 	        	}
 			}
-			$fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
+			// $fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
             $this->load->view('index',$fe_data);
             if ($this->input->post('frm_profile')){      
                     $fname      =   $this->input->post('old_firstname');
@@ -407,7 +407,7 @@ class Site extends MU_Controller {
 		}
 		if ($display_page == "personal-info") {
 			$pass_id = $this->mod_fecustomize->getCurrentPassengerId();
-			$fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
+			// $fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
 
 			if($this->input->post('btnPersonalInfo')){	
 				$this->general_lib->empty_personalInfo_message();
@@ -450,7 +450,7 @@ class Site extends MU_Controller {
 			            'pass_status'       => 1,
 			            'pass_deleted'      => 0,
 					);
-					$result  = $this->mod_fecustomize->personal_information($passengerInfo);
+					$result  = $this->mod_fecustomize->personal_information($passengerInfo, $pass_id);
 					if (!$result) {
 						$arr_errors = array(
 							"success" => false,
@@ -461,11 +461,12 @@ class Site extends MU_Controller {
 						$this->general_lib->set_personalInfo_message($arr_errors);
 						redirect('site/customizes/personal-info');
 					} else {
+
 						$newPass = array(
 							'pass_id' => $result
 						);
 						$this->session->set_userdata("new_passenger_id", $newPass);
-						redirect('site/customizes/payments');	
+						redirect('site/customizes/personal-info');	
 					}			
 				}
 
@@ -793,14 +794,6 @@ class Site extends MU_Controller {
 				"sms_value" => "Sorry! That email is already registered. Please login before you booking."
 			);
 			echo json_encode($arr_errors);
-		/*} else if($result == 'over_number') {
-			$arr_errors = array(
-				"success" => true,
-				"sms_type" => "warning",
-				"sms_title" => "Warning!",
-				"sms_value" => "Your member selected only ".$this->session->userdata('people')." member(s), if you would like to add more, please change amount of passenger.."
-			);
-			echo json_encode($arr_errors);*/
 		} else {
 			$arr_errors = array(
 				"success" => true,
@@ -966,7 +959,18 @@ class Site extends MU_Controller {
 
 	// when click on finish button of customize booking
 	function finish_customize_booking() {
-		$this->session->unset_userdata('people');
+		$items_sess = array(
+			'people' => '',
+			'pay_later' => false
+		);
+		$this->session->unset_userdata($items_sess);
+		$arr_errors = array(
+			"success" => true,
+			"sms_type" => "success",
+			"sms_title" => "Congradulation!",
+			"sms_value" => "Your process has been finished."
+		);
+		echo json_encode($arr_errors);
 	}
 
 	/*
@@ -1177,6 +1181,21 @@ class Site extends MU_Controller {
 			}
 		}
 		return $arraExtServices;
+	}
+
+	// Check existing passenger by email
+	function checkExistPassengerByEmail() {
+		$email = $this->input->post('email');
+		$result = $this->mod_fecustomize->exist_passenger_by_email($email);
+		if ($result) {
+			$arr_errors = array(
+				"success" => false,
+				"sms_type" => "danger",
+				"sms_title" => "Error!",
+				"sms_value" => "Sorry! That email is already registered."
+			);
+			echo json_encode($arr_errors);
+		}
 	}
 
 	/*

@@ -193,32 +193,9 @@ class Mod_FeCustomize extends MU_model {
     * public function add information of passenger to table passenger
     * @param parameter $pfname, $plname, $pgender, $pdob, $pmobile, $phphone, $paddress, $pcode, $pcity, $pcountry, $pnumber
     */
-    /*public function personal_information($passengerInfo, $pass_id=false){
-        if (!$pass_id or !$this->exist_passenger_by_id($pass_id)) {
-            // Plus 1 more is trip leader
-            $amount_people = $this->get_all_member_by_pass_addby($passengerInfo['pass_addby'])->num_rows() + 1;
-            if ($amount_people < $this->session->userdata("people")) {
-                if ($this->exist_passenger_by_email($passengerInfo['pass_email'])) {
-                    return false;
-                } else {
-                    if($this->db->insert('passenger', $passengerInfo))
-                    {
-                        return $passengerInfo['pass_id'] = $this->db->insert_id();
-                    } 
-                    return false;
-                }
-            } else {
-                return "over_number";
-            }
-        } else {
-            $this->db->where('pass_id', $pass_id);
-            return $this->db->update('passenger',$passengerInfo);
-        }
-        return false;
-    }*/
     public function personal_information(&$passengerInfo, $pass_id=false){
-        $pass_addby = $passengerInfo['pass_addby'];
         if (!$pass_id or !$this->exist_passenger_by_id($pass_id)) {
+            $pass_addby = $passengerInfo['pass_addby'];
             // Plus 1 more is trip leader
             $booking_id = $this->session->userdata('booking_id');
             $amount_people = $this->get_all_member_by_pass_addby($pass_addby, $booking_id);
@@ -281,15 +258,6 @@ class Mod_FeCustomize extends MU_model {
         if ($pbk_inserted) {
             return true;
         }
-        /*if (!$pbk_inserted) {
-            $arr_errors = array(
-                "success" => false,
-                "sms_type" => "danger",
-                "sms_title" => "Sorry!",
-                "sms_value" => "Your process has been failed for transection."
-            );
-            echo json_encode($arr_errors);
-        }*/
     }
 
     /*
