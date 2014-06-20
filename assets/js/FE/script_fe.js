@@ -301,6 +301,24 @@ $(function() {
 	$("body").on("click", "input[name='btnPersonalInfoModal']", function(event) {
 		var url = $('form[name="frm_personal_info_modal"]').attr("action");
 		var data = $('form[name="frm_personal_info_modal"]').serialize();
+		var msg = validateEmptyFields();
+		if(msg) {
+	        var div_sms = '<div class="alert alert-danger alert-dismissable">';
+			div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+			div_sms += '<strong>Error!</strong> '+msg;
+			div_sms += '</div>';
+			$("div#feedback_bar_modal").append(div_sms);
+			setTimeout(function()
+	        {
+	            $('#each_personalInfo_feedback').slideUp(250, function()
+	            {
+	                $('#each_personalInfo_feedback').removeClass();
+	            });
+	        },msg.length*125);
+
+	        return false;
+	    }
+
 		if (num_success >= $('input#add_pass_amount_pass').val()) {
 			var text = 'You cannot add more passenger than amount you selected.';
 			var div_sms = '<div class="alert alert-warning alert-dismissable">';
@@ -318,6 +336,7 @@ $(function() {
 
             return false;
 		} else {
+			// checkExistsEmail(check_url, email);
 			$.ajax({
 				type: "POST",
 				url: url,
@@ -355,6 +374,10 @@ $(function() {
             $(this).parent().next().append("<span class='error'>Cannot be empty.</span>");
             e.preventDefault();
         } else if (validateEmail(sEmail)) {
+        	var url = $('form[name="frm_personal_info_modal"]').attr("action");
+			var check_url = url.replace('customize_more_passenger', 'checkExistPassengerByEmail');
+			checkExistsEmail(check_url, $(this).val());
+
         	$(this).parent().next().append("<span class='success'>Email look like good.</span>");
         }
         else {
@@ -481,10 +504,41 @@ $(function() {
 	});
 
 	// Click on button finish of customize booking on front-end site
-	/*$('body').on('click', 'button#btnFinishCusBooking', function() {
+	$('body').on('click', 'button#btnFinishCusBooking', function(event) {
 		var url = $(this).parent().attr('action');
-		url = 
-	});*/
+		url = url.replace('pay_later_customize', 'finish_customize_booking');
+		$.ajax({
+			type: 'POST',
+			url: url,
+			dataType: 'json',
+			success: function(response) {
+				if (response) {
+					var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
+					div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
+					div_sms += '</div>';
+					$("div#pay_feedback").append(div_sms);
+					setTimeout(function()
+		            {
+		                $('#pay_feedback').slideUp(250, function()
+		                {
+		                    $('#pay_feedback').removeClass();
+		                });
+		            },response.sms_value.length*125);
+				}
+				if (response.sms_type == 'success') {
+					setTimeout(
+					  function() 
+					  {
+					    window.location.reload(true);
+					  }, 5000);
+				} else {
+					return false;
+				}
+			}
+		});
+		event.preventDefault();
+	});
 
 });
 
@@ -496,4 +550,43 @@ function validateEmail(sEmail) {
     } else {
         return false;
     }
+}
+
+// Check exists passenger by email
+function checkExistsEmail(url, data) {
+	$.ajax({
+		type: 'POST',
+		url: url,
+		dataType: 'json',
+		data: {'email':data},
+		success: function(response) {
+			if (response) {
+				var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
+				div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+				div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
+				div_sms += '</div>';
+				$("div#feedback_bar_modal").append(div_sms);
+				setTimeout(function()
+	            {
+	                $('#each_personalInfo_feedback').slideUp(250, function()
+	                {
+	                    $('#each_personalInfo_feedback').removeClass();
+	                });
+	            },response.sms_value.length*125);
+			}
+		}
+	});
+}
+
+// Check empty input field
+function validateEmptyFields()
+{
+    var msg= "",
+        fields = document.getElementById("frm_personal_info_modal").getElementsByClassName('input_require');
+
+    for (var i=0; i<fields.length; i++){
+        if (fields[i].value == "") 
+            msg += '<p>'+fields[i].title + ' is required. </p>';
+    }
+    return msg;
 }

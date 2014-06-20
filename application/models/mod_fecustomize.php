@@ -217,8 +217,8 @@ class Mod_FeCustomize extends MU_model {
         return false;
     }*/
     public function personal_information(&$passengerInfo, $pass_id=false){
-        $pass_addby = $passengerInfo['pass_addby'];
         if (!$pass_id or !$this->exist_passenger_by_id($pass_id)) {
+            $pass_addby = $passengerInfo['pass_addby'];
             // Plus 1 more is trip leader
             $booking_id = $this->session->userdata('booking_id');
             $amount_people = $this->get_all_member_by_pass_addby($pass_addby, $booking_id);
@@ -281,15 +281,6 @@ class Mod_FeCustomize extends MU_model {
         if ($pbk_inserted) {
             return true;
         }
-        /*if (!$pbk_inserted) {
-            $arr_errors = array(
-                "success" => false,
-                "sms_type" => "danger",
-                "sms_title" => "Sorry!",
-                "sms_value" => "Your process has been failed for transection."
-            );
-            echo json_encode($arr_errors);
-        }*/
     }
 
     /*
