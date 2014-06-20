@@ -399,10 +399,12 @@ class Site extends MU_Controller {
 				redirect('site/customizes/personal-info');
 			}else{
 				$fe_data['recordExtraProducts'] = $this->customizeExtra_service();
-				foreach ($fe_data['recordExtraProducts'] as $extra) {
-					$extra_index[] = $extra['ep_id']; 
+				if (!empty($fe_data['recordExtraProducts'])) {
+					foreach ($fe_data['recordExtraProducts'] as $extra) {
+						$extra_index[] = $extra['ep_id']; 
+					}
+					$this->general_lib->set_index_extra_service($extra_index);
 				}
-				$this->general_lib->set_index_extra_service($extra_index);
 			}
 		}
 		if ($display_page == "personal-info") {
@@ -514,17 +516,19 @@ class Site extends MU_Controller {
 	} 
 	// function convertDateToRange for customize on the front end
     function convertDateToRange($findDate, $from_date, $end_date, $step = '+1 day', $format = 'Y-m-d' ) {
-        $dates = array();
-        $current = strtotime($from_date);
-        $last = strtotime($end_date);
-        while( $current <= $last ) {
-            $dates[] = date($format, $current);
-            $current = strtotime($step, $current);
-        }
-        $std = in_array($findDate[0], $dates, true);
-        $ed = in_array($findDate[1], $dates, true);
-        if($std OR $ed){
-            return true;
+        if (!empty($findDate)) {
+        	$dates = array();
+	        $current = strtotime($from_date);
+	        $last = strtotime($end_date);
+	        while( $current <= $last ) {
+	            $dates[] = date($format, $current);
+	            $current = strtotime($step, $current);
+	        }
+	        $std = in_array($findDate[0], $dates, true);
+	        $ed = in_array($findDate[1], $dates, true);
+	        if($std OR $ed){
+	            return true;
+	        }
         }
         return false;
     }
@@ -606,12 +610,14 @@ class Site extends MU_Controller {
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 		$activities = $this->mod_fecustomize->trip_information($this->session->userdata('ftvID'), $this->session->userdata('lcID'));
 		$records = array();
-		if($activities->num_rows() > 0){
-			foreach($activities->result() as $act){
-				$recodeavaliable = $this->convertDateToRange($findate, $act->start_date, $act->end_date);				
-				if($recodeavaliable){
-					$avRecord = json_decode(json_encode($act), true); 
-					array_push($records, $avRecord);
+		if (!empty($findate)) {
+			if($activities->num_rows() > 0){
+				foreach($activities->result() as $act){
+					$recodeavaliable = $this->convertDateToRange($findate, $act->start_date, $act->end_date);				
+					if($recodeavaliable){
+						$avRecord = json_decode(json_encode($act), true); 
+						array_push($records, $avRecord);
+					}
 				}
 			}
 		}
@@ -649,12 +655,14 @@ class Site extends MU_Controller {
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 		$accommodation = $this->mod_fecustomize->accommodation($this->session->userdata('ftvID'), $this->session->userdata('lcID'));
 		$data = array();
-		if($accommodation->num_rows() > 0){
-			foreach($accommodation->result() as $acc){
-				$recodeavaliable = $this->convertDateToRange($findate, $acc->start_date, $acc->end_date);				
-				if($recodeavaliable){
-					$avRecord = json_decode(json_encode($acc), true); 
-					array_push($data, $avRecord);
+		if (!empty($findate)) {
+			if($accommodation->num_rows() > 0){
+				foreach($accommodation->result() as $acc){
+					$recodeavaliable = $this->convertDateToRange($findate, $acc->start_date, $acc->end_date);				
+					if($recodeavaliable){
+						$avRecord = json_decode(json_encode($acc), true); 
+						array_push($data, $avRecord);
+					}
 				}
 			}
 		}
@@ -706,19 +714,24 @@ class Site extends MU_Controller {
 	}
 
 	public function customizeTransportation(){
-		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
-		$transportation = $this->mod_fecustomize->transportation($this->session->userdata('ftvID'), $this->session->userdata('lcID'));		
-		$tp_data = array();
-		if($transportation->num_rows() > 0){
-			foreach($transportation->result() as $tp){
-				$recodeavaliable = $this->convertDateToRange($findate, $tp->start_date, $tp->end_date);				
-				if($recodeavaliable){
-					$avRecord = json_decode(json_encode($tp), true); 
-					array_push($tp_data, $avRecord);
+		$findate = array();
+		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) 
+		// {
+			 $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
+			$transportation = $this->mod_fecustomize->transportation($this->session->userdata('ftvID'), $this->session->userdata('lcID'));		
+			$tp_data = array();
+			if($transportation->num_rows() > 0){
+				foreach($transportation->result() as $tp){
+					$recodeavaliable = $this->convertDateToRange($findate, $tp->start_date, $tp->end_date);				
+					if($recodeavaliable){
+						$avRecord = json_decode(json_encode($tp), true); 
+						array_push($tp_data, $avRecord);
+					}
 				}
 			}
-		}
-		return $tp_data;
+			// var_dump($tp_data); die();
+			return $tp_data;
+		// }
 	}
 
 	public function clickCustomizeTransportation() {
@@ -736,12 +749,14 @@ class Site extends MU_Controller {
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 		$ext_records = $this->mod_fecustomize->selectExtraProdcuts();
 		$extra_data = array();
-		if ($ext_records->num_rows() > 0) {
-			foreach ($ext_records->result() as $exp) {
-				$recodeavaliable = $this->convertDateToRange($findate, $exp->start_date, $exp->end_date);
-				if ($recodeavaliable) {
-					$avRecord = json_decode(json_encode($exp), true);
-					array_push($extra_data, $avRecord);
+		if (!empty($findate)) {
+			if ($ext_records->num_rows() > 0) {
+				foreach ($ext_records->result() as $exp) {
+					$recodeavaliable = $this->convertDateToRange($findate, $exp->start_date, $exp->end_date);
+					if ($recodeavaliable) {
+						$avRecord = json_decode(json_encode($exp), true);
+						array_push($extra_data, $avRecord);
+					}
 				}
 			}
 		}

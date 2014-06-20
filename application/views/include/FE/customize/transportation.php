@@ -6,6 +6,7 @@
 	   			<?php 
 	   			echo form_hidden("amount_main_object", count($recordTransportation));
 	   			$transOrder = 0;
+	   		if (!empty($recordTransportation)) {
 	   			foreach ($recordTransportation as $tp_record) {
 	   				$transOrder++;
 	   				// Disable day of a week
@@ -200,7 +201,9 @@
 							</div>
 						<?php } ?>
 	   			</div>
-	   			<?php }?>
+	   			<?php 
+	   			}
+	   		}?>
 	   		</div>
 	   		<?php echo anchor("site/customizes/accommodation","Previous", array('role'=>'button', 'class'=>'btn btn-default btn-sm')); ?>
 			<?php $input = array('name' => 'btnTransportation', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); echo form_submit($input);?>
