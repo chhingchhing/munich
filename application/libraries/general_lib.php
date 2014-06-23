@@ -403,6 +403,21 @@ class General_lib
 		$this->CI->session->unset_userdata('personalInfo_sms');
 	}
 
+	// Booking Fee session
+	function get_booking_fee()
+	{
+		if(!$this->CI->session->userdata('booking_fee'))
+			$this->set_booking_fee('');
+		return $this->CI->session->userdata('booking_fee');
+	}
+	function set_booking_fee($booking_fee)
+	{
+		$this->CI->session->set_userdata('booking_fee',$booking_fee);
+	}
+	function empty_booking_fee() {
+		$this->CI->session->unset_userdata('booking_fee');
+	}
+
 	// Get amount days of between dates, checkin and checkout
 	function getAmountDaysBetweenDates($start, $end) {
 		$start_ts = strtotime($start);

@@ -253,8 +253,11 @@
 					}
 					echo "</dl>";
 				}
+				// Booking Fee
+				$booking_fee = $this->general_lib->get_booking_fee();
+
 				$total = 0;
-				$total += $sumAct + $sumSubAct + $sumActExt + $sumAcc + $tpSum + $tpSubSum + $sumTpExt + $sumExtp;
+				$total += $sumAct + $sumSubAct + $sumActExt + $sumAcc + $tpSum + $tpSubSum + $sumTpExt + $sumExtp + $booking_fee;
 				$this->session->set_userdata('total', $total);
 				echo '<h3> Total : $'.$total.'</h3>';
 

@@ -346,6 +346,7 @@ class Site extends MU_Controller {
 			'each_member_extra_of_trans' => ''
 		);
 		$this->session->unset_userdata($items_sess);
+		$this->general_lib->empty_booking_fee();
 	}
         
     /*
@@ -425,6 +426,27 @@ class Site extends MU_Controller {
 						'label' => 'Passenger lastname',
 						'rules' => 'trim|required'
 					), 
+					array(
+						'field' => 'pemail',
+						'label' => 'Passenger Email',
+						'rules' => 'trim|required|valid_email'
+						// 'rules' => 'trim|required|valid_email|is_unique[passenger.pass_email]'
+					), 
+					array(
+						'field' => 'phphone',
+						'label' => 'Hand phone',
+						'rules' => 'trim|required'
+					), 
+					array(
+						'field' => 'pcountry',
+						'label' => 'Country',
+						'rules' => 'trim|required'
+					),  
+					array(
+						'field' => 'pbk_fee',
+						'label' => 'Booking Fee',
+						'rules' => 'trim|required'
+					), 
 				);	
 				$this->form_validation->set_rules($addpassenger);
 				if($this->form_validation->run() == FALSE){
@@ -438,7 +460,8 @@ class Site extends MU_Controller {
 
 					$fe_data['arr_messages'] = $this->general_lib->get_personalInfo_message();
 					$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id);
-				}else{	
+				}else{
+					$this->general_lib->set_booking_fee($this->input->post('pbk_fee'));	
 					$passengerInfo = array(
 						'pass_addby' => '',
 						'pass_fname'        => $this->input->post('pfname'),

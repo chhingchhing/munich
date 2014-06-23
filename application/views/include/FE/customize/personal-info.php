@@ -20,7 +20,7 @@ if (isset($arr_messages)) {
 	   		<div class="col-sm-12">
 	   			<div class='col-sm-9'>
 		   			<div class="form-group">
-		   				<label class="col-sm-4 control-label">Passenger firstname <span class="require">*</span>:</label>
+		   				<label class="col-sm-4 control-label">Passenger Firstname <span class="require">*</span>:</label>
 		   				<div class="col-sm-7">
 					        <?php 
 					        	echo form_hidden("passenger_id", $passenger_info->pass_id);
@@ -29,6 +29,7 @@ if (isset($arr_messages)) {
 					        	'class' => 'form-control input_require disabled_input', 
 					        	'placeholder' => 'Passenger firstname',
 					        	'value' => $passenger_info->pass_fname,
+					        	'required' => 'required'
 					        	); 
 					        	echo form_input($pfname); 
 					        ?>
@@ -36,13 +37,14 @@ if (isset($arr_messages)) {
 					    <p class="help-block error"></p>
 		   			</div>
 		   			<div class="form-group">
-		   				<label class="col-sm-4 control-label">Passenger lastname <span class="require">*</span>:</label>
+		   				<label class="col-sm-4 control-label">Passenger Lastname <span class="require">*</span>:</label>
 		   				<div class="col-sm-7">
 					         <?php $plname = array(
 					         	'name' => 'plname', 
 					         	'class' => 'form-control input_require disabled_input', 
 					         	'placeholder' => 'Passenger lastname',
 					         	'value' => $passenger_info->pass_lname,
+					         	'required' => 'required'
 					         	); 
 					         	echo form_input($plname); 
 					         ?>
@@ -58,6 +60,7 @@ if (isset($arr_messages)) {
 					         	'class' => 'form-control input_email disabled_input',
 					         	'placeholder' => 'Email',
 					         	'value' => $passenger_info->pass_email,
+					         	'required' => 'required'
 					         	); 
 					         	echo form_input($pemail); 
 					        ?>
@@ -66,13 +69,14 @@ if (isset($arr_messages)) {
 					    <p class="help-block error"></p>
 		   			</div>
 		   			<div class="form-group">
-		   				<label class="col-sm-4 control-label">Home phone <span class="require">*</span>:</label>
+		   				<label class="col-sm-4 control-label">Home Phone <span class="require">*</span>:</label>
 		   				<div class="col-sm-7">
 					         <?php $phphone = array(
 					         	'name' => 'phphone', 
 					         	'class' => 'form-control input_require disabled_input', 
 					         	'placeholder' => 'Home phone',
 					         	'value' => $passenger_info->pass_phone,
+					         	'required' => 'required'
 					         	); 
 					         	echo form_input($phphone); 
 					         ?>
@@ -108,13 +112,16 @@ if (isset($arr_messages)) {
 		   			<div class="form-group">
 		   				<label class="col-sm-4 control-label">Country <span class="require">*</span>:</label>
 		   				<div class="col-sm-7">
-					         <?php $pcountry = array(
+					         <?php 
+					         echo country_dropdown('pcountry', 'cont', 'form-control input_require', $passenger_info->pass_country, array('KH','CA','US'), '');
+					        /* $pcountry = array(
 					         	'name' => 'pcountry', 
 					         	'class' => 'form-control input_require disabled_input', 
 					         	'placeholder' => 'Country',
-					         	'value' => $passenger_info->pass_country
+					         	'value' => $passenger_info->pass_country,
+					         	'required' => 'required'
 					         	); 
-					         	echo form_input($pcountry); 
+					         	echo form_input($pcountry); */
 					         ?>
 					    </div>
 					    <p class="help-block error"></p>
@@ -138,8 +145,49 @@ if (isset($arr_messages)) {
 					         	'placeholder' => 'Passenger Address', 
 					         	'rows' => '3',
 					         	'value' => $passenger_info->pass_address,
+					         	'required' => 'required'
 					         	); 
 					         	echo form_textarea($paddress); 
+					         ?>
+					    </div>
+					    <p class="help-block error"></p>
+		   			</div>
+		   			<div class="form-group">
+		   				<label class="col-sm-4 control-label">Additional Info:</label>
+		   				<div class="col-sm-7 checkbox">
+					         <?php
+					         $bk_fee_val = 15; 
+					         $checked = false;
+					         if ($this->general_lib->get_booking_fee() != '') {
+					         	$checked =  true;
+					         }
+					         $bk_fee = array(
+					         	'name' => 'pbk_fee',
+					         	'clas' => 'form-control',
+					         	'value' => $bk_fee_val,
+					         	'checked' => $checked,
+					         	'required' => 'required'
+					         );
+					         echo '<span class="require">*</span>'.form_checkbox($bk_fee).' Booking Fee $'.$bk_fee_val;
+					         ?>
+					    </div>
+					    <p class="help-block error"></p>
+		   			</div>
+		   			<div class="form-group">
+		   				<label class="col-sm-4 control-label"></label>
+		   				<div class="col-sm-7 checkbox">
+					         <?php
+					         $checked = false;
+					         if ($this->general_lib->get_booking_fee() != '') {
+					         	$checked =  true;
+					         }
+					         $bk_term_condition = array(
+					         	'name' => 'pterm_condition',
+					         	'clas' => 'form-control',
+					         	'checked' => $checked,
+					         	'required' => 'required'
+					         );
+					         echo '<span class="require">*</span>'.form_checkbox($bk_term_condition).' Term Condition';
 					         ?>
 					    </div>
 					    <p class="help-block error"></p>

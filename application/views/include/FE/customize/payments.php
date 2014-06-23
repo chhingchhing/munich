@@ -12,12 +12,25 @@
 			"Add info all passengers!", 
 			"class='btn btn-success btn-sm' data-target='.addmorepassenger_modal' data-toggle='modal'"
 		);
+		echo nbs(2);
+		echo anchor("site/pay_later_customize","Pay Later", array('role' => 'button', 'class' => 'btn btn-warning btn-sm', 'id' => 'pay_later', 'disabled' => 'disabled'));
+		?>
+		<button type="submit" class="btn btn-primary btn-sm" name="btnFinishCusBooking" id="btnFinishCusBooking"> Finish </button>
+		<?php
 	} else {
+		echo anchor(
+			"#", 
+			"Add info all passengers!", 
+			"class='btn btn-success btn-sm' data-target='.addmorepassenger_modal' data-toggle='modal' disabled='disabled' "
+		);
+		echo nbs(2);
 		echo anchor("site/pay_later_customize","Pay Later", array('role' => 'button', 'class' => 'btn btn-warning btn-sm', 'id' => 'pay_later'));
+		?>
+		<button type="submit" class="btn btn-primary btn-sm" name="btnFinishCusBooking" id="btnFinishCusBooking" disabled="disabled"> Finish </button>
+		<?php
 	}
 	echo nbs();
 	?>
-	<button type="submit" class="btn btn-primary btn-sm" name="btnFinishCusBooking" id="btnFinishCusBooking"> Finish </button>
 	<?php
 	echo form_close();
 	?>

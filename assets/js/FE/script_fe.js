@@ -507,6 +507,7 @@ $(function() {
 	$('body').on('click', 'button#btnFinishCusBooking', function(event) {
 		var url = $(this).parent().attr('action');
 		url = url.replace('pay_later_customize', 'finish_customize_booking');
+		var redirect_url = url.replace('finish_customize_booking', 'profile');
 		$.ajax({
 			type: 'POST',
 			url: url,
@@ -530,7 +531,8 @@ $(function() {
 					setTimeout(
 					  function() 
 					  {
-					    window.location.reload(true);
+					    // window.location.reload(true);
+					    redirectPage(redirect_url);
 					  }, 5000);
 				} else {
 					return false;
@@ -589,4 +591,9 @@ function validateEmptyFields()
             msg += '<p>'+fields[i].title + ' is required. </p>';
     }
     return msg;
+}
+
+// Redirect page 
+function redirectPage(url) {
+	document.location.href = url;
 }

@@ -103,14 +103,16 @@
                   <div class="form-group">
                     <label class="col-sm-3 control-label">Country <span class="require">*</span>:</label>
                     <div class="col-sm-5">
-                         <?php $pcountry = array(
+                         <?php 
+                         echo country_dropdown('pcountry', 'cont', 'form-control input_require', '', array('KH','CA','US'), '');
+                         /*$pcountry = array(
                           'name' => 'pcountry', 
                           'title' => 'Country',
                           'class' => 'form-control input_require', 
                           'placeholder' => 'Country',
                           'value' => ''
                           ); 
-                          echo form_input($pcountry); 
+                          echo form_input($pcountry); */
                          ?>
                     </div>
                     <p class="help-block error"></p>
@@ -143,27 +145,6 @@
                   </div>
                 </div>
                 <div>
-              <?php 
-              echo form_fieldset('Amount of Passenger');
-              ?>
-              <div class="form-group">
-                <label class="col-sm-3 control-label"> Amount of Passenger: </label>
-                <div class="col-sm-5">
-                    <?php
-                      $people = array(
-                      'name' => 'add_pass_amount_pass', 
-                      'class' => 'form-control add_pass_amount_pass', 
-                      'value' => $this->session->userdata("people"),
-                      'id' => 'add_pass_amount_pass'
-                      ); 
-                      echo form_input($people); 
-                    ?>
-                </div>
-                <?php echo anchor("#", "Edit Amount Passenger", "id='edit_amount_pass'");  ?>
-              </div>
-              <?php
-              echo form_fieldset_close(); 
-              ?>
             </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
