@@ -43,55 +43,59 @@
 			$sumSubAct = 0;
 			$sumActExt = 0;
 			$sumExtp = 0;
-
-				if($this->session->userdata('ftvID')) echo '<b>Festival : </b>'.MU_Model::getForiegnTableName('festival', array('ftv_id'=>$this->session->userdata('ftvID')), 'ftv_name').'<br/>';
-				if($this->session->userdata('lcID')) echo '<b>Location : </b>'.MU_Model::getForiegnTableName('location', array('lt_id'=>$this->session->userdata('lcID')), 'lt_name');
+				// echo "<div class='form-order-customize'>";
+					if($this->session->userdata('ftvID')) echo '<b>Festival : </b>'.MU_Model::getForiegnTableName('festival', array('ftv_id'=>$this->session->userdata('ftvID')), 'ftv_name').'<br/>';
+					if($this->session->userdata('lcID')) echo '<b>Location : </b>'.MU_Model::getForiegnTableName('location', array('lt_id'=>$this->session->userdata('lcID')), 'lt_name');
+				// echo "</div>";
 				
 				/* get main transportations */
-				echo '<h4>Transportation : </h4>';
-				$tps = $this->general_lib->get_transportation();
-				if ($tps !='') {
-					$tpPeople = $this->general_lib->get_people_transportation();
-					$tpDepartureDate = $this->general_lib->get_departure_transportation();
-					$tpReturnDate = $this->general_lib->get_return_date_transportation();
-					echo "<dl>";
-					echo "<dt>Transportations:</dt>";
-					foreach ($tps as $key => $tpsID) {
-						foreach ($tpPeople[$tpsID] as $person) {
-							echo "<dd>- ". MU_Model::getForiegnTableName('transportation', array('tp_id' => $tpsID), 'tp_name');
-							$tpPrice = MU_Model::getForiegnTableName('transportation', array('tp_id' => $tpsID), 'tp_saleprice');
-							$tpPrice = $tpPrice * $person;
-							$tpSum += $tpPrice;
-							echo ' $ ' .$tpPrice;
-							echo "<dd>";
-						}
-					}
-					echo "</dl>";
-
-					/* Calculate the extra products of transportation */
-					$tpExtra = $this->general_lib->get_sub_trans_extr_product();
-					if ($tpExtra !='') {
+				echo "<div class='form-order-customize'>";
+					echo '<h4>Transportation : </h4>';
+					$tps = $this->general_lib->get_transportation();
+					if ($tps !='') {
+						$tpPeople = $this->general_lib->get_people_transportation();
+						$tpDepartureDate = $this->general_lib->get_departure_transportation();
+						$tpReturnDate = $this->general_lib->get_return_date_transportation();
 						echo "<dl>";
-						echo "<dt>Extra Products:</dt>";
-						$amountTpExtra = $this->general_lib->get_sub_trans_amount_extra();
-						foreach ($tpExtra as $key => $amountExtras) {
-							foreach ($amountExtras as $id) {
-								foreach ($amountTpExtra as $arrAmount) {
-									echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $id), 'ep_name');
-									$tpExtrasPrice = MU_Model::getForiegnTableName('extraproduct', array('ep_id'=> $id), 'ep_saleprice');
-									$tpExtrasPrice = $tpExtrasPrice * $arrAmount[$id];
-									$sumTpExt += $tpExtrasPrice;
-									echo ': $'.$tpExtrasPrice;
-									echo "</dd>";
-								}
+						echo "<dt>Transportations:</dt>";
+						foreach ($tps as $key => $tpsID) {
+							foreach ($tpPeople[$tpsID] as $person) {
+								echo "<dd>- ". MU_Model::getForiegnTableName('transportation', array('tp_id' => $tpsID), 'tp_name');
+								$tpPrice = MU_Model::getForiegnTableName('transportation', array('tp_id' => $tpsID), 'tp_saleprice');
+								$tpPrice = $tpPrice * $person;
+								$tpSum += $tpPrice;
+								echo ' $ ' .$tpPrice;
+								echo "<dd>";
 							}
 						}
 						echo "</dl>";
-					}
-				}
 
+						/* Calculate the extra products of transportation */
+						$tpExtra = $this->general_lib->get_sub_trans_extr_product();
+						if ($tpExtra !='') {
+							echo "<dl>";
+							echo "<dt>Extra Products:</dt>";
+							$amountTpExtra = $this->general_lib->get_sub_trans_amount_extra();
+							foreach ($tpExtra as $key => $amountExtras) {
+								foreach ($amountExtras as $id) {
+									foreach ($amountTpExtra as $arrAmount) {
+										echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $id), 'ep_name');
+										$tpExtrasPrice = MU_Model::getForiegnTableName('extraproduct', array('ep_id'=> $id), 'ep_saleprice');
+										$tpExtrasPrice = $tpExtrasPrice * $arrAmount[$id];
+										$sumTpExt += $tpExtrasPrice;
+										echo ': $'.$tpExtrasPrice;
+										echo "</dd>";
+									}
+								}
+							}
+							echo "</dl>";
+						}
+					}
+				echo "</div>";
+				echo "<div class='form-order-customize'>";
 				// Calcuation the price of Accommodations
 				echo '<h4>Accommodation : </h4>';
+				// echo "<hr/>";
 				$acc = $this->general_lib->get_accommodation();
 				if($acc != ''){
 					$amount_room_booked = $this->general_lib->get_amount_book_room();
@@ -139,7 +143,6 @@
 						echo "No accommodation selected";
 					}
 					echo "</dl>";
-
 					/* calculate extra products of accommodation*/
 					$extraAcc = $this->general_lib->get_sub_acc_extr_product();
 					if($extraAcc != ''){
@@ -165,6 +168,8 @@
 						echo "</dl>";
 					}
 				}
+				echo "</div>";
+				echo "<div class='form-order-customize'>";
 				// get main activities and calculate price of amounts of activities
 				echo '<h4>Activities : </h4>';
 				$acts = $this->general_lib->get_main_activities();
@@ -229,7 +234,8 @@
 						echo "</dl>";
 					}
 				}
-				
+				echo "</div>";
+				echo "<div class='form-order-customize'>";
 				/* get all checked extra products */
 				echo '<h4>Extra Products : </h4>';
 				$extraProducts = $this->general_lib->get_extra_services();
@@ -253,6 +259,7 @@
 					}
 					echo "</dl>";
 				}
+				echo "</div>";
 				// Booking Fee
 				$booking_fee = $this->general_lib->get_booking_fee();
 

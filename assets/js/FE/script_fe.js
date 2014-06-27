@@ -1,6 +1,7 @@
 jQuery(document).ready(function(){
 	//  jquery for feedback
 
+
 	//  display form
 	jQuery(".fb_form").hide();
 	jQuery(".btn_fb").bind("click",function(){
