@@ -152,7 +152,8 @@ if (isset($arr_messages)) {
 					    </div>
 					    <p class="help-block error"></p>
 		   			</div>
-		   			<div class="form-group">
+		   			
+<div class="form-group">
 		   				<label class="col-sm-4 control-label">Additional Info:</label>
 		   				<div class="col-sm-7 checkbox">
 					         <?php
@@ -189,10 +190,19 @@ if (isset($arr_messages)) {
 					         );
 					         echo '<span class="require">*</span>'.form_checkbox($bk_term_condition).' Term Condition';
 					         ?>
+					         <div id="outer">
+Outer
+<div id="inner">
+Inner
+</div>
+</div>
+<div id="other">
+Trigger the handler
+</div>
+<div id="log"></div>
 					    </div>
 					    <p class="help-block error"></p>
 		   			</div>
-
 				</div>
 	   			<div style='clear: both'></div>
 
