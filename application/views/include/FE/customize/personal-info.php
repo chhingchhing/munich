@@ -196,9 +196,15 @@ if (isset($arr_messages)) {
 			echo form_submit($input);
 			echo nbs();
 			if ($passenger_info->pass_id != "") {
-				echo anchor("site/customizes/payments"," Next ", array('role'=>'button', 'class'=>'btn btn-primary btn-sm'));
-				echo nbs();
+				if ($this->general_lib->get_booking_fee() != '') {
+					echo anchor("site/customizes/payments"," Next ", array('role'=>'button', 'class'=>'btn btn-primary btn-sm'));
+				} else {
+					echo anchor("site/customizes/payments"," Next ", array('role'=>'button', 'class'=>'btn btn-primary btn-sm', 'disabled'=>'disabled'));
+				}
+			} else {
+				echo anchor("site/customizes/payments"," Next ", array('role'=>'button', 'class'=>'btn btn-primary btn-sm', 'disabled'=>'disabled'));
 			}
+			echo nbs();
 			?>
 <p></p>
 <?php echo form_close(); ?>
