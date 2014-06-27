@@ -243,6 +243,7 @@
 					echo "<dl>";
 					$amountExtraProducts = $this->general_lib->get_num_extra_services();
 					$expOrder = 0;
+					$value = 0;
 					foreach ($extraProducts as $key => $extID) {
 						$expOrder++;
 						if (isset($amountExtraProducts[$extID])) {
