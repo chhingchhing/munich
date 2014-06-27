@@ -501,9 +501,15 @@ class Site extends MU_Controller {
 			}
 		}
 
-		if ($display_page == 'each-member') {
-			$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id);
+		if ($display_page == 'payments') {
+			if ($this->general_lib->get_booking_fee() == '') {
+				$this->general_lib->set_booking_fee($this->input->post('pbk_fee'));
+			}
 		}
+
+		/*if ($display_page == 'each-member') {
+			$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id);
+		}*/
 
 		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
 		$fe_data['site_setting'] = "customizes";

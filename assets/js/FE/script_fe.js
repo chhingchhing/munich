@@ -542,6 +542,22 @@ $(function() {
 		event.preventDefault();
 	});
 
+	// Checked on booking fee
+	$('body').on('click', 'input[name="pbk_fee"]', function() {
+		var url = $('form[name="frm_personal_info"]').attr('action');
+		url = url.replace('personal-info', 'payments');
+		if ($(this).is(':checked')) {
+			$.ajax({
+				type: "POST",
+				url: url,
+				data: {"pbk_fee" : $(this).val()},
+				success: function(response) {
+
+				}
+			});
+		};
+	});
+
 });
 
 // Validate Email input
