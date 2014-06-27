@@ -135,7 +135,7 @@ jQuery(document).ready(function(){
 			success:function(response){
 				if(response == "t"){
 					// display message success.
-					clearContactForm();
+					clearContactForm ();
 					jQuery(".hiddenSTH").hide();
 					jQuery(".error-c").hide();
 					jQuery(".success-c").show();

@@ -113,15 +113,7 @@ if (isset($arr_messages)) {
 		   				<label class="col-sm-4 control-label">Country <span class="require">*</span>:</label>
 		   				<div class="col-sm-7">
 					         <?php 
-					         echo country_dropdown('pcountry', 'cont', 'form-control input_require', $passenger_info->pass_country, array('KH','CA','US'), '');
-					        /* $pcountry = array(
-					         	'name' => 'pcountry', 
-					         	'class' => 'form-control input_require disabled_input', 
-					         	'placeholder' => 'Country',
-					         	'value' => $passenger_info->pass_country,
-					         	'required' => 'required'
-					         	); 
-					         	echo form_input($pcountry); */
+					         echo country_dropdown('pcountry', 'cont', 'form-control input_require', $passenger_info->pass_country, array('KH','CA','US'), '');					        
 					         ?>
 					    </div>
 					    <p class="help-block error"></p>
@@ -190,16 +182,6 @@ if (isset($arr_messages)) {
 					         );
 					         echo '<span class="require">*</span>'.form_checkbox($bk_term_condition).' Term Condition';
 					         ?>
-					         <div id="outer">
-Outer
-<div id="inner">
-Inner
-</div>
-</div>
-<div id="other">
-Trigger the handler
-</div>
-<div id="log"></div>
 					    </div>
 					    <p class="help-block error"></p>
 		   			</div>
