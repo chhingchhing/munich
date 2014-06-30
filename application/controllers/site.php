@@ -953,7 +953,7 @@ class Site extends MU_Controller {
 						if($existORnot != "exist"){
 							$result = $this->mod_index->insertSubscriber($subsc);
 							if($result > 0){
-								$this->emailTOadmin($subsc);
+							//	$this->emailTOadmin($subsc);
 							}
 						}
 					}
