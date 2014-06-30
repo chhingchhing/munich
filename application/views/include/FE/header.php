@@ -20,7 +20,7 @@
 		//end slideshow
         echo link_tag("assets/datepicker/css/datepicker.css");
 	?>
-	<base href=<?php echo base_url().$this->uri->segment('1').'/'; ?> target="_blank">
+	<base href=<?php echo base_url().$this->uri->segment('1').'/'; ?>>
     </head>
     
 <body>
