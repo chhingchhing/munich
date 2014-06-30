@@ -1,6 +1,9 @@
 jQuery(document).ready(function(){
 	//  jquery for feedback
-
+	$('body').on('mouseout', '.condition', function() {
+		$('.condition').popover('hide');
+	});
+	
 
 	//  display form
 	jQuery(".fb_form").hide();
@@ -135,7 +138,7 @@ jQuery(document).ready(function(){
 			success:function(response){
 				if(response == "t"){
 					// display message success.
-					clearContactForm ();
+					clearContactForm();
 					jQuery(".hiddenSTH").hide();
 					jQuery(".error-c").hide();
 					jQuery(".success-c").show();
@@ -187,7 +190,58 @@ jQuery(document).ready(function(){
 		});	
 		return false;
         });
+        
+    // calculate price when insert people 
+    jQuery('.numPassenger').bind('blur', function(){
+    	var exs = jQuery('#exservice').attr('data-price');
+    	var pkp = jQuery('#pricepk').attr('data-price');
+    	var ppl = jQuery('.numPassenger').val();
+    	var bkfee = 0;
+    	if (jQuery('.bookingfee').is(":checked")){
+    		bkfee = jQuery('.bookingfee').val();
+    	}
+    	pricedisplay(exs, pkp, ppl, bkfee);    	
+    });
+    // calculate price when checked booking fee
+    jQuery('.bookingfee').bind('click',function(){
+    	var exs = jQuery('#exservice').attr('data-price');
+    	var pkp = jQuery('#pricepk').attr('data-price');
+    	var ppl = jQuery('.numPassenger').val();
+    	var bkfee = 0;
+    	if (jQuery('.bookingfee').is(":checked")){
+    		bkfee = jQuery('.bookingfee').val();
+    	}
+    	pricedisplay(exs, pkp, ppl, bkfee); 
+    });
+    // function to display the price
+    function pricedisplay(exs, pkp, ppl, bkfee){
+    	if(! exs) exs = 0;
+    	if(! pkp) pkp = 0;
+    	if(! ppl) ppl = 1;
+    	if(bkfee != 0){ jQuery('.moreprice').html('<p style="padding:5px;">Booking Fee: $'+bkfee+'</p>'); }else{jQuery('.moreprice').html(''); }
+    	var totalsprice = (parseInt(exs)+parseInt(pkp)+parseInt(bkfee))*parseInt(ppl);
+		jQuery('#ppl').text(ppl);
+    	jQuery('#totals').text(totalsprice);
+    }
+        
+    jQuery(".termcondition").bind("click", function(){
+        jQuery(".termcondition_content").slideToggle( "slow" );
+    });
+    
+    //  amount of product in extraservice
+    jQuery('.hsamount').prop('disabled', true);
+    jQuery('.checkIt').bind('click', function(){
+    	var id = jQuery(this).attr('data-in');    	
+    	var classname = '.input'+id; 
+    	if (this.checked){   		
+    		jQuery(classname).prop('disabled', false);
+    	}else{
+    		jQuery(classname).prop('disabled', true);
+    	}
+    });
+    
 });
+
 
 // Customize booking on FE with validation of form
 $(function() {
@@ -606,6 +660,18 @@ $(function() {
 		});
 		
 		event.preventDefault();
+
+	});
+
+	// Show tr-detail on profile passenger booking
+	var timesClick = 0;
+	$('body').on('click', 'td.td-title', function() {
+		timesClick = timesClick + 1;
+		if (timesClick % 2 != 0) {
+			$(this).parent().next().removeClass('hidden');
+		} else {
+			$(this).parent().next().addClass('hidden');
+		}
 	});
 
 });

@@ -343,7 +343,6 @@ class Site extends MU_Controller {
 			'total' => '',
 			'txtFrom' => '',
 			'txtTo' => '',
-			// 'people' => '',
 			'each_member_extra_of_trans' => ''
 		);
 		$this->session->unset_userdata($items_sess);
@@ -491,6 +490,13 @@ class Site extends MU_Controller {
 				$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id); 
 			}
 		}
+
+
+		/*if ($display_page == 'payments') {
+			if ($this->general_lib->get_booking_fee() == '') {
+				$this->general_lib->set_booking_fee($this->input->post('pbk_fee'));
+			}
+		}*/
 
 		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
 		$fe_data['site_setting'] = "customizes";
