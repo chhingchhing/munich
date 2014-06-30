@@ -553,7 +553,7 @@ $(function() {
 					  {
 					    // window.location.reload(true);
 					    redirectPage(redirect_url);
-					  }, 10000);
+					  }, 6000);
 				} else {
 					return false;
 				}
