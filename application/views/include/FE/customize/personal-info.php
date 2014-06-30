@@ -11,6 +11,7 @@ if (isset($arr_messages)) {
 		</div>
 <?php }
 }
+
 ?>
 <?php  echo form_open_multipart('site/customizes/personal-info', 'class="form-horizontal" name="frm_personal_info" '); ?>
 <!-- Start Div Control Form Personal Information -->
@@ -23,12 +24,12 @@ if (isset($arr_messages)) {
 		   				<label class="col-sm-4 control-label">Passenger Firstname <span class="require">*</span>:</label>
 		   				<div class="col-sm-7">
 					        <?php 
-					        	echo form_hidden("passenger_id", $passenger_info->pass_id);
+					        	echo form_hidden("passenger_id", isset($passenger_info) ? $passenger_info->pass_id : -1);
 					        	$pfname = array(
 					        	'name' => 'pfname', 
 					        	'class' => 'form-control input_require disabled_input', 
 					        	'placeholder' => 'Passenger firstname',
-					        	'value' => $passenger_info->pass_fname,
+					        	'value' => $this->session->userdata('pass_fname') ? $this->session->userdata('pass_fname') : $passenger_info->pass_fname,
 					        	'required' => 'required'
 					        	); 
 					        	echo form_input($pfname); 
@@ -43,7 +44,7 @@ if (isset($arr_messages)) {
 					         	'name' => 'plname', 
 					         	'class' => 'form-control input_require disabled_input', 
 					         	'placeholder' => 'Passenger lastname',
-					         	'value' => $passenger_info->pass_lname,
+					         	'value' => $this->session->userdata('pass_lname') ? $this->session->userdata('pass_lname') : $passenger_info->pass_lname,
 					         	'required' => 'required'
 					         	); 
 					         	echo form_input($plname); 
@@ -59,7 +60,7 @@ if (isset($arr_messages)) {
 					         	'name' => 'pemail', 
 					         	'class' => 'form-control input_email disabled_input',
 					         	'placeholder' => 'Email',
-					         	'value' => $passenger_info->pass_email,
+					         	'value' => $this->session->userdata('pass_email') ? $this->session->userdata('pass_email') : $passenger_info->pass_email,
 					         	'required' => 'required'
 					         	); 
 					         	echo form_input($pemail); 
@@ -75,7 +76,7 @@ if (isset($arr_messages)) {
 					         	'name' => 'phphone', 
 					         	'class' => 'form-control input_require disabled_input', 
 					         	'placeholder' => 'Home phone',
-					         	'value' => $passenger_info->pass_phone,
+					         	'value' => $this->session->userdata('pass_phone') ? $this->session->userdata('pass_phone') : $passenger_info->pass_phone,
 					         	'required' => 'required'
 					         	); 
 					         	echo form_input($phphone); 
@@ -90,7 +91,7 @@ if (isset($arr_messages)) {
 					         	'name' => 'pmobile', 
 					         	'class' => 'form-control disabled_input', 
 					         	'placeholder' => 'Mobile phone ',
-					         	'value' => $passenger_info->pass_mobile,
+					         	'value' => $this->session->userdata('pass_mobile') ? $this->session->userdata('pass_mobile') : $passenger_info->pass_mobile,
 					         	); 
 					         	echo form_input($pmobile); 
 					         ?>
@@ -103,7 +104,7 @@ if (isset($arr_messages)) {
 					         	'name' => 'pcompany', 
 					         	'class' => 'form-control disabled_input', 
 					         	'placeholder' => 'Company',
-					         	'value'=> $passenger_info->pass_company,
+					         	'value'=> $this->session->userdata('pass_company') ? $this->session->userdata('pass_company') : $passenger_info->pass_company,
 					         	); 
 					         	echo form_input($pcompany); 
 					        ?>
@@ -113,7 +114,7 @@ if (isset($arr_messages)) {
 		   				<label class="col-sm-4 control-label">Country <span class="require">*</span>:</label>
 		   				<div class="col-sm-7">
 					         <?php 
-					         echo country_dropdown('pcountry', 'cont', 'form-control input_require', $passenger_info->pass_country, array('KH','CA','US'), '');					        
+					         echo country_dropdown('pcountry', 'cont', 'form-control input_require', $this->session->userdata('pass_country') ? $this->session->userdata('pass_country') : $passenger_info->pass_country, array('KH','CA','US'), '');					        
 					         ?>
 					    </div>
 					    <p class="help-block error"></p>
@@ -122,8 +123,9 @@ if (isset($arr_messages)) {
 		   				<label class="col-sm-4 control-label">Gender <span class="require">*</span>:</label>
 		   				<div class="col-sm-7">
 					         <?php 
+					         $pgender_selected = $this->session->userdata('pass_gender') ? $this->session->userdata('pass_gender') : $passenger_info->pass_gender;
 					         $pgender = array('' => '--- selected --- ','F' => 'Female' , 'M' => 'Male'); 
-					         echo form_dropdown("pgender", $pgender, $passenger_info->pass_gender,"class = 'form-control' "); 
+					         echo form_dropdown("pgender", $pgender, $pgender_selected,"class = 'form-control' "); 
 					         ?>
 					    </div>
 					    <p class="help-block error"></p>
@@ -136,7 +138,7 @@ if (isset($arr_messages)) {
 					         	'class' => 'form-control input_require', 
 					         	'placeholder' => 'Passenger Address', 
 					         	'rows' => '3',
-					         	'value' => $passenger_info->pass_address,
+					         	'value' => $this->session->userdata('pass_address') ? $this->session->userdata('pass_address') : $passenger_info->pass_address,
 					         	'required' => 'required'
 					         	); 
 					         	echo form_textarea($paddress); 
@@ -192,18 +194,17 @@ if (isset($arr_messages)) {
 	   		
 	   		<?php echo anchor("site/customizes/extra-service","Previous", array('role'=>'button', 'class'=>'btn btn-default btn-sm')); ?>
 			<?php 
-			$input = array('name' => 'btnPersonalInfo', 'class' => 'btn btn-primary btn-sm', 'value' => ' Save '); 
+			$input = array('name' => 'btnPersonalInfo', 'class' => 'btn btn-primary btn-sm', 'value' => ' Next '); 
 			echo form_submit($input);
 			echo nbs();
-			if ($passenger_info->pass_id != "") {
-				if ($this->general_lib->get_booking_fee() != '') {
-					echo anchor("site/customizes/payments"," Next ", array('role'=>'button', 'class'=>'btn btn-primary btn-sm'));
-				} else {
-					echo anchor("site/customizes/payments"," Next ", array('role'=>'button', 'class'=>'btn btn-primary btn-sm', 'disabled'=>'disabled'));
+			/*if (isset($passenger_info)) {
+				if ($passenger_info->pass_id != "") {
+					if ($this->general_lib->get_booking_fee() != '') {
+						echo anchor("site/customizes/payments"," Next ", array('role'=>'button', 'class'=>'btn btn-primary btn-sm'));
+					}
 				}
-			} else {
-				echo anchor("site/customizes/payments"," Next ", array('role'=>'button', 'class'=>'btn btn-primary btn-sm', 'disabled'=>'disabled'));
-			}
+			}*/
+			
 			echo nbs();
 			?>
 <p></p>

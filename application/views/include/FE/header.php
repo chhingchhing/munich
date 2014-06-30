@@ -20,5 +20,8 @@
 		//end slideshow
         echo link_tag("assets/datepicker/css/datepicker.css");
 	?>
+	<base href=<?php echo base_url().$this->uri->segment('1').'/'; ?> target="_blank">
     </head>
+    
 <body>
+	<?php //echo form_hidden('base_url', base_url().'nl/'); ?>
