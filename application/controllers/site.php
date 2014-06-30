@@ -465,7 +465,8 @@ class Site extends MU_Controller {
 					$this->general_lib->set_booking_fee($this->input->post('pbk_fee'));	
 					if ($pass_id == -1) {
 						$passengerInfo = array(
-							'pass_addby' => '',
+							'pass_id'			=> '',
+							'pass_addby' 		=> '',
 							'pass_fname'        => $this->input->post('pfname'),
 				            'pass_lname'        => $this->input->post('plname'),
 				            'pass_email'        => $this->input->post('pemail'),
@@ -481,6 +482,22 @@ class Site extends MU_Controller {
 						$this->session->set_userdata($passengerInfo);
 					} else {
 						$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id);
+						$passengerInfo = array(
+							'pass_id'			=> $fe_data['passenger_info']->pass_id,
+							'pass_addby'		=> '',
+							'pass_fname'        => $fe_data['passenger_info']->pass_fname,
+				            'pass_lname'        => $fe_data['passenger_info']->pass_lname,
+				            'pass_email'        => $fe_data['passenger_info']->pass_email,
+				            'pass_phone'        => $fe_data['passenger_info']->pass_phone,
+				            'pass_mobile'       => $fe_data['passenger_info']->pass_mobile,
+				            'pass_country'      => $fe_data['passenger_info']->pass_country,
+				            'pass_address'      => $fe_data['passenger_info']->pass_address,
+				            'pass_company'      => $fe_data['passenger_info']->pass_company,
+				            'pass_gender'       => $fe_data['passenger_info']->pass_gender,
+				            'pass_status'       => $fe_data['passenger_info']->pass_status,
+				            'pass_deleted'      => $fe_data['passenger_info']->pass_deleted,
+						);
+						$this->session->set_userdata($passengerInfo);
 					}
 					redirect('site/customizes/payments');	
 				}
@@ -788,7 +805,7 @@ class Site extends MU_Controller {
 	* public function customize_more_passenger
 	* load template fe_more_passenger
 	*/
-	public function customize_more_passenger() {
+	/*public function customize_more_passenger() {
 		$new_sess_passenger = $this->session->userdata('new_passenger_id');
 		$login_sess_passenger = $this->session->userdata("passenger");
 		if ($new_sess_passenger) {
@@ -831,7 +848,7 @@ class Site extends MU_Controller {
 			echo json_encode($arr_errors);
 		}
 
-	}
+	}*/
 
 	/*
 	* Change session amount of people
@@ -917,9 +934,9 @@ class Site extends MU_Controller {
 			$dataExtraService = $this->getSessionExtraServices();
 
 			$pass_id = $this->mod_fecustomize->getCurrentPassengerId();
-			if ($pass_id == -1) {
+			// if ($pass_id == -1 AND $this->session->userdata('pass_id') == '') {
 				$passengerInfo = array(
-					'pass_addby' => '',
+					'pass_addby' 		=> $this->session->userdata('pass_addby'),
 					'pass_fname'        => $this->session->userdata('pass_fname'),
 		            'pass_lname'        => $this->session->userdata('pass_lname'),
 		            'pass_email'        => $this->session->userdata('pass_email'),
@@ -934,6 +951,7 @@ class Site extends MU_Controller {
 				);
 
 				$result  = $this->mod_fecustomize->personal_information($passengerInfo, $pass_id);
+
 				if (!$result) {
 					$arr_errors = array(
 						"success" => false,
@@ -943,6 +961,7 @@ class Site extends MU_Controller {
 					);
 					echo json_encode($arr_errors);
 				} else {
+					// Send mail automatically to passenger
 					$subsc['sub_fname'] = $this->session->userdata('pass_fname');
 					$subsc['sub_lname'] = $this->session->userdata('pass_lname');
 					$subsc['sub_email'] = $this->session->userdata('pass_email');
@@ -958,7 +977,9 @@ class Site extends MU_Controller {
 						}
 					}
 				}
-			}
+			/*} else if () {
+
+			}*/
 
 			$bk_info = array(
 				'bk_type' => 'customize',
@@ -978,6 +999,21 @@ class Site extends MU_Controller {
 				);
 				echo json_encode($arr_errors);
 			}
+
+			// Add data into passenger_booking
+			if ($bk_info['bk_id']) {
+				if ($pass_id == -1 AND $result != false AND $result != true) {
+					$pass_addby = $result;
+				} else {
+					$pass_addby = $pass_id;
+				}
+				$pass_bk_info = array(
+	                'pbk_pass_id' => $pass_addby,
+	                'pbk_bk_id' => $bk_info['bk_id']
+	            );
+			}
+           
+            $pbk_inserted = $this->mod_fecustomize->insertPassengerBookingInfo($pass_bk_info, $pass_addby, $bk_info['bk_id']);
 
 			$this->session->set_userdata('booking_id', $bk_info['bk_id']);
 			$cuscon_info = array(
