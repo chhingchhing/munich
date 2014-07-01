@@ -465,7 +465,6 @@ class Site extends MU_Controller {
 					$this->general_lib->set_booking_fee($this->input->post('pbk_fee'));	
 					if ($pass_id == -1) {
 						$passengerInfo = array(
-							'pass_id'			=> '',
 							'pass_addby' 		=> '',
 							'pass_fname'        => $this->input->post('pfname'),
 				            'pass_lname'        => $this->input->post('plname'),
@@ -483,7 +482,6 @@ class Site extends MU_Controller {
 					} else {
 						$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id);
 						$passengerInfo = array(
-							'pass_id'			=> $fe_data['passenger_info']->pass_id,
 							'pass_addby'		=> '',
 							'pass_fname'        => $fe_data['passenger_info']->pass_fname,
 				            'pass_lname'        => $fe_data['passenger_info']->pass_lname,
@@ -934,52 +932,47 @@ class Site extends MU_Controller {
 			$dataExtraService = $this->getSessionExtraServices();
 
 			$pass_id = $this->mod_fecustomize->getCurrentPassengerId();
-			// if ($pass_id == -1 AND $this->session->userdata('pass_id') == '') {
-				$passengerInfo = array(
-					'pass_addby' 		=> $this->session->userdata('pass_addby'),
-					'pass_fname'        => $this->session->userdata('pass_fname'),
-		            'pass_lname'        => $this->session->userdata('pass_lname'),
-		            'pass_email'        => $this->session->userdata('pass_email'),
-		            'pass_phone'        => $this->session->userdata('pass_phone'),
-		            'pass_mobile'       => $this->session->userdata('pass_mobile'),
-		            'pass_country'      => $this->session->userdata('pass_country'),
-		            'pass_address'      => $this->session->userdata('pass_address'),
-		            'pass_company'      => $this->session->userdata('pass_company'),
-		            'pass_gender'       => $this->session->userdata('pass_gender'),
-		            'pass_status'       => $this->session->userdata('pass_status'),
-		            'pass_deleted'      => $this->session->userdata('pass_deleted'),
+			$passengerInfo = array(
+				'pass_addby' 		=> $this->session->userdata('pass_addby'),
+				'pass_fname'        => $this->session->userdata('pass_fname'),
+	            'pass_lname'        => $this->session->userdata('pass_lname'),
+	            'pass_email'        => $this->session->userdata('pass_email'),
+	            'pass_phone'        => $this->session->userdata('pass_phone'),
+	            'pass_mobile'       => $this->session->userdata('pass_mobile'),
+	            'pass_country'      => $this->session->userdata('pass_country'),
+	            'pass_address'      => $this->session->userdata('pass_address'),
+	            'pass_company'      => $this->session->userdata('pass_company'),
+	            'pass_gender'       => $this->session->userdata('pass_gender'),
+	            'pass_status'       => $this->session->userdata('pass_status'),
+	            'pass_deleted'      => $this->session->userdata('pass_deleted'),
+			);
+			$result  = $this->mod_fecustomize->personal_information($passengerInfo, $pass_id);
+
+			if (!$result) {
+				$arr_errors = array(
+					"success" => false,
+					"sms_type" => "danger",
+					"sms_title" => "Error!",
+					"sms_value" => "Sorry! That email is already registered. Please try another one."
 				);
-
-				$result  = $this->mod_fecustomize->personal_information($passengerInfo, $pass_id);
-
-				if (!$result) {
-					$arr_errors = array(
-						"success" => false,
-						"sms_type" => "danger",
-						"sms_title" => "Error!",
-						"sms_value" => "Sorry! That email is already registered. Please check your email again or login before you booking"
-					);
-					echo json_encode($arr_errors);
-				} else {
-					// Send mail automatically to passenger
-					$subsc['sub_fname'] = $this->session->userdata('pass_fname');
-					$subsc['sub_lname'] = $this->session->userdata('pass_lname');
-					$subsc['sub_email'] = $this->session->userdata('pass_email');
-					$subsc['sub_status'] = 1;
-					$subsc['roles_role_id'] 	= 5;
-					if($subsc['sub_email'] != ""){
-						$existORnot = MU_Model::checkExistEmail('subscriber','sub_email',array("sub_email"=>$subsc['sub_email']));
-						if($existORnot != "exist"){
-							$result = $this->mod_index->insertSubscriber($subsc);
-							if($result > 0){
-								$this->emailTOadmin($subsc);
-							}
+				echo json_encode($arr_errors);
+			} else {
+				// Send mail automatically to passenger
+				$subsc['sub_fname'] = $this->session->userdata('pass_fname');
+				$subsc['sub_lname'] = $this->session->userdata('pass_lname');
+				$subsc['sub_email'] = $this->session->userdata('pass_email');
+				$subsc['sub_status'] = 1;
+				$subsc['roles_role_id'] 	= 5;
+				if($subsc['sub_email'] != ""){
+					$existORnot = MU_Model::checkExistEmail('subscriber','sub_email',array("sub_email"=>$subsc['sub_email']));
+					if($existORnot != "exist"){
+						$result = $this->mod_index->insertSubscriber($subsc);
+						if($result > 0){
+							//$this->emailTOadmin($subsc);
 						}
 					}
 				}
-			/*} else if () {
-
-			}*/
+			}
 
 			$bk_info = array(
 				'bk_type' => 'customize',
@@ -1001,19 +994,22 @@ class Site extends MU_Controller {
 			}
 
 			// Add data into passenger_booking
-			if ($bk_info['bk_id']) {
-				if ($pass_id == -1 AND $result != false AND $result != true) {
-					$pass_addby = $result;
-				} else {
-					$pass_addby = $pass_id;
-				}
+			$passengerID = 0;
+			if ($pass_id != -1) {
+				$passengerID = $pass_id;
+			} else if (is_numeric($result)) {
+				$passengerID = $result;
+			}
+			if ($bk_info['bk_id'] AND $passengerID != 0) {
 				$pass_bk_info = array(
-	                'pbk_pass_id' => $pass_addby,
+	                'pbk_pass_id' => $passengerID,
 	                'pbk_bk_id' => $bk_info['bk_id']
 	            );
+
+	            $pbk_inserted = $this->mod_fecustomize->insertPassengerBookingInfo($pass_bk_info, $passengerID, $bk_info['bk_id']);
 			}
            
-            $pbk_inserted = $this->mod_fecustomize->insertPassengerBookingInfo($pass_bk_info, $pass_addby, $bk_info['bk_id']);
+           
 
 			$this->session->set_userdata('booking_id', $bk_info['bk_id']);
 			$cuscon_info = array(
