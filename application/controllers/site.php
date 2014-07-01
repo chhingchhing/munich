@@ -948,7 +948,6 @@ class Site extends MU_Controller {
 	            'pass_deleted'      => $this->session->userdata('pass_deleted'),
 			);
 			$result  = $this->mod_fecustomize->personal_information($passengerInfo, $pass_id);
-
 			if (!$result) {
 				$arr_errors = array(
 					"success" => false,

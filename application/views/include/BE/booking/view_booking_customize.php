@@ -26,9 +26,9 @@
                 $pkID = $rows->cuscon_id;
                 $pkstartdate = $rows->cuscon_start_date;
                 $pkenddate = $rows->cuscon_end_date;
-                $pkname = $rows->cuscon_name;
-                $pkstockactual = $rows->cuscon_actualstock;
-                $pkprice = $rows->cuscon_saleprice;
+                // $pkname = $rows->cuscon_name;
+                // $pkstockactual = $rows->cuscon_actualstock;
+                // $pkprice = $rows->cuscon_saleprice;
                 // pkactivities
                 $package_activities['pg_activities'] = $rows->cuscon_activities;
                 // pkaccommodation
@@ -59,18 +59,18 @@
 </blockquote>
 <div class="row">
     <?php echo form_open('booking/view_booking_customize/'.$bkID.'/'.$bookingtype, 'role="form" class="frm_booking_view form-horizontal"'); ?>
-    <?php echo form_hidden('pkconprice', $pkprice); ?>
+    <?php //echo form_hidden('pkconprice', $pkprice); ?>
     <div class="form-group col-sm-12">
         <label class="col-sm-2 control-label">Booking Date <span class="require">*</span>:</label>
         <div class="col-sm-4">
-            <?php echo form_input(array('name' => 'bkDate','data-date-format'=>'yyyy-mm-dd', 'value' => set_value('bkDate', $bkDate), 'class' => 'bkDate form-control', 'id' => 'bkDate','placeholder'=>'Y-m-d')); ?>
+            <?php echo form_input(array('name' => 'bkDate','data-date-format'=>'yyyy-mm-dd', 'value' => set_value('bkDate', $bkDate), 'class' => 'bkDate form-control', 'id' => 'bkDate','placeholder'=>'yyyy-mm-dd')); ?>
             <span style="color:red;"><?php echo form_error('bkDate'); ?></span>
         </div>
     </div>
     <div class="form-group col-sm-12">
         <label class="col-sm-2 control-label">Arrival Date <span class="require">*</span>:</label>
         <div class="col-sm-4">
-            <?php echo form_input(array('name' => 'bkArrivalDate','data-date-format'=>'yyyy-mm-dd', 'value' => set_value('bkArrivalDate', $bkArrivalDate), 'class' => 'bkArrivalDate form-control', 'id' => 'bkArrivalDate','placeholder'=>'Y-m-d')); ?>
+            <?php echo form_input(array('name' => 'bkArrivalDate','data-date-format'=>'yyyy-mm-dd', 'value' => set_value('bkArrivalDate', $bkArrivalDate), 'class' => 'bkArrivalDate form-control', 'id' => 'bkArrivalDate','placeholder'=>'yyyy-mm-dd')); ?>
             <span style="color:red;"><?php echo form_error('bkArrivalDate'); ?></span>
         </div>
     </div>
@@ -91,7 +91,7 @@
     <div class="form-group col-sm-12">
         <label class="col-sm-2 control-label">Pay date <span class="require">*</span>:</label>
         <div class="col-sm-4">
-            <?php echo form_input(array('name' => 'bkPayDate','data-date-format'=>'yyyy-mm-dd', 'value' => set_value('bkPayDate',$bkpaydate), 'class' => 'bkPayDate form-control', 'id' => 'bkPayDate','placeholder'=>'Y-m-d')); ?>
+            <?php echo form_input(array('name' => 'bkPayDate','data-date-format'=>'yyyy-mm-dd', 'value' => set_value('bkPayDate',$bkpaydate), 'class' => 'bkPayDate form-control', 'id' => 'bkPayDate','placeholder'=>'yyyy-mm-dd')); ?>
             <span style="color:red;"><?php echo form_error('bkPayDate'); ?></span>
         </div>
     </div>
@@ -129,7 +129,7 @@
                 $pkcus[''] = "--- select ---";
                     if($getpkORcus->num_rows > 0){
                         foreach($getpkORcus->result() as $value){
-                            $pkcus[$value->cuscon_id] = $value->cuscon_name;
+                            $pkcus[$value->cuscon_id] = $value->cuscon_end_date;
                         }
                     }
                 echo form_dropdown('pkORcus', $pkcus, $pkID, 'class="pkcus form-control"'); 
@@ -237,7 +237,7 @@
             <td><?php echo $pkname; ?></td>
             <td><?php echo $pkstartdate; ?></td>
             <td><?php echo $pkenddate; ?></td>
-            <td><?php echo $pkprice; ?></td>
+            <td><?php //echo $pkprice; ?></td>
         </tr>
     </table> 
         <?php if(isset($package_activities['pg_activities'])){ ?>   
@@ -285,7 +285,7 @@
                 <tr class="real_ep_pk remove<?php echo $epacc['ep_id']; ?>">
                     <td><?php echo form_checkbox(array('class' => 'check_checkbox','id' => 'check_checkbox', 'name' => 'epacc_checkbox[]', "checked" => true), $epacc['ep_id'] );  ?></td>
                     <td><?php echo $epacc['ep_id']; ?></td>
-                    <td><?php echo character_limiter($epacc['ep_name'], 7); ?></td>
+                    <td><?php echo $epacc['ep_name']; ?></td>
                     <td><?php echo $epacc['start_date']; ?></td>
                     <td><?php echo $epacc['end_date']; ?></td>
                     <td><?php echo $epacc['ep_purchaseprice']; ?></td>

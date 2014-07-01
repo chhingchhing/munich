@@ -231,8 +231,7 @@ iframe {
 	border-bottom-right-radius: 5px solid #F5F5F5;
 }
 .form-order{
-	border-left-color: #DDDDDD;/*
-	background-color: #F0F9F0;*/
+	border-left-color: #DDDDDD;
 	background-color: #F8F8F8;
 	border-radius: 3px;
 	border: 1px solid #CCC;

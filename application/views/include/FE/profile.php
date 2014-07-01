@@ -1,5 +1,6 @@
 <div class="row">
-    <ol class="breadcrumb">
+    <div class="col-sm-12">
+        <ol class="breadcrumb">
       <li><?php echo anchor("site/profile","Profile"); ?></li>
       <?php 
         if ($this->uri->segment('4') == "view_detail_bk") { ?>
@@ -9,6 +10,7 @@
         <?php }
       ?>
     </ol>
+    </div>
     <div class="col-md-4">
         <?php if ($profile->num_rows > 0) { ?>
            <?php foreach($profile->result() as $row) { ?>
