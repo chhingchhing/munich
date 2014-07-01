@@ -16,8 +16,7 @@
 	?>
 	<?php
 		echo form_close();
-	?>
-	
+	?>	
 <p></p>
 </div>
 	<!-- end div home -->
