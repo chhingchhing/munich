@@ -465,6 +465,7 @@ class Site extends MU_Controller {
 					$this->general_lib->set_booking_fee($this->input->post('pbk_fee'));	
 					if ($pass_id == -1) {
 						$passengerInfo = array(
+							'has_passenger'		=> true,
 							'pass_addby' 		=> '',
 							'pass_fname'        => $this->input->post('pfname'),
 				            'pass_lname'        => $this->input->post('plname'),

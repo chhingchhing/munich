@@ -522,44 +522,7 @@ $(function() {
 		});
 	});
 
-	// Finish booking of customize on fe side
-	$('body').on('click', 'a#pay_later', function(event) {
-		event.preventDefault();
-		var url = $(this).parent().attr('action');
-		// var redirect_url = url.replace('pay_later_customize', 'success');
-		var redirect_url = url.replace('pay_later_customize', 'customizes/success');
-		$.ajax({
-			type: "POST",
-			url: url,
-			dataType: "json",
-			success: function(response) {
-				if (response) {
-					var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
-					div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-					div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
-					div_sms += '</div>';
-					$("div#pay_feedback").append(div_sms);
-					setTimeout(function()
-		            {
-		                $('#pay_feedback').slideUp(250, function()
-		                {
-		                    $('#pay_feedback').removeClass();
-		                });
-		            },response.sms_value.length*125);
-				}
-				if (response.sms_type == 'success') {
-					setTimeout(
-					  function() 
-					  {
-					    // window.location.reload(true);
-					    redirectPage(redirect_url);
-					  }, 6000);
-				} else {
-					return false;
-				}
-			}
-		});
-	});
+	
 
 	// Click on button finish of customize booking on front-end site
 	/*$('body').on('click', 'button#btnFinishCusBooking', function(event) {
@@ -616,64 +579,158 @@ $(function() {
 		};
 	});
 
-	// Checked if no enter amount of passenger on Trip Info
-	$('body').on('click', 'input[name="btnTripInfo"]', function(event) {
-		var txtFrom = $('input[name="txtFrom"]').val();
-		var txtTo = $('input[name="txtTo"]').val();
-		var people = $('input[name="people"]').val();
-		var url = $(this).parent().parent().attr('action');
-		var redirect_url = url;
-		var url = $('base').attr('href')+"site/customizeTrip";
+});
 
-		var msg = validateEmptyFields("trip_info", "input_require_trip_info");
-		if(msg) {
-	        var div_sms = '<div class="alert alert-danger alert-dismissable">';
-			div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-			div_sms += '<strong>Error!</strong> '+msg;
-			div_sms += '</div>';
-			$("div#feedback_bar_modal").append(div_sms);
-			setTimeout(function()
-	        {
-	            $('#each_personalInfo_feedback').slideUp(250, function()
+// Show tr-detail on profile passenger booking
+var timesClick = 0;
+$('body').on('click', 'td.td-title', function() {
+	timesClick = timesClick + 1;
+	if (timesClick % 2 != 0) {
+		$(this).parent().next().removeClass('hidden');
+	} else {
+		$(this).parent().next().addClass('hidden');
+	}
+});
+
+// Checked if no enter amount of passenger on Trip Info
+$('body').on('click', 'input[name="btnTripInfo"]', function(event) {
+	var txtFrom = $('input[name="txtFrom"]').val();
+	var txtTo = $('input[name="txtTo"]').val();
+	var people = $('input[name="people"]').val();
+	var url = $(this).parent().parent().attr('action');
+	var redirect_url = url;
+	var url = $('base').attr('href')+"site/customizeTrip";
+
+	var msg = validateEmptyFields("trip_info", "input_require_trip_info");
+	if(msg) {
+        var div_sms = '<div class="alert alert-danger alert-dismissable">';
+		div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+		div_sms += '<strong>Error!</strong> '+msg;
+		div_sms += '</div>';
+		$("div#feedback_bar_modal").append(div_sms);
+		setTimeout(function()
+        {
+            $('#each_personalInfo_feedback').slideUp(250, function()
+            {
+                $('#each_personalInfo_feedback').removeClass();
+            });
+        },msg.length*125);
+
+        return false;
+    }
+
+	if (people == 0 || txtTo == '' || txtFrom == '') {
+		alert('Please enter amount of people.');
+		return false;
+	}
+	$.ajax({
+		type: "POST",
+		url: url,
+		dataType: 'html',
+		data: $(this).parent().parent().serialize(),
+		success: function(response) {
+			if (response == 'true') {
+				redirectPage(redirect_url);
+			};
+		}
+	});
+	
+	event.preventDefault();
+
+});
+
+// Finish booking of customize on fe side
+$('body').on('click', 'a#pay_later', function(event) {
+	event.preventDefault();
+	var has_passenger = $('input[name="has_passenger"]').val();
+	
+	var bookingfee = $('input[name="booking_fee_sess"]').val();
+	var totalPrice = $('input[name="total"]').val();
+	if (has_passenger == '') {
+		var msg = 'Please fill all the required information of Passenger Information tab before you would like to do payments.';
+		var div_sms = '<div class="alert alert-danger alert-dismissable">';
+		div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+		div_sms += '<strong>Error!</strong> '+msg;
+		div_sms += '</div>';
+		$("div#pay_feedback").append(div_sms);
+		setTimeout(function()
+        {
+            $('#pay_feedback').slideUp(250, function()
+            {
+                $('#pay_feedback').removeClass();
+            });
+        },msg.length*125);
+
+		return false;
+	};
+	if (totalPrice == 0) {
+		var msg = 'Please select the items/product before you would like to payments';
+		var div_sms = '<div class="alert alert-danger alert-dismissable">';
+		div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+		div_sms += '<strong>Error!</strong> '+msg;
+		div_sms += '</div>';
+		$("div#pay_feedback").append(div_sms);
+		setTimeout(function()
+        {
+            $('#pay_feedback').slideUp(250, function()
+            {
+                $('#pay_feedback').removeClass();
+            });
+        },msg.length*125);
+
+		return false;
+	};
+	if (bookingfee == '') {
+		var msg = 'Please check the booking fee at Personal Information tab.';
+		var div_sms = '<div class="alert alert-danger alert-dismissable">';
+		div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+		div_sms += '<strong>Error!</strong> '+msg;
+		div_sms += '</div>';
+		$("div#pay_feedback").append(div_sms);
+		setTimeout(function()
+        {
+            $('#pay_feedback').slideUp(250, function()
+            {
+                $('#pay_feedback').removeClass();
+            });
+        },msg.length*125);
+
+		return false;
+	};
+
+	var url = $(this).parent().attr('action');
+	var redirect_url = url.replace('pay_later_customize', 'customizes/success');
+	$.ajax({
+		type: "POST",
+		url: url,
+		dataType: "json",
+		success: function(response) {
+			if (response) {
+				var div_sms = '<div class="alert alert-'+response.sms_type+' alert-dismissable">';
+				div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+				div_sms += '<strong>'+response.sms_title+'</strong> '+response.sms_value;
+				div_sms += '</div>';
+				$("div#pay_feedback").append(div_sms);
+				setTimeout(function()
 	            {
-	                $('#each_personalInfo_feedback').removeClass();
-	            });
-	        },msg.length*125);
-
-	        return false;
-	    }
-
-		if (people == 0 || txtTo == '' || txtFrom == '') {
-			alert('Please enter amount of people.');
-			return false;
-		}
-		$.ajax({
-			type: "POST",
-			url: url,
-			dataType: 'html',
-			data: $(this).parent().parent().serialize(),
-			success: function(response) {
-				if (response == 'true') {
-					redirectPage(redirect_url);
-				};
+	                $('#pay_feedback').slideUp(250, function()
+	                {
+	                    $('#pay_feedback').removeClass();
+	                });
+	            },response.sms_value.length*125);
 			}
-		});
-		
-		event.preventDefault();
-
-	});
-
-	// Show tr-detail on profile passenger booking
-	var timesClick = 0;
-	$('body').on('click', 'td.td-title', function() {
-		timesClick = timesClick + 1;
-		if (timesClick % 2 != 0) {
-			$(this).parent().next().removeClass('hidden');
-		} else {
-			$(this).parent().next().addClass('hidden');
+			if (response.sms_type == 'success') {
+				setTimeout(
+				  function() 
+				  {
+				    // window.location.reload(true);
+				    redirectPage(redirect_url);
+				  }, 6000);
+			} else {
+				return false;
+			}
 		}
 	});
-
 });
 
 // Validate Email input

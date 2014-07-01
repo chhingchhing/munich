@@ -263,11 +263,16 @@
 				echo "</div>";
 				// Booking Fee
 				$booking_fee = $this->general_lib->get_booking_fee();
+				echo form_hidden('booking_fee_sess', $booking_fee);
 
 				$total = 0;
-				$total += $sumAct + $sumSubAct + $sumActExt + $sumAcc + $tpSum + $tpSubSum + $sumTpExt + $sumExtp + $booking_fee;
+				$total += $sumAct + $sumSubAct + $sumActExt + $sumAcc + $tpSum + $tpSubSum + $sumTpExt + $sumExtp;
+				echo form_hidden('total', $total);
+				$total = $total + $booking_fee;
 				$this->session->set_userdata('total', $total);
 				echo '<h3> Total : $'.$total.'</h3>';
+				
+				echo form_hidden('has_passenger', $this->session->userdata('has_passenger'));
 
 			?>			
 		</div>
