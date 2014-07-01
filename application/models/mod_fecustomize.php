@@ -196,6 +196,9 @@ class Mod_FeCustomize extends MU_model {
     public function personal_information(&$passengerInfo, $pass_id=false){
         if ($passengerInfo['pass_addby'] == '') {
             if (!$pass_id or !$this->exist_passenger_by_id($pass_id)) {
+                if ($this->exist_passenger_by_email($passengerInfo['pass_email'])) {
+                    return false;
+                }
                 if($this->db->insert('passenger', $passengerInfo)) {
                     return $passengerInfo['pass_id'] = $this->db->insert_id();
                 }
