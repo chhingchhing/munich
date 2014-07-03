@@ -155,8 +155,6 @@
 							    <div id="roomType_<?php echo $htOrder; ?>" class="panel-collapse collapse in">
 							      <div class="panel-body">
 							        <?php 
-							       /* $room_types = $this->mod_fecustomize->getAllRoomType($acc['dhht_id'], $acc['classification_id']);*/
-							        // foreach ($room_types->result() as $item) {
 							        foreach ($detail_hotels as $item) {
 							        	?>
 							        	<div class='row'>
@@ -188,10 +186,6 @@
 									        		echo nbs();
 
 									        		$room_booked = $this->mod_fecustomize->getDetailOfRoomBooked($item->dhrt_id, $item->dhht_id, $item->dhcl_id, $start_date, $end_date)->result();
-var_dump($room_booked);
-if (!empty($room_booked)) {
-	echo "string";
-}
 									        		echo $item->rt_name;
 									        		echo nbs();
 									        		echo '(Amount people per room: '.$item->rt_people_per_room.', Room avaliable: 4)';
@@ -233,7 +227,6 @@ if (!empty($room_booked)) {
 				        </div>
 			    	</div>
 			    	<?php
-			        // }
 					}
 			        ?>
 			    	
