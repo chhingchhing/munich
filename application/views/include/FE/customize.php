@@ -9,13 +9,25 @@
 	<div class="col-sm-12">
 		<div class="col-sm-10">
 			<ul class="nav nav-tabs menu_customize">
-			   <li><?php echo anchor("site/customizes/","Trip info"); ?></li>
-			   <li><?php echo anchor("site/customizes/transportation","Transportation"); ?></li>
-			   <li><?php echo anchor("site/customizes/accommodation","Accommodation"); ?></li>
-			   <li><?php echo anchor("site/customizes/activities","Activities"); ?></li>
-			   <li><?php echo anchor("site/customizes/extra-service","Extra Services"); ?></li>
-			   <li><?php echo anchor("site/customizes/personal-info","Personal Information"); ?></li>
-			   <li><?php echo anchor("site/customizes/payments","Payment"); ?></li>
+			<?php 
+				$uri4 = $this->uri->segment('4');
+				$menus = array(
+					'' => 'Trip Info',
+					'transportation' => 'Transportation',
+					'accommodation' => 'Accommodation',
+					'activities' => 'Activities',
+					'extra-service' => 'Extra Services',
+					'personal-info' => 'Personal Information',
+					'payments' => 'Payment',
+				);
+				foreach ($menus as $key => $value) { 
+					if ($uri4 == $key) { ?>
+						<li class='active'><?php echo anchor("site/customizes/$key","$value"); ?></li>
+					<?php } else { ?>
+						<li><?php echo anchor("site/customizes/$key","$value"); ?></li>
+					<?php }
+				}
+			?>
 			</ul>			
 			<hr>
 			<div class="tab-content">

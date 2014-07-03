@@ -425,6 +425,36 @@ class General_lib
 		$diff = $end_ts - $start_ts;
 		return round($diff / 86400);
 	}
+
+	// Get room type booking information
+	function get_room_booking()
+	{
+		if(!$this->CI->session->userdata('room_booked'))
+			$this->set_room_booking('');
+		return $this->CI->session->userdata('room_booked');
+	}
+	function set_room_booking($room_booked)
+	{
+		$this->CI->session->set_userdata('room_booked',$room_booked);
+	}
+	function empty_room_booking() {
+		$this->CI->session->unset_userdata('room_booked');
+	}
+
+	// Booking Fee session
+	function get_hotel_ids()
+	{
+		if(!$this->CI->session->userdata('hotelIDs'))
+			$this->set_hotel_ids('');
+		return $this->CI->session->userdata('hotelIDs');
+	}
+	function set_hotel_ids($hotelIDs)
+	{
+		$this->CI->session->set_userdata('hotelIDs',$hotelIDs);
+	}
+	function empty_hotel_ids() {
+		$this->CI->session->unset_userdata('hotelIDs');
+	}
         
 }
 ?>

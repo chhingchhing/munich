@@ -347,6 +347,8 @@ class Site extends MU_Controller {
 		);
 		$this->session->unset_userdata($items_sess);
 		$this->general_lib->empty_booking_fee();
+		$this->general_lib->empty_room_booking();
+		$this->general_lib->empty_hotel_ids();
 	}
         
     /*
@@ -707,6 +709,21 @@ class Site extends MU_Controller {
 		$this->general_lib->set_people_accommodation($this->input->post('peopleAccommodation'));
 		$this->general_lib->set_room_type_accommodation($this->input->post('room_type_checked'));
 		$this->general_lib->set_amount_book_room($this->input->post('amount_book_room'));
+		$this->general_lib->set_hotel_ids($this->input->post('hotelIDs'));
+
+
+
+/*foreach ($this->input->post('room_type_checked') as $key => $items) {
+	var_dump($key);
+	var_dump($items);
+	foreach ($items as $i => $value) {
+	  echo "$i:\n";
+	}
+}
+
+
+		var_dump($this->input->post('room_type_checked'));
+		var_dump(); die();*/
 	}
 	
 	/*select sub accommodation */
@@ -948,6 +965,11 @@ class Site extends MU_Controller {
 	            'pass_deleted'      => $this->session->userdata('pass_deleted'),
 			);
 			$result  = $this->mod_fecustomize->personal_information($passengerInfo, $pass_id);
+			if ($pass_id != -1) {
+				$pass_id = $pass_id;
+			} else {
+				$pass_id = $result;
+			}
 			if (!$result) {
 				$arr_errors = array(
 					"success" => false,
@@ -994,22 +1016,26 @@ class Site extends MU_Controller {
 			}
 
 			// Add data into passenger_booking
-			$passengerID = 0;
-			if ($pass_id != -1) {
-				$passengerID = $pass_id;
-			} else if (is_numeric($result)) {
-				$passengerID = $result;
-			}
-			if ($bk_info['bk_id'] AND $passengerID != 0) {
+			if ($bk_info['bk_id']) {
 				$pass_bk_info = array(
-	                'pbk_pass_id' => $passengerID,
+	                'pbk_pass_id' => $pass_id,
 	                'pbk_bk_id' => $bk_info['bk_id']
 	            );
 
 	            $pbk_inserted = $this->mod_fecustomize->insertPassengerBookingInfo($pass_bk_info, $passengerID, $bk_info['bk_id']);
 			}
-           
-           
+
+			if ($bk_info['bk_id'] AND $passengerID != 0) {
+				foreach($dataAccommodation as $dataAcc) {
+					foreach($dataAcc as $dataAccomm) {
+						foreach ($dataAccomm['room_booked_info'] as $room_book_infos) {
+							// Add new index to array $room_book_infos of booking_id
+							$room_book_infos['booking_id'] = $bk_info['bk_id'];
+							$this->mod_fecustomize->insertRoomBookInfo($room_book_infos);
+						}
+					}
+				}
+			}
 
 			$this->session->set_userdata('booking_id', $bk_info['bk_id']);
 			$cuscon_info = array(
@@ -1151,6 +1177,7 @@ class Site extends MU_Controller {
 		$amount_room_book = $this->general_lib->get_amount_book_room();
 		$extra_pro = $this->general_lib->get_sub_acc_extr_product();
 		$amount_extra_pro = $this->general_lib->get_sub_acc_amount_extra();
+		$hotel_ids = $this->general_lib->get_hotel_ids();
 
 		$arraAccommodations = array();
 		if ($this->general_lib->get_accommodation() != "") {
@@ -1161,6 +1188,7 @@ class Site extends MU_Controller {
 				$products = array();
 				$arr_rooms = array();
 				$amount_rm_bked = array();
+				$room_booked = array();
 				if (isset($pass_joined[$id])) {
 					foreach ($pass_joined[$id] as $people) {
 						$temp = array(
@@ -1179,13 +1207,25 @@ class Site extends MU_Controller {
 					}
 				}
 				if (isset($room_type[$id])) {
-					foreach ($room_type[$id] as $items) {
+					foreach ($room_type[$id] as $key_hotel => $items) {
 						foreach ($items as $rt_id) {
 							$room = $this->mod_fecustomize->get_info_hotel($rt_id);
 							if (isset($amount_room_book[$id])) {
 								foreach ($amount_room_book[$id] as $arra_room_nums) {
 									foreach ($arra_room_nums as $num) {
 										if ($num[$rt_id] != '') {
+											// Set data or room_booked
+											$room_booked_info = array(
+												'rbht_id' 		=> $key_hotel,
+												'rbrt_id' 		=> $rt_id,
+												'rbclass_id' 	=> $object->classification_id,
+												'amount_book' => $num[$rt_id],
+												'check_in' 		=> $departure[$id],
+												'check_out'		=> $return_date[$id]
+											);
+											array_push($room_booked, $room_booked_info);
+
+											// Assign amount number of booking room type
 											$room->amount_bked = $num[$rt_id];
 											array_push($arr_rooms, $room);
 										}
@@ -1195,7 +1235,6 @@ class Site extends MU_Controller {
 						}
 					}
 				}
-
 				$arraAccommodation = array(
 					$id => array(
 						'info' => $object,
@@ -1203,7 +1242,8 @@ class Site extends MU_Controller {
 						'return_date' => $return_date[$id],
 						'pass_joined' => $num_people,
 						'extra_pro' => $products,
-						'accom' => $arr_rooms
+						'accom' => $arr_rooms,
+						'room_booked_info' => $room_booked,
 					)
 				);
 				array_push($arraAccommodations, $arraAccommodation);

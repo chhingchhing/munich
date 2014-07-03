@@ -55,7 +55,7 @@
 	   					<?php echo form_checkbox($checkbox_accommodation).nbs(); ?>
 	   					<?php echo $acc['clf_name'];?>
 	   				</h4>
-	   				<p><?php echo $acc['acc_bookingtext'];?></p>
+	   				<p><strong>Desc:</strong> <?php echo $acc['acc_bookingtext'];?></p>
 	   				<div class="form-group">
 				        <label class="col-sm-2 control-label">Check In :</label>
 				        <div class="col-sm-4">
@@ -130,31 +130,34 @@
 				        </div>
 			    	</div>
 			    	<div class='form-group'>
-			    		<label class="col-sm-2 control-label">Room Offer :</label>
+			    		<label class="col-sm-4 control-label">List of accommodation offering :</label>
 			    	</div>
 
 			    	<?php 
 			        $hotels = $this->mod_fecustomize->getAllHotels($acc['classification_id']);
 			        $htOrder = 0;
-			        // foreach ($hotels->result() as $hotel) {
+			        foreach ($hotels->result() as $hotel) {
+			        	$detail_hotels =  $this->mod_fecustomize->getHotelDetailByHotelIDAndClassification($acc['classification_id'], $hotel->dhht_id)->result();
 			        	$htOrder++;
 			        	?>
-			    	<div class="form-group room_types">
+			    	<div class="form-group room_types col-sm-12">
 				        <div class="col-sm-12">
 				        	<div class="panel-group" id="accordion">
 							  <div class="panel panel-success">
 							    <div class="panel-heading">
 							      <h4 class="panel-title">
-							        <a data-toggle="collapse" data-parent="#accordion" href="#roomType_<?php echo $accOrder; ?>">
+							        <a data-toggle="collapse" data-parent="#accordion" href="#roomType_<?php echo $htOrder; ?>">
+							        	<span class="icon icon-home"></span> 
 							          Offer <?php echo $htOrder; ?><span class="caret"></span>
 							        </a>
 							      </h4>
 							    </div>
-							    <div id="roomType_<?php echo $accOrder; ?>" class="panel-collapse collapse in">
+							    <div id="roomType_<?php echo $htOrder; ?>" class="panel-collapse collapse in">
 							      <div class="panel-body">
 							        <?php 
-							        $room_types = $this->mod_fecustomize->getAllRoomType($acc['dhht_id'], $acc['classification_id']);
-							        foreach ($room_types->result() as $item) {
+							       /* $room_types = $this->mod_fecustomize->getAllRoomType($acc['dhht_id'], $acc['classification_id']);*/
+							        // foreach ($room_types->result() as $item) {
+							        foreach ($detail_hotels as $item) {
 							        	?>
 							        	<div class='row'>
 							        		<div class="col-xs-9">
@@ -177,14 +180,21 @@
 								   						'value' => $item->rt_id, 
 								   						'checked' => $checked, 
 								   						'class' => 'check_main_element', 
-								   						'name' => 'room_type_checked['.$acc['acc_id'].']['.$acc['dhht_id'].']['.$item->rt_id.']', 
+								   						'name' => 'room_type_checked['.$acc['acc_id'].']['.$item->dhht_id.']['.$item->rt_id.']', 
 								   						'id' => "room_type_checked"
 								   					);
 									        		echo form_checkbox($room_type_checked);
+									        		echo form_hidden('hotelIDs['.$acc['classification_id'].']['.$item->dhht_id.']', $item->dhht_id);
 									        		echo nbs();
+
+									        		$room_booked = $this->mod_fecustomize->getDetailOfRoomBooked($item->dhrt_id, $item->dhht_id, $item->dhcl_id, $start_date, $end_date)->result();
+var_dump($room_booked);
+if (!empty($room_booked)) {
+	echo "string";
+}
 									        		echo $item->rt_name;
-									        		echo nbs(5);
-									        		echo '(Amount people per room: '.$item->rt_people_per_room.')';
+									        		echo nbs();
+									        		echo '(Amount people per room: '.$item->rt_people_per_room.', Room avaliable: 4)';
 									        		?>
 									        	</span>
 							        		</div>
@@ -224,6 +234,7 @@
 			    	</div>
 			    	<?php
 			        // }
+					}
 			        ?>
 			    	
 				    <h3>Extra Products</h3>

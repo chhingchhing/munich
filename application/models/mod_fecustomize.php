@@ -356,7 +356,7 @@ class Mod_FeCustomize extends MU_model {
     /*
     Returns all the room types
     */
-    function getAllRoomType($ht_id, $classification_id)
+    /*function getAllRoomType($ht_id, $classification_id)
     {
         $data = $this->db
             ->join('hotel_detail', 'hotel.ht_id = hotel_detail.dhht_id')
@@ -365,7 +365,7 @@ class Mod_FeCustomize extends MU_model {
             ->where('dhht_id', $ht_id)
             ->get("hotel");
         return $data;
-    }
+    }*/
 
     // Get all room type when each passenger
     function getAllRoomTypeEachPassenger($rt_id)
@@ -387,8 +387,19 @@ class Mod_FeCustomize extends MU_model {
         return $data;
     }
 
+    function getHotelDetailByHotelIDAndClassification($classification_id, $hotel_id) {
+        $data = $this->db
+            ->join('hotel', 'hotel.ht_id = hotel_detail.dhht_id')
+            ->join('room_types', 'room_types.rt_id = hotel_detail.dhrt_id')
+            ->where('dhcl_id', $classification_id)
+            ->where('dhht_id', $hotel_id)
+            ->get("hotel_detail");
+        return $data;
+    }
+
     // Get information of item
-    function get_info_of_main_obj($table, $col, $id, $field_select) {
+    function get_info_of_main_obj($table, $col, $id, $field_select=false) {
+        
         $query = $this->db
             ->select($field_select)
             ->where($col, $id)
@@ -437,6 +448,7 @@ class Mod_FeCustomize extends MU_model {
     * Inserting data into table Passenger booking
     */
     function insertPassengerBookingInfo(&$pass_bk_info, $pass_addby, $booking_id) {
+        // var_dump($this->get_all_member_by_pass_addby($pass_addby, $booking_id)->num_rows());
         if ($this->get_all_member_by_pass_addby($pass_addby, $booking_id)->num_rows() > 0) {
             $this->db
                 ->where('pbk_pass_id', $pass_addby)
@@ -468,6 +480,48 @@ class Mod_FeCustomize extends MU_model {
     function insertSaleCustomizeInfo(&$salecus_info) {
         if ($this->db->insert('sale_customize', $salecus_info)) {
             $salecus_info['salecus_id'] = $this->db->insert_id();
+            return true;
+        }
+        return false;
+    }
+
+    /*
+    * public function getCustomizeConjectionID
+    * @param $bk_id
+    * @table sale_customize
+    * @column salecus_cuscon_id
+    */
+    /*function getRecordIDby($bk_id)
+    {   
+        $this->db->where('salecus_bk_id',$bk_id);
+        $query = $this->db->get('sale_customize');
+        
+        if ($query->num_rows()==1)
+        {
+            return $query->row()->salecus_cuscon_id;
+        }
+        
+        return false;
+    }*/
+
+    function getDetailOfRoomBooked($rt_id, $ht_id, $classification_id, $check_in, $check_out)
+    {
+        $data = $this->db
+            ->where('rbht_id', $ht_id)
+            ->where('rbrt_id', $rt_id)
+            ->where('rbclass_id', $classification_id)
+            ->where('check_in', $check_in)
+            ->where('check_out', $check_out)
+            ->get("room_booked");
+        return $data;
+    }
+
+    /*
+    * Inserting data into table room book
+    */
+    function insertRoomBookInfo(&$room_book_infos) {
+        if ($this->db->insert('room_booked', $room_book_infos)) {
+            $room_book_infos['rb_id'] = $this->db->insert_id();
             return true;
         }
         return false;
