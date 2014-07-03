@@ -1022,10 +1022,10 @@ class Site extends MU_Controller {
 	                'pbk_bk_id' => $bk_info['bk_id']
 	            );
 
-	            $pbk_inserted = $this->mod_fecustomize->insertPassengerBookingInfo($pass_bk_info, $passengerID, $bk_info['bk_id']);
+	            $pbk_inserted = $this->mod_fecustomize->insertPassengerBookingInfo($pass_bk_info, $pass_id, $bk_info['bk_id']);
 			}
 
-			if ($bk_info['bk_id'] AND $passengerID != 0) {
+			if ($bk_info['bk_id']) {
 				foreach($dataAccommodation as $dataAcc) {
 					foreach($dataAcc as $dataAccomm) {
 						foreach ($dataAccomm['room_booked_info'] as $room_book_infos) {
