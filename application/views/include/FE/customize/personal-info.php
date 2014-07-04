@@ -77,7 +77,7 @@ if (isset($arr_messages)) {
 					         	'class' => 'form-control input_require disabled_input', 
 					         	'placeholder' => 'Home phone',
 					         	'value' => $this->session->userdata('pass_phone') ? $this->session->userdata('pass_phone') : $passenger_info->pass_phone,
-					         	'required' => 'required'
+					         	'required' => 'required',
 					         	); 
 					         	echo form_input($phphone); 
 					         ?>

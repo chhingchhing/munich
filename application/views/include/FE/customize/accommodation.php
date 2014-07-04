@@ -20,6 +20,9 @@
 		   			if ($recordAccommodation[$accOrder-1]['friday'] == 0) $daysOfWeekDisabled .= "5, ";
 		   			if ($recordAccommodation[$accOrder-1]['saturday'] == 0) $daysOfWeekDisabled .= "6";
 	   			?>
+
+	   			<div id="feedback_bar"></div>
+
 	   			<div class="col-sm-3">
 	   				<?php 
 			            $accomodation_img = array(
@@ -61,20 +64,23 @@
 				        <div class="col-sm-4">
 				            <?php
 					            $start_date = date("Y-m-d");
+					            $class = '';
 				        		$check_in_date = $this->general_lib->get_checkin_date_accommodation();
 				   				if ($check_in_date != '') { 
 				   					if (isset($check_in_date[$acc['acc_id']])) {
 				   						$start_date = $check_in_date[$acc['acc_id']];
+				   						$class = 'date-accomm';
 				   					}
 			   					}
 			                    $checkIn = array(
 			                    	'id'=>'start_date_'.$accOrder, 
 			                    	'name' => 'checkIn['.$acc['acc_id'].']', 
-			                    	'class' => 'form-control checkin checkin_'.$accOrder,
+			                    	'class' => "form-control checkin checkin_$accOrder $class",
 			                    	'data-date-format'=>'yyyy-mm-dd',
 			                    	'value' => $start_date, 
 			                    	'checkin_attr'=>$acc['start_date'], 
-			                    	'daysOfWeekDisabled'=>$daysOfWeekDisabled
+			                    	'daysOfWeekDisabled'=>$daysOfWeekDisabled,
+			                    	'accommodation_id' => $acc['acc_id']
 			                    );
 			                    echo form_input($checkIn);
 			                ?>
@@ -87,19 +93,16 @@
 				   				if ($check_out_date != '') { 
 				   					if (isset($check_out_date[$acc['acc_id']])) {
 				   						$end_date = $check_out_date[$acc['acc_id']];
-				   					} else {
-				   						$end_date = date('Y-m-d');
 				   					}
-			   					} else {
-			   						$end_date = date('Y-m-d');
 			   					}
 			                    $checkOut = array(
 			                    	'id'=>'end_date_'.$accOrder,
 			                    	'name' => 'checkOut['.$acc['acc_id'].']', 
-			                    	'class' => 'form-control checkout',
+			                    	'class' => "form-control checkout",
 			                    	'data-date-format'=>'yyyy-mm-dd',
 			                    	'value' => $end_date, 
-			                    	'checkout_attr'=>$acc['end_date']
+			                    	'checkout_attr'=>$acc['end_date'],
+			                    	'accommodation_id' => $acc['acc_id']
 			                    );
 			                    echo form_input($checkOut);
 				            ?>
@@ -133,6 +136,7 @@
 			    		<label class="col-sm-4 control-label">List of accommodation offering :</label>
 			    	</div>
 
+			    <div id="room_offering_<?php echo $acc['acc_id']; ?>">
 			    	<?php 
 			        $hotels = $this->mod_fecustomize->getAllHotels($acc['classification_id']);
 			        $htOrder = 0;
@@ -174,6 +178,17 @@
 								   							}
 								   						}
 								   					}
+
+								   					$amount_available = 0;
+								   					$amount_rm_booked = $this->mod_fecustomize->getAmountRoomBooking($item->dhcl_id,$item->dhht_id,$item->dhrt_id,$start_date, $end_date);
+								   					foreach ($amount_rm_booked->result() as $rm_book_obj) {
+								   						$amount_booked = $rm_book_obj;
+								   					}
+								   					
+								   					$actual_stock = $item->dhrm_actualstock;
+								   					$num_booked = $amount_booked->amount_book;
+													$amount_availabled = $actual_stock - $num_booked;
+
 									        		$room_type_checked = array(
 								   						'value' => $item->rt_id, 
 								   						'checked' => $checked, 
@@ -188,7 +203,7 @@
 									        		$room_booked = $this->mod_fecustomize->getDetailOfRoomBooked($item->dhrt_id, $item->dhht_id, $item->dhcl_id, $start_date, $end_date)->result();
 									        		echo $item->rt_name;
 									        		echo nbs();
-									        		echo '(Amount people per room: '.$item->rt_people_per_room.', Room avaliable: 4)';
+									        		echo '(Amount people per room: <spa style="color: #468847">'.$item->rt_people_per_room.'</span>, Room avaliable: <span style="color: #468847">'.$amount_availabled.'</span>)';
 									        		?>
 									        	</span>
 							        		</div>
@@ -229,6 +244,7 @@
 			    	<?php
 					}
 			        ?>
+			    </div>
 			    	
 				    <h3>Extra Products</h3>
 				    	<?php

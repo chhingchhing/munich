@@ -733,6 +733,43 @@ $('body').on('click', 'a#pay_later', function(event) {
 	});
 });
 
+// Check room amount that has booked when has changed dates
+// Re-set session of array of check-in and check-out
+// Replace the old view with the new one after query from ajax success
+$('body').on('change', 'input.date-accomm', function(event) {
+	var base_url = $('base').attr('href');
+	var url = base_url + "site/getAmountRoomBooking";
+	var acc_id = $(this).attr('accommodation_id');
+	var checked_in = $(this).val();
+	var checked_out = $(this).parent().next().next().find("input").val();
+	if (checked_in >= checked_out) {
+		var msg = 'Check In date have to smaller than Check Out date.';
+		var div_sms = '<div class="alert alert-danger alert-dismissable">';
+		div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+		div_sms += '<strong>Please check!</strong> '+msg;
+		div_sms += '</div>';
+		$("div#feedback_bar").append(div_sms);
+		setTimeout(function()
+        {
+            $('#feedback_bar').slideUp(250, function()
+            {
+                $('#feedback_bar').removeClass();
+            });
+        },msg.length*125);
+
+		return false;
+	};
+	$.ajax({
+		type: "POST",
+		url: url,
+		dataType: "json",
+		data: {"acc_id":acc_id, "checked_in":checked_in, "checked_out":checked_out},
+		success: function(response) {
+
+		}
+	});
+});
+
 // Validate Email input
 function validateEmail(sEmail) {
     var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;

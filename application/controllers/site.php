@@ -1378,6 +1378,10 @@ class Site extends MU_Controller {
         $send = $this->email->send();
 	}
 
+	function getAmountRoomBooking() {
+		
+	}
+
 	/*
 	* Public function subscriber
 	* @noparam

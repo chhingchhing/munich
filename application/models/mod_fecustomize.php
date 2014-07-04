@@ -70,20 +70,6 @@ class Mod_FeCustomize extends MU_model {
             ->get('accommodation');
             return $accommodation;
     }
-    /*public function accommodation($ftvID, $lcId){
-        $accommodation = $this->db->select('*')
-            ->join('acc_calendar','accommodation.acc_id = acc_calendar.accomodations_id')
-            ->join('calendar_available', 'calendar_available.ca_id = acc_calendar.calendar_available_id')
-            ->join('photo','photo.photo_id = accommodation.photo_id')
-            ->join('room_types','room_types.rt_id = accommodation.acc_rt_id')
-            ->join('classification','classification.clf_id = accommodation.classification_id')
-            ->where('accommodation.acc_deleted',0)
-            ->where('accommodation.acc_subof', 0)
-            ->where('accommodation.acc_ftv_id', $ftvID)
-            ->where('accommodation.location_id', $lcId)
-            ->get('accommodation');
-            return $accommodation;
-    }*/
 
     /* * public function select sub accommodation
     * @param parameter $ftvID, $lcId
@@ -353,20 +339,6 @@ class Mod_FeCustomize extends MU_model {
         }
     }
 
-    /*
-    Returns all the room types
-    */
-    /*function getAllRoomType($ht_id, $classification_id)
-    {
-        $data = $this->db
-            ->join('hotel_detail', 'hotel.ht_id = hotel_detail.dhht_id')
-            ->join('room_types', 'room_types.rt_id = hotel_detail.dhrt_id')
-            ->where('dhcl_id', $classification_id)
-            ->where('dhht_id', $ht_id)
-            ->get("hotel");
-        return $data;
-    }*/
-
     // Get all room type when each passenger
     function getAllRoomTypeEachPassenger($rt_id)
     {
@@ -448,7 +420,6 @@ class Mod_FeCustomize extends MU_model {
     * Inserting data into table Passenger booking
     */
     function insertPassengerBookingInfo(&$pass_bk_info, $pass_addby, $booking_id) {
-        // var_dump($this->get_all_member_by_pass_addby($pass_addby, $booking_id)->num_rows());
         if ($this->get_all_member_by_pass_addby($pass_addby, $booking_id)->num_rows() > 0) {
             $this->db
                 ->where('pbk_pass_id', $pass_addby)
@@ -457,7 +428,6 @@ class Mod_FeCustomize extends MU_model {
             return true;
         }
         if ($this->db->insert('passenger_booking', $pass_bk_info)) {
-            // $pass_bk_info['pbk_id'] = $this->db->insert_id();
             return true;
         }
         return false;
@@ -485,25 +455,6 @@ class Mod_FeCustomize extends MU_model {
         return false;
     }
 
-    /*
-    * public function getCustomizeConjectionID
-    * @param $bk_id
-    * @table sale_customize
-    * @column salecus_cuscon_id
-    */
-    /*function getRecordIDby($bk_id)
-    {   
-        $this->db->where('salecus_bk_id',$bk_id);
-        $query = $this->db->get('sale_customize');
-        
-        if ($query->num_rows()==1)
-        {
-            return $query->row()->salecus_cuscon_id;
-        }
-        
-        return false;
-    }*/
-
     function getDetailOfRoomBooked($rt_id, $ht_id, $classification_id, $check_in, $check_out)
     {
         $data = $this->db
@@ -525,6 +476,37 @@ class Mod_FeCustomize extends MU_model {
             return true;
         }
         return false;
+    }
+
+    /*
+    * Check room booked with check_in and check_out
+    */
+
+    function getAmountRoomBooking($class_id, $ht_id, $rt_id, $checked_in, $checked_out) {
+        $tmp_date = date('Y-m-d');
+        if ($checked_out == date("Y-m-d")) {
+            $query_date = $this->db
+                ->where('rbclass_id', $class_id)
+                ->where('rbht_id', $ht_id)
+                ->where('rbrt_id', $rt_id)
+                ->get('room_booked');
+            foreach ($query_date->result() as $date) {
+                if ($tmp_date < $date->check_out) {
+                    $tmp_date = $date->check_out;
+                }
+            }
+            $checked_out = $tmp_date;
+        }
+        
+        $strQuery = $this->db
+            ->select_sum('amount_book')
+            ->where('rbclass_id', $class_id)
+            ->where('rbht_id', $ht_id)
+            ->where('rbrt_id', $rt_id)
+            ->where('check_in >=', $checked_in)
+            ->where('check_out <=', $checked_out)
+            ->get('room_booked');
+            return $strQuery;
     }
     
 }
