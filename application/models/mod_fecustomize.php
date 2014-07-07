@@ -455,8 +455,15 @@ class Mod_FeCustomize extends MU_model {
         return false;
     }
 
-    function getDetailOfRoomBooked($rt_id, $ht_id, $classification_id, $check_in, $check_out)
+    /*function getDetailOfRoomBooked($check_in, $check_out, $rt_id=false, $ht_id=false, $classification_id=false)
     {
+        if (!$classification_id) {
+            $data = $this->db
+                ->where('check_in', $check_in)
+                ->where('check_out', $check_out)
+                ->get("room_booked");
+            return $data;
+        }
         $data = $this->db
             ->where('rbht_id', $ht_id)
             ->where('rbrt_id', $rt_id)
@@ -465,6 +472,33 @@ class Mod_FeCustomize extends MU_model {
             ->where('check_out', $check_out)
             ->get("room_booked");
         return $data;
+    }*/
+
+    function getRoomDateAvailable($check_in, $check_out, $rt_id=false, $ht_id=false, $class_id=false) 
+    {
+        $query_date = $this->db
+            ->join('booking', 'booking.bk_id = room_booked.booking_id')
+            ->where('rbclass_id', $class_id)
+            ->where('rbht_id', $ht_id)
+            ->where('rbrt_id', $rt_id)
+            ->where('bk_pay_status !=', 'Completed')
+            ->where('bk_status', 0)
+            ->where('bk_deleted', 0)
+            ->get('room_booked');
+        if ($query_date->num_rows() > 0) {
+            foreach ($query_date->result() as $date) {
+                if (strtotime($check_in) > strtotime($date->check_out)) {
+                    continue;
+                } else {
+                    $available_date = $date->check_out;
+                }
+                if (strtotime($date->check_out) < strtotime(date('Y-m-d'))) {
+                    $available_date = date('Y-m-d');
+                }
+                return $available_date;
+            }
+        }
+        return date('Y-m-d');
     }
 
     /*
@@ -481,33 +515,108 @@ class Mod_FeCustomize extends MU_model {
     /*
     * Check room booked with check_in and check_out
     */
+    function getAmountRoomBooking($checked_in, $checked_out, $class_id=false, $ht_id=false, $rt_id=false) {
+        $query_date = $this->db
+            ->join('booking', 'booking.bk_id = room_booked.booking_id')
+            ->where('rbclass_id', $class_id)
+            ->where('rbht_id', $ht_id)
+            ->where('rbrt_id', $rt_id)
+            ->where('bk_pay_status !=', 'Completed')
+            ->where('bk_status', 0)
+            ->where('bk_deleted', 0)
+            ->get('room_booked');
+        if ($query_date->num_rows() > 0) {
+            foreach ($query_date->result() as $date) {
+                if (strtotime($checked_out) > strtotime($date->check_out)) {
+                    continue;
+                }
+                /*if (strtotime($date->check_out) < strtotime(date('Y-m-d'))) {
+                    return date('Y-m-d');
+                }*/
+                $checked_out = $date->check_out;
+            }
+        }
+        // var_dump($checked_out);
+        $amount = $this->db
+            ->select_sum('amount_book')
+            ->join('booking', 'booking.bk_id = room_booked.booking_id')
+            ->where('rbclass_id', $class_id)
+            ->where('rbht_id', $ht_id)
+            ->where('rbrt_id', $rt_id)
+            // ->where('check_in >=', $checked_in)
+            ->where('check_out <=', $checked_out)
+            ->where('bk_pay_status !=', 'Completed')
+            ->where('bk_status', 0)
+            ->where('bk_deleted', 0)
+            ->get('room_booked');
+            // var_dump($amount); die();
+            return $amount;
+    }
 
-    function getAmountRoomBooking($class_id, $ht_id, $rt_id, $checked_in, $checked_out) {
-        $tmp_date = date('Y-m-d');
-        if ($checked_out == date("Y-m-d")) {
+    function getAmountRoomBooking__OLD($checked_in, $checked_out, $class_id=false, $ht_id=false, $rt_id=false) {
+        // Check check_out date
+        if (strtotime($checked_out) == strtotime(date("Y-m-d"))) {
             $query_date = $this->db
                 ->where('rbclass_id', $class_id)
                 ->where('rbht_id', $ht_id)
                 ->where('rbrt_id', $rt_id)
                 ->get('room_booked');
-            foreach ($query_date->result() as $date) {
-                if ($tmp_date < $date->check_out) {
-                    $tmp_date = $date->check_out;
+            if ($query_date->num_rows() > 0) {
+                foreach ($query_date->result() as $date) {
+                    if (strtotime($checked_out) < strtotime($date->check_out)) {
+                        // $checked_out = $date->check_out;
+                        continue;
+                    }
+                    if (strtotime($checked_out) < strtotime(date("Y-m-d"))) {
+                        $checked_out = date("Y-m-d");
+                    }
                 }
             }
-            $checked_out = $tmp_date;
+            $checked_out = $checked_out;
         }
-        
-        $strQuery = $this->db
-            ->select_sum('amount_book')
+        /*$query_date = $this->db
+            ->join('booking', 'booking.bk_id = room_booked.booking_id')
             ->where('rbclass_id', $class_id)
             ->where('rbht_id', $ht_id)
             ->where('rbrt_id', $rt_id)
+            ->where('booking.status !=', 'Completed')
+            ->get('room_booked');
+        foreach ($query_date->result() as $date) {
+            if (strtotime($checked_out) < strtotime($date->check_out)) {
+                $tmp_date = $date->check_out;
+            }
+        }*/
+        
+        $strQuery = $this->db
+            ->select_sum('amount_book')
+            ->join('booking', 'booking.bk_id = room_booked.booking_id')
+            ->where('rbclass_id', $class_id)
+            ->where('rbht_id', $ht_id)
+            ->where('rbrt_id', $rt_id)
+            // ->where('check_in >=', date('Y-m-d'))
             ->where('check_in >=', $checked_in)
-            ->where('check_out <=', $checked_out)
+            // ->where('check_out <=', $checked_out)
+            ->where('bk_status !=', 'Completed')
             ->get('room_booked');
             return $strQuery;
     }
+    /*function getAmountRoomBooking($checked_in, $checked_out, $class_id=false, $ht_id=false, $rt_id=false) {
+
+        $query_date = $this->db
+            ->where('rbclass_id', $class_id)
+            ->where('rbht_id', $ht_id)
+            ->where('rbrt_id', $rt_id)
+            ->get('room_booked');
+        if ($query_date->num_rows() > 0) {
+            foreach ($query_date->result() as $date) {
+                if (strtotime($checked_in) < strtotime($date->check_out)) {
+                    continue;
+                }
+                return $date->check_out;
+            }
+        }
+    }*/
+
     
 }
 

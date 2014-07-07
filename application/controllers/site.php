@@ -357,9 +357,6 @@ class Site extends MU_Controller {
 	* load template customizes and include customize
 	*/
 	public function customizes($display_page = false, $pass_id = false){
-		if ($display_page == "success") {
-			$fe_data['success'] = 'hello successfully';
-		}
 
 		if($display_page == "customizeTrip"){
 			redirect('site/customizes/transportation');
@@ -385,6 +382,7 @@ class Site extends MU_Controller {
 				$fe_data['recordAccommodation'] = $this->customizeAccommodation();
 			}	
 		}
+		$fe_data['recordAccommodation'] = $this->customizeAccommodation();
 
 		if ($display_page == "activities") {
 			if($this->input->post('btnActivity')){
@@ -1378,8 +1376,123 @@ class Site extends MU_Controller {
         $send = $this->email->send();
 	}
 
+	// Response when using ajax call to show room booking available
 	function getAmountRoomBooking() {
-		
+		$checked_in = $this->input->post('checked_in');
+		$checked_out = $this->input->post('checked_out');
+		$acc_id = $this->input->post('acc_id');
+		$classification_id = $this->input->post('classification_id');
+		$hotel_id = $this->input->post('hotel_id');
+
+		$hotels = $this->mod_fecustomize->getAllHotels($classification_id);
+		$htOrder = 0;
+		$panel = '<div id="room_offering_'.$acc_id.'">';
+		foreach ($hotels->result() as $hotel) {
+			$detail_hotels =  $this->mod_fecustomize->getHotelDetailByHotelIDAndClassification($classification_id, $hotel->dhht_id)->result();
+			$htOrder++;
+			$panel .= '<div class="form-group room_types col-sm-12">';
+			$panel .= '<div class="col-sm-12">';
+			$panel .= '<div class="panel-group" id="accordion">';
+			$panel .= '<div class="panel panel-success">';
+
+			$panel.= '<div class="panel-heading">';
+			$panel .= '<h4 class="panel-title">';
+			$panel .= '<a data-toggle="collapse" data-parent="#accordion" href="#roomType_'.$htOrder.'">';
+			$panel .= '<span class="icon icon-home"></span> Offer '.$htOrder.'<span class="caret"></span>';
+			$panel .= '</a>';
+			$panel .= '</h4>'; // End class="panel-title"
+			$panel .= '</div>'; // End class="panel-heading"
+
+			$panel .= '<div id="roomType_'.$htOrder.'" class="panel-collapse collapse in">';
+			$panel .= '<div class="panel-body">';
+			foreach ($detail_hotels as $item) {
+				$panel .= '<div class="row">';
+
+				$panel .= '<div class="col-xs-9">';
+				$panel .= '<span>';
+				$rooms = $this->general_lib->get_room_type_accommodation();
+				$checked = false;
+				if ($rooms != '') {
+					if (isset($rooms[$acc_id])) {
+						foreach ($rooms[$acc_id] as $rm_hotel) {
+							foreach ($rm_hotel as $each_item) {
+								if ($each_item == $item->rt_id) {
+									$checked = true;
+								}
+							}
+						}
+					}
+				}
+				$amount_available = 0;
+				$amount_rm_booked = $this->mod_fecustomize->getAmountRoomBooking($checked_in, $checked_out,$item->dhcl_id,$item->dhht_id,$item->dhrt_id);
+				foreach ($amount_rm_booked->result() as $rm_book_obj) {
+					$amount_booked = $rm_book_obj;
+				}
+
+				$actual_stock = $item->dhrm_actualstock;
+				$num_booked = $amount_booked->amount_book;
+				$amount_availabled = $actual_stock - $num_booked;
+
+				$room_date_available = $this->mod_fecustomize->getRoomDateAvailable($checked_in, $checked_out, $item->dhrt_id, $item->dhht_id, $item->dhcl_id);
+				if ($amount_availabled <= 0) {
+					$panel .= "<span class='require'>* </span>It will available from <span class='amount-room'>".$room_date_available."</span>, Amount room: <span class='amount-room'>".$item->dhrm_originalstock."</span><br/>";
+				} else {
+					$panel .= "<span class='require'>* </span>It available <span class='amount-room'>today</span>, Amount room: <span class='amount-room'>".$amount_availabled."</span><br/>";
+				}
+
+				$room_type_checked = array(
+					'value' => $item->rt_id, 
+					'checked' => $checked, 
+					'class' => 'check_main_element', 
+					'name' => 'room_type_checked['.$acc_id.']['.$item->dhht_id.']['.$item->rt_id.']', 
+					'id' => "room_type_checked"
+				);
+				$panel .= form_checkbox($room_type_checked);
+				$panel .= form_hidden('hotelIDs['.$classification_id.']['.$item->dhht_id.']', $item->dhht_id);
+				$panel .= nbs();
+				$panel .= $item->rt_name;
+				$panel .= nbs();
+				$panel .= '(Amount people per room: <spa class="amount-room">'.$item->rt_people_per_room.'</span>)';
+
+				$panel .= '</span>';
+				$panel .= '</div>'; // End class="col-xs-9"
+
+				$panel .= '<div class="col-xs-3">';
+				$amount_rooms_booked = $this->general_lib->get_amount_book_room();
+				$value = '';
+				if (isset($amount_rooms_booked[$acc_id])) {
+					foreach ($amount_rooms_booked[$acc_id] as $item_arra) {
+						if (isset($item_arra[$classification_id][$item->rt_id])) {
+							$value = $item_arra[$classification_id][$item->rt_id];
+						}
+					}
+				}
+
+				$input = array(
+					'name' => 'amount_book_room['.$acc_id.']['.$hotel_id.']['.$classification_id.']['.$item->rt_id.']',
+					'class' => 'form-control input-sm theTooltip',
+					'placeholder' => 'Amount Room',
+					'value' => $value,
+					'data-toggle' => 'tooltip',
+					'data-placement' => 'top',
+					'title' => 'Amount Room'
+				);
+				$panel .= form_input($input);
+
+				$panel .= '</div>'; // End class="col-xs-3"
+
+				$panel .= '</div>'; // End class="row"
+			}
+			$panel .= '</div>'; // End of class="panel-body"
+			$panel .= '</div>'; // End of class="roomType_".$htOrder
+			$panel .= '</div>'; // End of class="panel panel-success"
+			$panel .= '</div>'; // End of class="panel-group" id="accordion"
+			$panel .= '</div>'; // End of class="col-sm-12"
+			$panel .= '</div>'; // End of class="form-group room_types col-sm-12"
+		}
+		$panel .= '</div>';
+
+		echo $panel;
 	}
 
 	/*

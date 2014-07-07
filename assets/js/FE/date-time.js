@@ -24,21 +24,20 @@ jQuery(function(){
 		  	}
 		}).on('changeDate', function(ev) {
 			var dates = $(this).parent().siblings().find("input");
-		  if (ev.date.valueOf() > checkout.date.valueOf()) {
+		  // if (ev.date.valueOf() > checkout.date.valueOf()) {	// Check if the start date bigger than end date
 		    var newDate = new Date(ev.date)
-		    newDate.setDate(newDate.getDate());
-		    /*checkout.setValue(newDate);
-		    checkout.setDate(newDate);
-		    checkout.startDate = newDate;
-		    checkout.update();*/
+		    if (dates.hasClass("date_out")) {
+		  		// newDate.setDate(newDate.getDate() + 1);
+		  		newDate.setDate(newDate.getDate());
+		  	} else {
+		  		newDate.setDate(newDate.getDate());
+		  	}
 		    dates.datepicker({ autoclose: true})
 		    .datepicker('setStartDate', newDate)
 		    .datepicker('setValue', newDate)
 		    .datepicker("update", newDate)
 		    .focus();
-		    // dates.val(newDate);
-		    // $('#checkout').datepicker({ autoclose: true}).datepicker('setStartDate', ev.date).focus();
-		  }
+		  // }
 		  $(this).datepicker("hide");
 		  dates[0].focus();
 		}).data('datepicker');

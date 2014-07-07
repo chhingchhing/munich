@@ -75,12 +75,14 @@
 			                    $checkIn = array(
 			                    	'id'=>'start_date_'.$accOrder, 
 			                    	'name' => 'checkIn['.$acc['acc_id'].']', 
-			                    	'class' => "form-control checkin checkin_$accOrder $class",
+			                    	'class' => "form-control checkin checkin_$accOrder $class date_in",
 			                    	'data-date-format'=>'yyyy-mm-dd',
 			                    	'value' => $start_date, 
 			                    	'checkin_attr'=>$acc['start_date'], 
 			                    	'daysOfWeekDisabled'=>$daysOfWeekDisabled,
-			                    	'accommodation_id' => $acc['acc_id']
+			                    	'accommodation_id' => $acc['acc_id'],
+			                    	'classification_id' => $acc['classification_id'],
+			                    	'hotel_id' => $acc['dhht_id']
 			                    );
 			                    echo form_input($checkIn);
 			                ?>
@@ -93,16 +95,19 @@
 				   				if ($check_out_date != '') { 
 				   					if (isset($check_out_date[$acc['acc_id']])) {
 				   						$end_date = $check_out_date[$acc['acc_id']];
+				   						$class = 'date-accomm-chk-out';
 				   					}
 			   					}
 			                    $checkOut = array(
 			                    	'id'=>'end_date_'.$accOrder,
 			                    	'name' => 'checkOut['.$acc['acc_id'].']', 
-			                    	'class' => "form-control checkout",
+			                    	'class' => "form-control checkout $class date_out",
 			                    	'data-date-format'=>'yyyy-mm-dd',
 			                    	'value' => $end_date, 
 			                    	'checkout_attr'=>$acc['end_date'],
-			                    	'accommodation_id' => $acc['acc_id']
+			                    	'accommodation_id' => $acc['acc_id'],
+			                    	'classification_id' => $acc['classification_id'],
+			                    	'hotel_id' => $acc['dhht_id']
 			                    );
 			                    echo form_input($checkOut);
 				            ?>
@@ -180,16 +185,24 @@
 								   					}
 
 								   					$amount_available = 0;
-								   					$amount_rm_booked = $this->mod_fecustomize->getAmountRoomBooking($item->dhcl_id,$item->dhht_id,$item->dhrt_id,$start_date, $end_date);
+								   					$amount_rm_booked = $this->mod_fecustomize->getAmountRoomBooking($start_date, $end_date,$item->dhcl_id,$item->dhht_id,$item->dhrt_id);
+								   					// var_dump($amount_rm_booked); die();
 								   					foreach ($amount_rm_booked->result() as $rm_book_obj) {
 								   						$amount_booked = $rm_book_obj;
 								   					}
-								   					
+
 								   					$actual_stock = $item->dhrm_actualstock;
 								   					$num_booked = $amount_booked->amount_book;
 													$amount_availabled = $actual_stock - $num_booked;
 
-									        		$room_type_checked = array(
+													$room_date_available = $this->mod_fecustomize->getRoomDateAvailable($start_date, $end_date, $item->dhrt_id, $item->dhht_id, $item->dhcl_id);
+													if ($amount_availabled <= 0) {
+														echo "<span class='require'>* </span>It will available from <span class='amount-room'>".$room_date_available."</span>, Amount room: <span class='amount-room'>".$item->dhrm_originalstock."</span><br/>";
+													} else {
+														echo "<span class='require'>* </span>It available <span class='amount-room'>today</span>, Amount room: <span class='amount-room'>".$amount_availabled."</span><br/>";
+													}
+
+													$room_type_checked = array(
 								   						'value' => $item->rt_id, 
 								   						'checked' => $checked, 
 								   						'class' => 'check_main_element', 
@@ -199,11 +212,10 @@
 									        		echo form_checkbox($room_type_checked);
 									        		echo form_hidden('hotelIDs['.$acc['classification_id'].']['.$item->dhht_id.']', $item->dhht_id);
 									        		echo nbs();
-
-									        		$room_booked = $this->mod_fecustomize->getDetailOfRoomBooked($item->dhrt_id, $item->dhht_id, $item->dhcl_id, $start_date, $end_date)->result();
 									        		echo $item->rt_name;
 									        		echo nbs();
-									        		echo '(Amount people per room: <spa style="color: #468847">'.$item->rt_people_per_room.'</span>, Room avaliable: <span style="color: #468847">'.$amount_availabled.'</span>)';
+									        		echo '(Amount people per room: <spa class="amount-room">'.$item->rt_people_per_room.'</span>)';
+									        		
 									        		?>
 									        	</span>
 							        		</div>
@@ -219,16 +231,19 @@
 									        		}
 								        		}
 								        		
-								        		$input = array(
-								        			'name' => 'amount_book_room['.$acc['acc_id'].']['.$acc['dhht_id'].']['.$acc['dhcl_id'].']['.$item->rt_id.']',
-								        			'class' => 'form-control input-sm theTooltip',
-								        			'placeholder' => 'Amount Room',
-								        			'value' => $value,
-								        			'data-toggle' => 'tooltip',
-								        			'data-placement' => 'top',
-								        			'title' => 'Amount Room'
-								        			);
-								        		echo form_input($input); 
+								        		// if ($amount_availabled > 0) {
+								        			$input = array(
+									        			'name' => 'amount_book_room['.$acc['acc_id'].']['.$acc['dhht_id'].']['.$acc['dhcl_id'].']['.$item->rt_id.']',
+									        			'class' => 'form-control input-sm theTooltip',
+									        			'placeholder' => 'Amount Room',
+									        			'value' => $value,
+									        			'data-toggle' => 'tooltip',
+									        			'data-placement' => 'top',
+									        			'title' => 'Amount Room'
+									        			);
+									        		echo form_input($input); 
+								        		// }
+								        		
 								        		?>
 								        	</div>
 							        	</div>
