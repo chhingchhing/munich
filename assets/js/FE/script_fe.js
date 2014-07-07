@@ -735,7 +735,6 @@ $('body').on('click', 'a#pay_later', function(event) {
 
 // Check room amount that has booked when has changed dates
 // Replace the old view with the new one after query from ajax success
-// $('body').on('change', 'input.date-accomm, input.date-accomm-chk-out', function(event) {
 $('body').on('change', 'input.date_in, input.date_out', function(event) {
 	var base_url = $('base').attr('href');
 	var url = base_url + "site/getAmountRoomBooking";
@@ -752,45 +751,6 @@ $('body').on('change', 'input.date_in, input.date_out', function(event) {
 		var checked_in = $(this).parent().prev().prev().find("input").val();
 	};
 	
-	if (checked_in >= checked_out) {
-		var msg = 'Check In date have to smaller than Check Out date.';
-		var div_sms = '<div class="alert alert-danger alert-dismissable">';
-		div_sms += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-		div_sms += '<strong>Please check!</strong> '+msg;
-		div_sms += '</div>';
-		$("div#feedback_bar").append(div_sms);
-		setTimeout(function()
-        {
-            $('#feedback_bar').slideUp(250, function()
-            {
-                $('#feedback_bar').removeClass();
-            });
-        },msg.length*125);
-
-		return false;
-	};
-	$.ajax({
-		type: "POST",
-		url: url,
-		dataType: "html",
-		data: {"acc_id":acc_id, "classification_id":class_id, "hotel_id":hotel_id, "checked_in":checked_in, "checked_out":checked_out},
-		success: function(response) {
-			$("#room_offering_"+acc_id).html(response);
-		}
-	});
-});
-
-$('body').on('change', 'input.date-accomm-chk-out-1', function(event) {
-	var base_url = $('base').attr('href');
-	var url = base_url + "site/getAmountRoomBooking";
-	var acc_id = $(this).attr('accommodation_id');
-	var class_id = $(this).attr('classification_id');
-	var hotel_id = $(this).attr('hotel_id');
-	// var checked_in = $(this).val();
-	// var checked_out = $(this).parent().next().next().find("input").val();
-	var checked_out = $(this).val();
-	var checked_in = $(this).parent().prev().prev().find("input").val();
-	alert(checked_in);
 	if (checked_in >= checked_out) {
 		var msg = 'Check In date have to smaller than Check Out date.';
 		var div_sms = '<div class="alert alert-danger alert-dismissable">';
