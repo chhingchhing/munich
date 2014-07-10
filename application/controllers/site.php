@@ -397,9 +397,6 @@ class Site extends MU_Controller {
 		
 		if($display_page == "extra-service"){
 
-//$this->clickCustomizeActivity();
-
-
 			if($this->input->post('btnExtraService')){
 				$this->clear_all_for_extra_services();
 				$this->clickCustomizeExtraService();
@@ -413,8 +410,6 @@ class Site extends MU_Controller {
 					}
 					$this->general_lib->set_index_extra_service($extra_index);
 				}
-//echo 'Hello wrold <br/>';
-//var_dump($this->general_lib->get_people_main_activity()); die(); 
 			}
 		}
 		if ($display_page == "personal-info") {
@@ -506,20 +501,6 @@ class Site extends MU_Controller {
 				            'pass_deleted'      => $fe_data['passenger_info']->pass_deleted,
 						);
 						$this->session->set_userdata($passengerInfo);
-
-						$this->session->set_userdata('has_passenger', true);
-						$this->session->set_userdata('pass_addby', '');
-						$this->session->set_userdata('pass_fname', $this->input->post('pfname'));
-						$this->session->set_userdata('pass_lname', $this->input->post('plname'));
-						$this->session->set_userdata('pass_email', $this->input->post('pemail'));
-						$this->session->set_userdata('pass_phone', $this->input->post('phphone'));
-						$this->session->set_userdata('pass_mobile', $this->input->post('pmobile'));
-						$this->session->set_userdata('pass_country', $this->input->post('pcountry'));
-						$this->session->set_userdata('pass_address', $this->input->post('paddress'));
-						$this->session->set_userdata('pass_company', $this->input->post('pcompany'));
-						$this->session->set_userdata('pass_gender', $this->input->post('pgender'));
-						$this->session->set_userdata('pass_status', 1);
-						$this->session->set_userdata('pass_deleted', 0);
 					}
 					redirect('site/customizes/payments');	
 				}
@@ -529,13 +510,6 @@ class Site extends MU_Controller {
 				$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id); 
 			}
 		}
-
-
-		/*if ($display_page == 'payments') {
-			if ($this->general_lib->get_booking_fee() == '') {
-				$this->general_lib->set_booking_fee($this->input->post('pbk_fee'));
-			}
-		}*/
 
 		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
 		$fe_data['site_setting'] = "customizes";
