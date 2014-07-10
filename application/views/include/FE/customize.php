@@ -210,14 +210,17 @@
 						foreach ($sub as $key => $arrActs) {
 							foreach ($arrActs as $actsID) {
 								foreach ($actPeople as $amount) {
-									$passSubAmount = $amount[$actsID];
+								   	if (isset($amount[$actsID])) {
+										$passSubAmount = $amount[$actsID];
+										echo '<dd>- '.MU_Model::getForiegnTableName('activities', array('act_id' => $actsID), 'act_name');
+										$subActPrice = MU_Model::getForiegnTableName('activities', array('act_id'=>$actsID), 'act_saleprice');
+										$subActPrice = $subActPrice * $passSubAmount;
+										$sumSubAct += $subActPrice;
+										echo ': $'.$subActPrice;
+										echo '</dd>';
+								
+								   	}
 								}
-								echo '<dd>- '.MU_Model::getForiegnTableName('activities', array('act_id' => $actsID), 'act_name');
-								$subActPrice = MU_Model::getForiegnTableName('activities', array('act_id'=>$actsID), 'act_saleprice');
-								$subActPrice = $subActPrice * $passSubAmount;
-								$sumSubAct += $subActPrice;
-								echo ': $'.$subActPrice;
-								echo '</dd>';
 							}
 						}
 						echo "</dl>";
@@ -233,12 +236,14 @@
 							$order++;
 							foreach ($extPro as $id) {
 								foreach ($amountextra as $items) {
-									echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $id), 'ep_name');
-									$epPrice = 	MU_Model::getForiegnTableName('extraproduct', array('ep_id'=>$id), 'ep_saleprice');
-									$epPrice = $epPrice * $items[$id];
-									$sumActExt += $epPrice;
-									echo ': $'.$epPrice;
-									echo '</dd>';
+									if (isset($items[$id])) {
+										echo '<dd>- '.MU_Model::getForiegnTableName('extraproduct', array('ep_id' => $id), 'ep_name');
+										$epPrice = 	MU_Model::getForiegnTableName('extraproduct', array('ep_id'=>$id), 'ep_saleprice');
+										$epPrice = $epPrice * $items[$id];
+										$sumActExt += $epPrice;
+										echo ': $'.$epPrice;
+										echo '</dd>';
+									}
 								}
 								
 							}

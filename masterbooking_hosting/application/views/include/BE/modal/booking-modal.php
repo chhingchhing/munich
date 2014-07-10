@@ -49,7 +49,7 @@
 <div class="modal fade modal-extraservice-customize" tabindex="-1" role="dialog" aria-labelledby="bkextraModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-    <?php echo form_open("booking/add_extraservice/".$this->uri->segment(3).'/'.$this->uri->segment(4), 'class="frm_bk_pass"'); ?>
+    <?php echo form_open("booking/add_extraservice/".$this->uri->segment(3).'/'.$this->uri->segment(4), 'class="frm_bk_pass frm_bk_eps"'); ?>
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title" id="bkextraModalLabel">Add Extra Service</h4>
@@ -66,12 +66,22 @@
                             $extraservices[$value->ep_id] = $value->ep_name;
                         }
                     }
-                echo form_dropdown('bkmodalextraservice', $extraservices, '', 'class="es form-control"');
+                echo form_dropdown('bkmodalextraservice', $extraservices, '', 'class="es form-control form-group"');
             ?>
+            <p class="msges">extra service is required...</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Amount of product <span class="require">*</span> :</label>
+          <div class="col-sm-7">
+            <?php
+                echo form_input(array('name'=>'bkamountproduct', 'value'=>set_value('bkamountproduct'),'placeholder'=>'0','class'=>'bkap form-control form-group'));
+            ?>
+            <p class="msgaop">Invalid...</p>
           </div>
         </div>
       </div>
-      <div class="modal-footer modal-act-footer">
+      <div class="modal-footer modal-act-footer" style="clear:both;">
         <?php echo form_submit("btnsubmitextrabk", "Save Extra Service", 'class="btn btn-primary"'); ?>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
@@ -145,6 +155,7 @@
   </div>
 </div>
 
+<!-- Add more passenger at BE -->
 <div class="modal fade addmorepassenger_modal" tabindex="-1" role="dialog" aria-labelledby="subscribeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -208,7 +219,7 @@
                           'type' => "email",
                           'name' => 'pemail', 
                           'title' => 'Email',
-                          'class' => 'form-control input_email',
+                          'class' => 'form-control input_email input_require',
                           'placeholder' => 'Email',
                           'value' => ''
                           ); 
@@ -219,12 +230,12 @@
                     <p class="help-block error"></p>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-3 control-label">Home Phone <span class="require">*</span>:</label>
+                    <label class="col-sm-3 control-label">Home Phone :</label>
                     <div class="col-sm-5">
                          <?php $phphone = array(
                           'name' => 'phphone', 
                           'title' => 'Phone',
-                          'class' => 'form-control input_require', 
+                          'class' => 'form-control', 
                           'placeholder' => 'Home phone',
                           'value' => ''
                           ); 
@@ -260,16 +271,16 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-3 control-label">Country <span class="require">*</span>:</label>
+                    <label class="col-sm-3 control-label">Country :</label>
                     <div class="col-sm-5">
                          <?php 
-                        echo country_dropdown('pcountry', 'cont', 'form-control input_require', '', array('KH','CA','US'), '');
+                        echo country_dropdown('pcountry', 'cont', 'form-control ', '', array('KH','CA','US'), '');
                          ?>
                     </div>
                     <p class="help-block error"></p>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-3 control-label">Gender <span class="require">*</span>:</label>
+                    <label class="col-sm-3 control-label">Gender :</label>
                     <div class="col-sm-5">
                          <?php 
                          $pgender = array('' => '--- selected --- ','F' => 'Female' , 'M' => 'Male'); 
@@ -279,12 +290,12 @@
                     <p class="help-block error"></p>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-3 control-label">Address <span class="require">*</span>:</label>
+                    <label class="col-sm-3 control-label">Address :</label>
                     <div class="col-sm-5">
                          <?php $paddress = array(
                           'name' => 'paddress', 
                           'title' => 'Address',
-                          'class' => 'form-control input_require', 
+                          'class' => 'form-control ', 
                           'placeholder' => 'Passenger Address', 
                           'rows' => '3',
                           'valu' => ''

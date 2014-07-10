@@ -18,7 +18,7 @@
 				<td><?php echo $return_date; ?></td>
 				<td><?php echo $sub_activites->act_purchaseprice; ?></td>
                 <td><?php echo $sub_activites->act_saleprice; ?></td>
-				<td><?php echo $sub_activites->amount_bked; ?></td>
+				<td><?php echo $sub_activites->amount; ?></td>
 			</tr>
 		<?php } ?>
     </tbody>

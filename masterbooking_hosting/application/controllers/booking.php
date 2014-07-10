@@ -647,18 +647,24 @@ class Booking extends MU_Controller {
 
         $extraproductactbooking = $objRecord->result();
         $extraproductactbooking = json_decode(json_encode($extraproductactbooking), true);
-        $extraservices[$esID] = $extraproductactbooking[0];
-        $extraservices[$esID]['amount'] = $esamount;
+        
+        if ($bkType != 'customize') {
+            $extraservices[$esID]['amount'] = $esamount;
+            $extraservices[$esID] = $extraproductactbooking[0];
+        }
 
-        // Customize booking
         if ($bkType == 'customize') {
             $temp_old = array();
-            $temp_new = array();
             $bookingInfos = $this->mod_booking->getBookingEditCustomize($bkID)->result();
             foreach ($bookingInfos as $bookingInfo) {
                 $temp_old = unserialize($bookingInfo->bk_addmoreservice);
             }
-            $temp_new = $this->insertArrayIndex($temp_new, $extraservices[$esID], $esID);
+            $field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
+            $object = $this->mod_booking->get_info_of_main_obj('extraproduct', 'ep_id', $esID, $field_select);
+            $object->amount = $esamount;
+            $temp_new = array(
+                    $id => $object
+                );
             array_push($temp_old, $temp_new);
             $extraservices = $temp_old;
         }
@@ -828,6 +834,7 @@ class Booking extends MU_Controller {
     public function customize_more_passenger() {
         $bkID = $this->input->post('bk_id');
         $passID = $this->input->post('pass_id');
+        $old_bk_total_people = MU_Model::getForiegnTableName("booking", array('bk_id' => $bkID), 'bk_total_people');
         $accompany = MU_Model::getForiegnTableName("passenger_booking", array('pbk_bk_id' => $bkID, 'pbk_pass_id' => $passID), 'pbk_pass_come_with');
         $accompany = unserialize($accompany);
         $temp_old = array();
@@ -853,6 +860,12 @@ class Booking extends MU_Controller {
         $success  = $this->mod_booking->personal_information($passengerInfo);
         $result = false;
         if ($success) {
+            $num_passenger_registered = $this->mod_booking->getAmountPassengerRegisteredByPassID($passID);
+            if ($num_passenger_registered > $old_bk_total_people) {
+                $old_bk_total_people = $old_bk_total_people + 1;
+                $this->mod_booking->upateBookingTotalPassengerByBkID($old_bk_total_people, $bkID);
+            }
+
             $temp_old = $this->insertArrayIndex($temp_old, $passengerInfo['pass_id'], $passengerInfo['pass_id']);
             // array_push($temp_old, $temp_new);
             $accompany = serialize($temp_old);

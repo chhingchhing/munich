@@ -20,7 +20,7 @@
                     <td><?php echo $return_date; ?></td>
                     <td><?php echo $sub_accommodation->dhht_price; ?></td>
                     <td><?php echo $sub_accommodation->rt_people_per_room; ?></td>
-					<td><?php echo $sub_accommodation->amount_bked; ?></td>
+					<td><?php echo $sub_accommodation->amount; ?></td>
 				</tr>
 		<?php } ?>
     </tbody>

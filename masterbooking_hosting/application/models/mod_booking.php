@@ -366,4 +366,43 @@ class Mod_booking extends MU_Model {
         return ($query->num_rows() == 1);
     }
 
+    // Get Amount Passenger by using BookingID and PassengerID
+    function getAmountPassengerRegisteredByPassID($passID) {
+      $query = $this->db
+        ->where('pass_addby', $passID)
+        ->get('passenger');
+      if ($query->num_rows() > 0) {
+        return $query->num_rows();
+      }
+    }
+
+    public function upateBookingTotalPassengerByBkID($amount_passenger, $bkID){
+      $booking_info['bk_total_people'] = $amount_passenger;
+      $this->db->where('bk_id', $bkID);
+      if($this->db->update('booking', $booking_info)){ return true; }else{ return false; }
+    }
+
+    // Get information of item
+    function get_info_of_main_obj($table, $col, $id, $field_select) {
+        $query = $this->db
+            ->select($field_select)
+            ->where($col, $id)
+            ->get($table);
+        if ($query->num_rows() == 1) {
+            return $query->row();
+        } else {
+            //Get empty base parent object, as $item_id is NOT an item
+            $object = new stdClass();
+
+            //Get all the fields from items table
+            $fields = $this->db->list_fields($table);
+
+            foreach ($fields as $field)
+            {
+                $object->$field='';
+            }
+            return $object;
+        }
+    }
+
 }

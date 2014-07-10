@@ -82,13 +82,13 @@
             <span style="color:red;"><?php echo form_error('bkTotalPeople'); ?></span>
         </div>
     </div>
-    <div class="form-group col-sm-12">
+    <!-- <div class="form-group col-sm-12">
         <label class="col-sm-2 control-label">Total Price($):</label>
         <div class="col-sm-4">
             <?php echo form_input(array('name' => 'bkTotalPrice', 'value' => set_value('bkTotalPrice',$bkTotalPrice), 'class' => 'bkTotalPrice form-control', 'id' => 'bkTotalPrice','readonly'=>'readonly')); ?>
             <span style="color:red;"><?php echo form_error('bkTotalPrice'); ?></span>
         </div>
-    </div>
+    </div> -->
     <div class="form-group col-sm-12">
         <label class="col-sm-2 control-label">Price($) <span class="require">*</span>:</label>
         <div class="col-sm-4">
@@ -111,7 +111,7 @@
         </div>
     </div>
     <div class="form-group col-sm-12">
-        <label class="col-sm-2 control-label">Pay date <span class="require">*</span>:</label>
+        <label class="col-sm-2 control-label">Pay date :</label>
         <div class="col-sm-4">
             <?php echo form_input(array('name' => 'bkPayDate','data-date-format'=>'yyyy-mm-dd', 'value' => set_value('bkPayDate',$bkpaydate), 'class' => 'bkPayDate form-control', 'id' => 'bkPayDate','placeholder'=>'yyyy-mm-dd')); ?>
             <span style="color:red;"><?php echo form_error('bkPayDate'); ?></span>
@@ -268,35 +268,34 @@
             <th><input type="checkbox" name="checkbox_all" id="checkbox_all" checked="true"></th>
             <th>ID</th>
             <th>Name</th>
-            <th>From</th>
-            <th>To</th>
             <th>Purchase($)</th>
             <th>Sale($)</th>
-            <!-- <th>Amount Book</th> -->
+            <th>Amount</th>
         </tr> 
         </thead>
         <tbody class="body-extraservice">
         <?php 
             if(isset($bkextraservice)){
-                $extraservice = unserialize($bkextraservice);
-                foreach ($extraservice as $extra_service) {
-                    foreach ($extra_service as $extra) {
-                        ?>
-                        <tr class="real_ep_pk remove<?php echo $extra['ep_id']; ?>">
-                            <td><?php echo form_checkbox(array('class' => 'check_checkbox','id' => 'check_checkbox', 'name' => 'epacc_checkbox[]', "checked" => true), $extra['ep_id'] );  ?></td>
-                            <td><?php echo $extra['ep_id']; ?></td>
-                            <td><?php echo character_limiter($extra['ep_name'], 7); ?></td>
-                            <td><?php // echo $extra->start_date; ?></td>
-                            <td><?php // echo $extra->end_date; ?></td>
-                            <td><?php echo $extra['ep_purchaseprice']; ?></td>
-                            <td><?php echo $extra['ep_saleprice']; ?></td>
-                            <!-- <td><?php //echo $extra['amount_bked']; ?></td> -->
-                        </tr>
-                    <?php
+                if (!empty($bkextraservice)) {
+                    $extraservice = unserialize($bkextraservice);
+                    foreach ($extraservice as $extra_service) {
+                        foreach ($extra_service as $extra) {
+                            ?>
+                            <tr class="real_ep_pk remove<?php echo $extra->ep_id; ?>">
+                                <td><?php echo form_checkbox(array('class' => 'check_checkbox','id' => 'check_checkbox', 'name' => 'epacc_checkbox[]', "checked" => true), $extra->ep_id );  ?></td>
+                                <td><?php echo $extra->ep_id; ?></td>
+                                <td><?php echo $extra->ep_name; ?></td>
+                                <td><?php echo $extra->ep_purchaseprice; ?></td>
+                                <td><?php echo $extra->ep_saleprice; ?></td>
+                                <td><?php echo isset($extra->amount) ? $extra->amount : ''; ?></td>
+                            </tr>
+                        <?php
+                        }
                     }
                 }
             }
         ?>
+        </tbody>
       </table> 
     </div>
 </div>

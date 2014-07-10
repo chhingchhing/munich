@@ -357,7 +357,7 @@ class Site extends MU_Controller {
 	* load template customizes and include customize
 	*/
 	public function customizes($display_page = false, $pass_id = false){
-
+ 
 		if($display_page == "customizeTrip"){
 			redirect('site/customizes/transportation');
 		}
@@ -376,7 +376,7 @@ class Site extends MU_Controller {
 			if($this->input->post('btnAccommodation')){	
 				$this->clear_all_for_accommodation();
 				$this->clickCustomizeAccommodation();
- 
+
 				redirect('site/customizes/activities');
 			}else{
 				$fe_data['recordAccommodation'] = $this->customizeAccommodation();
@@ -396,6 +396,10 @@ class Site extends MU_Controller {
 		}
 		
 		if($display_page == "extra-service"){
+
+//$this->clickCustomizeActivity();
+
+
 			if($this->input->post('btnExtraService')){
 				$this->clear_all_for_extra_services();
 				$this->clickCustomizeExtraService();
@@ -409,13 +413,15 @@ class Site extends MU_Controller {
 					}
 					$this->general_lib->set_index_extra_service($extra_index);
 				}
+//echo 'Hello wrold <br/>';
+//var_dump($this->general_lib->get_people_main_activity()); die(); 
 			}
 		}
 		if ($display_page == "personal-info") {
 			$pass_id = $this->mod_fecustomize->getCurrentPassengerId();
 
 			if($this->input->post('btnPersonalInfo')){	
-				$this->general_lib->empty_personalInfo_message();
+				//$this->general_lib->empty_personalInfo_message();
 
 				$addpassenger  = array(
 					array(
@@ -463,7 +469,9 @@ class Site extends MU_Controller {
 					$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id);
 				}else{
 					$this->general_lib->set_booking_fee($this->input->post('pbk_fee'));	
+
 					if ($pass_id == -1) {
+
 						$passengerInfo = array(
 							'has_passenger'		=> true,
 							'pass_addby' 		=> '',
@@ -480,6 +488,7 @@ class Site extends MU_Controller {
 				            'pass_deleted'      => 0,
 						);
 						$this->session->set_userdata($passengerInfo);
+
 					} else {
 						$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id);
 						$passengerInfo = array(
@@ -497,6 +506,20 @@ class Site extends MU_Controller {
 				            'pass_deleted'      => $fe_data['passenger_info']->pass_deleted,
 						);
 						$this->session->set_userdata($passengerInfo);
+
+						$this->session->set_userdata('has_passenger', true);
+						$this->session->set_userdata('pass_addby', '');
+						$this->session->set_userdata('pass_fname', $this->input->post('pfname'));
+						$this->session->set_userdata('pass_lname', $this->input->post('plname'));
+						$this->session->set_userdata('pass_email', $this->input->post('pemail'));
+						$this->session->set_userdata('pass_phone', $this->input->post('phphone'));
+						$this->session->set_userdata('pass_mobile', $this->input->post('pmobile'));
+						$this->session->set_userdata('pass_country', $this->input->post('pcountry'));
+						$this->session->set_userdata('pass_address', $this->input->post('paddress'));
+						$this->session->set_userdata('pass_company', $this->input->post('pcompany'));
+						$this->session->set_userdata('pass_gender', $this->input->post('pgender'));
+						$this->session->set_userdata('pass_status', 1);
+						$this->session->set_userdata('pass_deleted', 0);
 					}
 					redirect('site/customizes/payments');	
 				}
@@ -1144,7 +1167,7 @@ class Site extends MU_Controller {
 					foreach ($extra_pro[$id] as $product_id) {
 						$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
 						$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
-						$product->amount_bked = $amount_extra_pro[$id][$product_id];
+						$product->amount = $amount_extra_pro[$id][$product_id];
 						array_push($products, $product);
 					}
 				}
@@ -1200,7 +1223,7 @@ class Site extends MU_Controller {
 					foreach ($extra_pro[$id] as $product_id) {
 						$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
 						$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
-						$product->amount_bked = $amount_extra_pro[$id][$product_id];
+						$product->amount = $amount_extra_pro[$id][$product_id];
 						array_push($products, $product);
 					}
 				}
@@ -1224,7 +1247,7 @@ class Site extends MU_Controller {
 											array_push($room_booked, $room_booked_info);
 
 											// Assign amount number of booking room type
-											$room->amount_bked = $num[$rt_id];
+											$room->amount = $num[$rt_id];
 											array_push($arr_rooms, $room);
 										}
 									}
@@ -1286,7 +1309,7 @@ class Site extends MU_Controller {
 					foreach ($sub_activities[$id] as $sub_act_id) {
 						$field_select = 'act_id, act_name, act_texteticket, act_purchaseprice, act_saleprice, act_actualstock';
 						$sub_act = $this->mod_fecustomize->get_info_of_main_obj('activities', 'act_id', $sub_act_id, $field_select);
-						$sub_act->amount_bked = $sub_act_people[$id][$sub_act_id];
+						$sub_act->amount = $sub_act_people[$id][$sub_act_id];
 						array_push($sub_acts, $sub_act);
 					}
 
@@ -1296,7 +1319,7 @@ class Site extends MU_Controller {
 					foreach ($extra_pro[$id] as $product_id) {
 						$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
 						$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
-						$product->amount_bked = $amount_extra_pro[$id][$product_id];
+						$product->amount = $amount_extra_pro[$id][$product_id];
 						array_push($products, $product);
 					}
 				}
@@ -1329,7 +1352,7 @@ class Site extends MU_Controller {
 			foreach ($extra_services as $id) {
 				$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
 				$object = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $id, $field_select);
-				$object->amount_bked = $amount_extra_pro[$id][0];
+				$object->amount = $amount_extra_pro[$id][0];
 				$arraExtService = array(
 					$id => $object
 				);
@@ -1429,7 +1452,7 @@ class Site extends MU_Controller {
 					$amount_booked = $rm_book_obj;
 				}
 
-				$actual_stock = $item->dhrm_actualstock;
+				$actual_stock = $item->dhrm_originalstock;
 				$num_booked = $amount_booked->amount_book;
 				$amount_availabled = $actual_stock - $num_booked;
 

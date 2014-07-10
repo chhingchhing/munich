@@ -17,7 +17,7 @@
                     <td><?php echo $eptps->ep_name; ?></td>
                     <td><?php echo $eptps->ep_purchaseprice; ?></td>
                     <td><?php echo $eptps->ep_saleprice; ?></td>
-                    <td><?php echo $eptps->amount_bked; ?></td>
+                    <td><?php echo $eptps->amount; ?></td>
                 </tr>
             <?php
                 }

@@ -186,12 +186,11 @@
 
 								   					$amount_available = 0;
 								   					$amount_rm_booked = $this->mod_fecustomize->getAmountRoomBooking($start_date, $end_date,$item->dhcl_id,$item->dhht_id,$item->dhrt_id);
-								   					// var_dump($amount_rm_booked); die();
 								   					foreach ($amount_rm_booked->result() as $rm_book_obj) {
 								   						$amount_booked = $rm_book_obj;
 								   					}
 
-								   					$actual_stock = $item->dhrm_actualstock;
+								   					$actual_stock = $item->dhrm_originalstock;
 								   					$num_booked = $amount_booked->amount_book;
 													$amount_availabled = $actual_stock - $num_booked;
 

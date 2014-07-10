@@ -15,7 +15,7 @@
                     <td><?php echo $extra_pro->ep_name; ?></td>
                     <td><?php echo $extra_pro->ep_purchaseprice; ?></td>
                     <td><?php echo $extra_pro->ep_saleprice; ?></td>
-                    <td><?php echo $extra_pro->amount_bked; ?></td>
+                    <td><?php echo $extra_pro->amount; ?></td>
                 </tr>
             <?php } ?>
         <?php } ?>

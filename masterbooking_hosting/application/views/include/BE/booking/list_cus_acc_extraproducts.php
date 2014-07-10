@@ -17,7 +17,7 @@
                     <td><?php echo $epacc->ep_name; ?></td>
                     <td><?php echo $epacc->ep_purchaseprice; ?></td>
                     <td><?php echo $epacc->ep_saleprice; ?></td>
-                    <td><?php echo $epacc->amount_bked; ?></td>
+                    <td><?php echo $epacc->amount; ?></td>
                 </tr>
         <?php
                 }
