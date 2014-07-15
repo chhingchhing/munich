@@ -1,334 +1,510 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Site extends MU_Controller {
+	class Site extends MU_Controller {
 
-	public function __construct() {
-        parent::__construct();
-        $this->load->library('general_lib');
+ 		 public function __construct() {
+        		parent::__construct();
+  			$this->load->library('general_lib');
+  
+        		$this->load->model(array('mod_index','mod_booking','mod_profilefe','mod_fepackage','mod_fecustomize'));
+   		 }
 
-        $this->load->model(array('mod_index','mod_booking','mod_profilefe','mod_fepackage','mod_fecustomize'));
-    }
+	    /*function
+	    * index function is a function for load the default page
+	    * @noparam
+	    * Load index.php in folder view
+	    */
+	
+	  public function index($menu_id = false){
+	  
+	    $fe_data['menu_fe'] = $this->mod_index->getAllMenu();
+	    $fe_data['site_setting'] = "default";
+	    $this->load->view('index',$fe_data);
+	  }
 
-    /*
-    * index function is a function for load the default page
-    * @noparam
-    * Load index.php in folder view
-    */
-
-	public function index($menu_id = false)
-	{
-		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
-		$fe_data['site_setting'] = "default";
-		$this->load->view('index',$fe_data);
-	}
-	/*
-	* function redirect from route.php in folder config
-	* public function page
-	* display the page by id
-	* used table content and menu
-	* load view index.php
-	*/
-	public function page(){
-		if($this->uri->segment(4)){ $menu_id = $this->uri->segment(4); }elseif($this->uri->segment(3)){ $menu_id = $this->uri->segment(3); }else{ $menu_id = $this->uri->segment(2); }
-		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
-		$fe_data['content_fe'] = $this->mod_index->getContentById($menu_id);
-		$fe_data['site_setting'] = $this->getTemplate($menu_id);
-		$this->load->view('index',$fe_data);
-	}
-     // add more passenger
-	public function morepassenger(){
-		$passID = $this->session->userdata('passengerid');
-		$bkID = $this->input->post('txtBooking');
-		if ($this->input->post('addmore_profile')) {
-			$config = array(
-			  array(
-			  	'field' => 'fname',
-			  	'label' => 'First Name',
-			  	'rules' => 'trim|required'
-			  ),
-              array(
-              	'field' => 'lname',
-              	'label' => 'Last Name',
-              	'rules' => 'trim|required'
-              ),
-              array(
-              	'field' => 'password',
-              	'label' => 'Password',
-              	'rules' => 'trim|required'
-              ),
-              array(
-              	'field' => 'email',
-              	'label' => 'Email',
-              	'rules' => 'trim|required'
-              ),
-              array(
-              	'field' => 'phone', 
-              	'label' => 'Phone Number',
-              	'rules' => 'trim|required'
-              ),
-              array(
-              	'field' => 'address',
-              	'label' => 'Address',
-              	'rules' => 'trim|required'
-              ),
-              array(
-              	'field' => 'company',
-              	'label' => 'Company',
-              	'rules' => 'trim|required'
-              ),
-              array(
-              	'field' => 'gender',
-              	'label' => 'Gener',
-              	'rules' => 'trim|required'
-              ),
-              array(
-              	'field' => 'txtStatus',
-              	'label' => 'Status',
-              	'rules' => 'trim|required'
-              ),
-			);
-			$this->form_validation->set_rules($config);
-			if($this->form_validation->run() == FALSE){
-			$this->session->set_userdata('create', show_message('Please check your completed form!', 'error'));
-			}else{
-				$insert['pass_fname'] =   $this->input->post('fname');
-				$insert['pass_lname'] 	=   $this->input->post('lname');
-				$insert['pass_password'] =   $this->input->post('password');
-				$insert['pass_email'] =   $this->input->post('email');
-				$insert['pass_phone'] =   $this->input->post('phone');
-				$insert['pass_address'] =   $this->input->post('address');
-				$insert['pass_company'] =   $this->input->post('company');
-				$insert['pass_gender'] =   $this->input->post('gener');
-				$insert['pass_status'] = $this->input->post('txtStatus');
-				$insert['pass_deleted'] = 0;
-			  	$resulf = $this->mod_booking->getMorePassenger($insert);
-			    if($resulf){
-			    	$accompany = MU_Model::getForiegnTableName("passenger_booking", array('pbk_bk_id' => $bkID, 'pbk_pass_id' => $passID), 'pbk_pass_come_with');
-			        $accompany = unserialize($accompany);
-			        $newaccompany = $accompany;
-			        $newaccompany[$resulf] = $resulf;			        
-			        $newaccompany = serialize($newaccompany);
-			        $updatepassengerbooking = $this->mod_booking->updateaccompany($newaccompany, $bkID, $passID);
-					if($updatepassengerbooking){
-					   $this->session->set_userdata('create', show_message('Your data input was successfully.', 'success'));
-			        }else{
-			           $this->session->set_userdata('create', show_message('Cannot insert or update you passenger!', 'error'));	
-			        }
-			    }
-	        }
-	    }else{
-	    	$this->session->set_userdata('create', show_message('Please check your completed form!', 'error'));
-	    }
-	    redirect('site/profile');
-	}
-	public function export_eticket() {
-        $fe_data['users'] = $this->mod_index->exportAllEtichet('user');
-        $fe_data['site_setting'] = "export_eticket";
-        $this->load->view('index', $fe_data);
-    }
-
-	/*
-	* public function getTemplate()
-	* @param menu_id (int)
-	* used table content
-	* return $tmpl
-	*/
-	public function getTemplate($menu_id){
-		$tmpl = "";
-		$template = $this->mod_index->getContentTemplate($menu_id);
-		if($template->num_rows() > 0){
-			foreach($template->result() as $value){
-				$tmpl = $value->con_template;
-			}
-			return $tmpl;
-		}
-		return $tmpl;
-	}
-
-	/*
-	* public function feedback()
-	* @noparam
-	* used table feedback
-	* return object
-	*/
-	public function feedback($view_feedback = false){
-		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
-		if($view_feedback != false){
-			if( ! file_exists('application/views/include/FE/'.$view_feedback.'.php') ){
-				show_404();
-			}
-			$fe_data['single_fb'] = $this->view_feedback($view_feedback);
-			$fe_data['back_to'] = 'page/'.$view_feedback; 
-			$fe_data['site_setting'] = "view_feedback";
-		}else{
-			$fe_data['site_setting'] = "feedback";
-			$fe_data['feedback'] = $this->mod_index->getFeedback();
-		}
-		$this->load->view('index', $fe_data);
-	}
-        
-        public function profile(){
-            $fe_data['title'] = "profile user";
-            $fe_data['menu_fe'] = $this->mod_index->getAllMenu();
-            $fe_data['site_setting'] = "profile";
-            // $passegnger_id = $this->session->userdata('passengerid');
-            $passegnger_id = $this->mod_fecustomize->getCurrentPassengerId();
-            $fe_data['old_gender'] = array('' => '-- Select --', 'F' => 'Female', 'M' => 'Male');
-            $fe_data['old_txtStatus'] = array('0' => 'Unpublished','1' => 'Published');
-            $fe_data['profile'] = $this->mod_profilefe->pass_profilefe($passegnger_id);
-            $fe_data['passengerbooking_info'] = $this->mod_profilefe->passenger_bookedform($passegnger_id);
-			// add select more passengers that booking by team leader
-			$login_sess_passenger = $this->session->userdata('passenger');
-	        $new_sess_passenger = $this->session->userdata('new_passenger_id');
-	        $pass_id = -1;
-			if ($new_sess_passenger OR $login_sess_passenger) {
-				$this->general_lib->empty_personalInfo_message();
-
-				if ($new_sess_passenger != '') {
-	        		$pass_id = $new_sess_passenger['pass_id'];
-	        	}
-	        	if ($login_sess_passenger != '') {
-	        		$pass_id = $login_sess_passenger['pass_id'];
-	        	}
-			}
-			// $fe_data['members'] = $this->mod_fecustomize->get_all_member_by_pass_addby($pass_id);
-            $this->load->view('index',$fe_data);
-            if ($this->input->post('frm_profile')){      
-                    $fname      =   $this->input->post('old_firstname');
-                    $lname      =   $this->input->post('old_lastname');
-                    $email      =   $this->input->post('old_email');
-                    $phonenum   =   $this->input->post('old_phone');
-                    $address    =   $this->input->post('old_address');
-                    $company    =   $this->input->post('old_company');
-                    $gender     =   $this->input->post('old_gender');
-                    $get_txtStatus      = $this->input->post('old_txtStatus');
-                    $profileupgrate = $this->mod_profilefe->upgrate_profile($passegnger_id, $fname,$lname,$email,$phonenum,$address,$company,$gender,$get_txtStatus);
-                    if($profileupgrate > 0){
-                        $this->session->set_userdata('create', show_message('Your data update was successfully.', 'success'));
-                        redirect('site/profile');
-                     }   
-            }
+	  /*
+	  * function redirect from route.php in folder config
+	  * public function pagef
+	  * display the page by id
+	  * used table content and menu
+	  * load view index.php
+	  */
+	public function sendtoadmin(){
+                if ($this->input->post('btn_sending')) {
+                  echo "success";
+                                           // $this->email->set_mailtype("html");
+                    $this->email->clear();
+                    $this->email->to('saorinphan@gmail.com');
+                    $this->email->from('phansaorin@gmail.com');
+                    $this->email->subject('Test');
+                    $this->email->message('Hello sreynak');
+                    $this->email->send();
+               }else{
+                echo "error";
+               }
         }
         
+	  public function page(){
+	    if($this->uri->segment(4)){ $menu_id = $this->uri->segment(4); }elseif($this->uri->segment(3)){ $menu_id = $this->uri->segment(3); }else{ $menu_id = $this->uri->segment(2); }
+	    $fe_data['menu_fe'] = $this->mod_index->getAllMenu();
+	    $fe_data['content_fe'] = $this->mod_index->getContentById($menu_id);
+	    $fe_data['site_setting'] = $this->getTemplate($menu_id);
+	    $this->load->view('index',$fe_data);
+	  }
+      // add more passenger
+   	  private $price = 0;
+	  public function morepassenger(){
+	    $passID = $this->session->userdata('passengerid');
+	    $bkID = $this->input->post('txtBooking');
+	    $fe_data['old_gender'] = array('' => '-- Select --', 'F' => 'Female', 'M' => 'Male');
+	    if ($this->input->post('addmore_profile')) {
+	      $config = array(
+	          array('field' => 'fname', 'label' => 'First Name','rules' => 'trim|required'),
+	                    array('field' => 'lname','label' => 'Last Name','rules' => 'trim|required'),
+	                    array('field' => 'email','label' => 'Email','rules' => 'trim|required'),
+	                    array('field' => 'phone', 'label' => 'Phone Number','rules' => 'trim|required'),
+	                    array('field' => 'address','label' => 'Address','rules' => 'trim|required'),
+	                    array('field' => 'company','label' => 'Company','rules' => 'trim|required'),
+	                    array('field' => 'gender','label' => 'Gender','rules' => 'trim|required'),
+	                    // add new
+	                    array('field' => 'country','label' => 'Country','rules' => 'trim|required'),
+	                    array('field' => 'city','label' => 'City','rules' => 'trim|required'),
+	                    
+	      );
+	      $this->form_validation->set_rules($config);
+	      if($this->form_validation->run() == FALSE){
+	      $this->session->set_userdata('create', show_message('Please check your completed form!', 'error'));
+	      }else{
+	        $insert['pass_fname'] =   $this->input->post('fname');
+	        $insert['pass_lname']   =   $this->input->post('lname');
+	        $insert['pass_addby']   =   $passID;
+	        $insert['pass_email'] =   $this->input->post('email');
+	        $insert['pass_phone'] =   $this->input->post('phone');
+	        $insert['pass_mobile'] =   $this->input->post('telephone');
+	        $insert['pass_address'] =   $this->input->post('address');
+	        $insert['pass_company'] =   $this->input->post('company');
+	        $insert['pass_gender'] =   $this->input->post('gender');
+	        $insert['pass_password'] = 123456789;
+	        // add new
+	        $insert['pass_country'] =   $this->input->post('country');
+	        $insert['pass_city'] =   $this->input->post('city');
+	        $insert['pass_about'] = $this->input->post('aboutyou');
+	        $insert['pass_deleted'] = 0;
+	        $insert['pass_status'] = 1;
+	        $result = $this->mod_booking->getMorePassenger($insert);
+	        if($result){
+	        $aopID = $this->input->post('txtBooking'); 
+	        $aop = MU_Model::getForiegnTableName('booking', array('bk_id'=> $aopID), 'bk_total_people');
+	          $accompany = MU_Model::getForiegnTableName("passenger_booking", array('pbk_bk_id' => $bkID, 'pbk_pass_id' => $passID), 'pbk_pass_come_with');
+	          $accompany = unserialize($accompany);
+	          $newaccompany = $accompany;
+	          $newaccompany[$result] = $result;               
+	          $countaccompany = count($newaccompany);         
+	          $newaccompany = serialize($newaccompany);
+	          if($countaccompany < $aop){
+	            $updatepassengerbooking = $this->mod_booking->updateaccompany($newaccompany, $bkID, $passID);
+	            $this->session->set_userdata('create', show_message('<p>'.'Booking was updated successfully ...'.'</p>', 'success'));
+	                           redirect('site/profile');
+	          }elseif($countaccompany == $aop){
+	            // echo "warning message"; die();
+	            $this->session->set_userdata('warning', show_message('This booking is full ,if you want to add more people please contact to our sale!', 'warning'));
+	            $this->session->set_userdata('hiddens', show_message('', 'hiddens'));
+	            redirect('site/profile');
+	          }
+	          }
+	       }
+	      }else{
+	        $this->session->set_userdata('create', show_message('Please check your completed form!', 'error'));
+	      }
+	      redirect('site/profile');
+	  }
+	  
+	  
+	 public function package_eticket() {
+	        $bkID = $this->uri->segment(4);
+	        $fe_data['eticket_collection'] = $this->mod_index->exportAllEtichet($bkID);
+	        $fe_data['site_setting'] = "package_eticket";
+	        $this->load->view('index', $fe_data);
+	}
+	
+	public function customize_eticket(){
+	      $cusID = $this->uri->segment(4);
+	      $fe_data['eticket_customize'] = $this->mod_index->exportCustomizet($cusID);
+	      $fe_data['site_setting'] = "customize_eticket";
+	      $this->load->view('index', $fe_data);
+
+	}
+	
+	/*
+	  *public function upgrade_booking()
+	  * update add more server that passengger need more
+	  */ 
+	  public function upgrade_booking(){
+	    $bkID = $this->input->post('txtBooking');
+	    $fe_data['extraService'] = $this->mod_booking->getAllExtraService(); 
+	    $fe_data['totalPeople'] = $this->mod_booking->gettotalPeople();
+	    $extraID  = $this->input->post('upgradextraservice');
+	    $bookingPrice = MU_Model::getForiegnTableName('booking', array('bk_id'=> $bkID), 'bk_pay_price');
+	    $aopID = $this->input->post('txtBooking');
+	    $aop = MU_Model::getForiegnTableName('booking', array('bk_id'=> $aopID), 'bk_total_people');
+	    $balance = MU_Model::getForiegnTableName('booking', array('bk_id'=> $bkID), 'bk_balance');
+	    $deposit = MU_Model::getForiegnTableName('booking', array('bk_id'=> $bkID), 'bk_deposit');
+	    if($this->input->post('addmore_service')){
+	      $config = array(
+	              array('field' => 'txtBooking', 'label' => 'Booking ID','rules' => 'trim|required'),
+	                          array('field' => 'upgradextraservice','label' => 'Extra Service','rules' => 'trim|required')
+	                          );
+	        $this->form_validation->set_rules($config);
+	        if ($this->form_validation->run() == FALSE) {
+	                  $this->session->set_userdata('error', show_message('<p class="error">'.'Please complete the field required...'.'</p>', 'error'));
+	              }else{
+	          $extraPrice = $this->saveExtraProduct();
+	          $balanceTotal = $balance + $extraPrice;
+	          // var_dump($balanceTotal); die();
+	          $updatebooking['bk_pay_price'] = ($bookingPrice + $extraPrice) * $aop;
+	          $updatebooking['bk_balance'] = $balanceTotal;
+	                  if(isset($updatebooking['bk_pay_price']) && $this->is_money($updatebooking['bk_pay_price'])){
+	                      $result_booking = $this->mod_booking->updateBooking($updatebooking,$bkID);
+	                      if($result_booking){
+	                          $this->session->set_userdata('create', show_message('<p>'.'Booking was updated successfully ...'.'</p>', 'success'));
+	                           redirect('site/profile');
+	                          break;
+	                      }
+	                  }
+	
+	        }         
+	    }
+	  }
+	  
+	 public function is_money($price) {
+	     return preg_match('/^[0-9]+(\.[0-9]{0,2})?$/', $price);
+	 }
+	 
+	    public function saveExtraProduct(){     
+	          $bkID = $this->input->post('txtBooking');
+	          $extraservices = MU_Model::getForiegnTableName("booking",array('bk_id' => $bkID), 'bk_addmoreservice');
+	          $extraservices = unserialize($extraservices);
+	          $esID = $this->input->post('upgradextraservice');
+	      	  $objRecord = $this->mod_booking->getExtraProductById($esID);
+	      	  $extraproductactbooking = $objRecord->result();
+	          $extraproductactbooking = json_decode(json_encode($extraproductactbooking), true);
+	          $extraservices[$esID] = $extraproductactbooking[0];
+	      	  $extraservices = serialize($extraservices); 
+	       	  $result = $this->mod_booking->updateExtraservice($extraservices, $bkID);
+	      	  $prices = $extraproductactbooking[0]['ep_saleprice'];
+	      	  if($result != NULL){
+	              return $prices;
+	          }else{
+	              return 0;
+	          }
+	    }
+	    
+	     /*
+	    sending mail to admin 
+	    after we want to add more passenger
+	    */
+	           public function contact_admin(){
+	      		if($_FILES['userfile']['name']) {	    
+			 $config['upload_path']      = 'user_uploads/files/'; 
+			          $config['allowed_types']    = 'doc|docx|pdf|txt|xlm|zip|rar';
+			          $config['max_size']     = '4000';
+			          $this->load->library('upload', $config);
+	            if ($this->upload->do_upload('userfile')) {
+	                  $adminMail = MU_Model::getAdminEmail();
+	                        $ret = $this->upload->data();
+	                        $uploadedFile = $ret['full_path'];
+	
+	                        $sendFrom = $this->input->post('email');
+	                        $subject = $this->input->post('subject');
+	                        $text = $this->input->post('text');
+	                        $bookingID = $this->input->post('txtBooking');
+	                        $message = "Text".$text.'/n'."Booking ID".$bookingID;
+	                        $this->email->clear();      
+	                            $this->email->to($adminMail);
+	                            $this->email->from($sendFrom);
+	                            $this->email->subject($subject);
+	                            $this->email->message($message);
+	                            $this->email->attach($uploadedFile);
+	                            $send = $this->email->send();
+	                            $this->session->set_userdata('success', show_message('<p>'.'Your email successfuly sent!...'.'</p>', 'success'));
+	                              redirect('site/profile');
+	                              
+	                }
+	        }else{
+	       
+	         $this->session->set_userdata('error', show_message('Please check your completed form!', 'error'));
+	         redirect('site/profile');
+	       }
+	
+	  } 
+	    
+	/*
+	@ change staus
+	after and
+	before booking
+	*/
+	public function status_booking($bk_status, $bk_id){
+	        $total_rows = MU_Model::count_all_data('booking', array('bk_deleted' => 0));
+	        $bk_status = ($bk_status == 1) ? 0 : 1;
+	        $statuschaged = MU_Model::updateStatusById('booking', array("bk_status" => $bk_status), array('bk_id' => $bk_id));	        
+	        $bk_msg = ($bk_statuss == 1) ? "Published" : "Unpublished";	
+	        if($statuschaged){
+	            $this->session->set_userdata('create', show_message('The booking have been '.$bk_msg.' successfully.', 'success'));
+	            redirect($redirect);
+	        }else{
+	            $this->session->set_userdata('create', show_message('Cannot '.$bk_msg.' record on table name booking.', 'error'));
+	            redirect($redirect);
+	        }
+	    }
+	    
+	/*
+	@ the end of 
+	change booking
+	*/
+	  /*
+	  * public function getTemplate()
+	  * @param menu_id (int)
+	  * used table content
+	  * return $tmpl
+	  */
+	  public function getTemplate($menu_id){
+	    $tmpl = "";
+	    $template = $this->mod_index->getContentTemplate($menu_id);
+	    if($template->num_rows() > 0){
+	      foreach($template->result() as $value){
+	        $tmpl = $value->con_template;
+	      }
+	      return $tmpl;
+	    }
+	    return $tmpl;
+	  }
+	
+	  /*
+	  * public function feedback()
+	  * @noparam
+	  * used table feedback
+	  * return object
+	  */
+	  public function feedback($view_feedback = false){
+	    $fe_data['menu_fe'] = $this->mod_index->getAllMenu();
+	    if($view_feedback != false){
+	      if( ! file_exists('application/views/include/FE/'.$view_feedback.'.php') ){
+	        show_404();
+	      }
+	      $fe_data['single_fb'] = $this->view_feedback($view_feedback);
+	      $fe_data['back_to'] = 'page/'.$view_feedback; // wrong
+	      $fe_data['site_setting'] = "view_feedback";
+	    }else{
+	      $fe_data['site_setting'] = "feedback";
+	      $fe_data['feedback'] = $this->mod_index->getFeedback();
+	    }
+	    $this->load->view('index', $fe_data);
+	  }
+	  
+    public function profile(){
+	    $fe_data['title'] = "profile user";
+	    $fe_data['extraService'] = $this->mod_booking->getAllExtraService();
+	    $fe_data['txtPhotos'] = $this->mod_booking->getPhotos();
+	    $fe_data['menu_fe'] = $this->mod_index->getAllMenu();
+	    $fe_data['site_setting'] = "profile";
+	    $passegnger_id = $this->session->userdata('passengerid');
+	   // $passegnger_id = $this->mod_fecustomize->getCurrentPassengerId();
+	    $fe_data['old_gender'] = array('' => '-- Select --', 'F' => 'Female', 'M' => 'Male');
+	    $fe_data['old_txtStatus'] = array('0' => 'Unpublished','1' => 'Published');
+	    $fe_data['profile'] = $this->mod_profilefe->pass_profilefe($passegnger_id);
+	    $fe_data['passengerbooking_info'] = $this->mod_profilefe->passenger_bookedform($passegnger_id);
+	    
+	    if ($this->input->post('frm_profile')){      
+	      $fname      =   $this->input->post('firstname');
+	      $lname      =   $this->input->post('old_lastname');
+	      $email      =   $this->input->post('old_email');
+	      $phonenum   =   $this->input->post('old_phone');
+	      $address    =   $this->input->post('old_address');
+	      $company    =   $this->input->post('old_company');
+	      $gender     =   $this->input->post('old_gender');
+	      $get_txtStatus      = $this->input->post('old_txtStatus');
+	      $profileupgrate = $this->mod_profilefe->upgrate_profile($passegnger_id, $fname,$lname,$email,$phonenum,$address,$company,$gender,$get_txtStatus);
+	      if($profileupgrate > 0){
+	        $this->session->set_userdata('create', show_message('Your data update was successfully.', 'success'));
+	        redirect('site/profile');
+	      }  
+	    }
+	
+	    if ($this->uri->segment('4') == 'view_detail_bk') {
+	      $fe_data['booking_info'] = $this->view_detail_bk($this->uri->segment('5'));
+	    }
+	
+	    $this->load->view('index',$fe_data);
+  }
+
+	  /*
+	  * public function view_detail_bk
+	  * @param $bk_id (int)
+	  * 
+	  */
+	   function view_detail_bk($bk_id) {
+	    $pass_id = $this->getCurrentPassengerId();
+	    $bkInfo = $this->mod_fecustomize->bookingInfoByPassengerIDAndBookingID($bk_id, $pass_id);
+	
+	    return $bkInfo;
+	  }
+
+	  /*public function customizePersonal_info($passenger_id){ 
+	    return $this->mod_fecustomize->customizePersonal_info($passenger_id);
+	  }*/
+	
+	  /*
+	  * Get current user id
+	  */
+	  function getCurrentPassengerId() {
+	    $login_sess_passenger = $this->session->userdata('passenger');
+	    $new_sess_passenger = $this->session->userdata('new_passenger_id');
+	    $pass_id = -1;
+	    if ($new_sess_passenger OR $login_sess_passenger) {
+	
+	        if ($new_sess_passenger != '') {
+	            $pass_id = $new_sess_passenger['pass_id'];
+	        }
+	        if ($login_sess_passenger != '') {
+	            $pass_id = $login_sess_passenger['pass_id'];
+	        }
+	    }
+	    return $pass_id;
+	  }
+        
+	  /*
+	  * public function view_feedback
+	  * @param $fb_id (int)
+	  * return object of feedback
+	  * table feedback
+	  */
+	  public function view_feedback($fb_id){
+	    return $this->mod_index->getFeedbackById($fb_id);
+	}
+
+	  /*
+	  * public function contact()
+	  * @noparam
+	  * load view object
+	  */
+	  public function contact(){
+	    $fe_data['menu_fe'] = $this->mod_index->getAllMenu();
+	    $fe_data['site_setting'] = "contact";
+	    $fe_data['contact'] = $this->mod_index->getAdminProfile();
+	    $this->load->view('index', $fe_data);
+	}
+	
+	  /*
+	  * public function booking
+	  * @param $include default (false)
+	  * load view booking
+	  */
+	  public function booking($include = false, $param2 = false){
+	    $fe_data['menu_fe'] = $this->mod_index->getAllMenu();
+	    $fe_data['getLocation'] = $this->mod_booking->getLocation();
+	    $fe_data['site_setting'] = "booking";
+	    if($include != false){
+	      if( ! file_exists('application/views/include/FE/booking/'.$include.'.php') ){
+	        show_404();
+	      }
+	      if($param2 == false){
+	        if($this->input->post('select_value')){ 
+	          $decrypted_id = $this->input->post('select_value'); 
+	          if(is_numeric($decrypted_id)){
+	            $fe_data['getFtvByLcID'] = $this->mod_booking->getFtvByLcID($decrypted_id);
+	          }else{
+	            $fe_data['param2error'] = "error";
+	          }
+	        }else{
+	          $this->session->set_userdata('ftvID', $this->input->post('ftv_id'));
+	          $this->session->set_userdata('lcID', $this->input->post('location_id'));          
+	        }
+	      }else{
+	        $salt = "90408752631";
+	          $decrypted_id = base64url_decode($param2);
+	          $decrypted_id = preg_replace(sprintf('/%s/', $salt), '', $decrypted_id);        
+	        if(is_numeric($decrypted_id)){
+	          $fe_data['getFtvByLcID'] = $this->mod_booking->getFtvByLcID($decrypted_id);
+	        }else{
+	          $fe_data['param2error'] = "error";
+	        }       
+	      }
+	      $fe_data['include_type'] = $include;
+	    }else{
+	      // if($this->session->userdata('ftvID')) $this->session->unset_userdata('ftvID');
+	      // if($this->session->userdata('lcID')) $this->session->unset_userdata('lcID');
+	      $fe_data['include_type'] = 'first';
+	      $fe_data['festival'] = $this->mod_booking->getFestival();
+	    }
+	    $this->load->view('index', $fe_data);
+	  }
+	  
+	  /**
+	     * @insert a new array member at a given index
+	     * @param array $array
+	     * @param mixed $new_element
+	     * @param int $index
+	     * @return array
+	     */
+	     function insertArrayIndex($array, $new_element, $index) {
+	        $array[$index] = $new_element;
+	        return $array;
+	     }
+
+		////////////////////    START CUSTOMIZE BOOKING SECTION        //////////////////////
+
+
+	     /**
+	   * Clear all session of storing array
+	     */
+	     public function clear_all_for_activity() {
+		      $this->general_lib->empty_main_activities();
+		      $this->general_lib->empty_sub_activities();
+		      $this->general_lib->empty_extra_activities();
+		      $this->general_lib->empty_amount_extra();
+		      $this->general_lib->empty_people_sub_activity();
+		      $this->general_lib->empty_people_main_activity();
+		      $this->general_lib->empty_start_date_activity();
+		      $this->general_lib->empty_end_date_activity();
+	     }
+
+	     /**
+	   * Clear all session of storing array
+	     */
+	     public function clear_all_for_accommodation() {
+	     	$this->general_lib->empty_people_accommodation();
+	     	$this->general_lib->empty_accommodation();
+	     	$this->general_lib->empty_checkin_date_accommodation();
+	     	$this->general_lib->empty_checkout_date_accommodation();
+	     	$this->general_lib->empty_room_type_accommodation();
+	     	$this->general_lib->empty_amount_book_room();
+	     	$this->general_lib->empty_sub_acc_amount_extra();
+	     	$this->general_lib->empty_sub_acc_extr_product();
+	     }
+
+	     /**
+	  * Clear all session for storing array of transportation
+	     */
+	  public function clear_all_for_transportation() {
+		    $this->general_lib->empty_transportation();
+		    $this->general_lib->empty_sub_transportation();
+		    $this->general_lib->empty_departure_transportation();
+		    $this->general_lib->empty_return_date_transportation();
+		    $this->general_lib->empty_people_transportation();
+		    $this->general_lib->empty_people_sub_transportation();
+		    $this->general_lib->empty_sub_trans_extr_product();
+		    $this->general_lib->empty_sub_trans_amount_extra();
+	  }
+	
+	  /**
+	  * Clear all session for storing array of extra services
+	     */
+	  public function clear_all_for_extra_services() {
+	    $this->general_lib->empty_extra_services();
+	    $this->general_lib->empty_num_extra_services();
+	  }
         
         /*
-	* public function view_feedback
-	* @param $fb_id (int)
-	* return object of feedback
-	* table feedback
-	*/
-	public function view_feedback($fb_id){
-		return $this->mod_index->getFeedbackById($fb_id);
-	}
-
-	/*
-	* public function contact()
-	* @noparam
-	* load view object
-	*/
-	public function contact(){
-		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
-		$fe_data['site_setting'] = "contact";
-		$fe_data['contact'] = $this->mod_index->getAdminProfile();
-		$this->load->view('index', $fe_data);
-	}
-
-	/*
-	* public function booking
-	* @param $include default (false)
-	* load view booking
-	*/
-	public function booking($include = false, $param2 = false){
-		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
-		$fe_data['getLocation'] = $this->mod_booking->getLocation();
-		$fe_data['site_setting'] = "booking";
-		if($include != false){
-			if( ! file_exists('application/views/include/FE/booking/'.$include.'.php') ){
-				show_404();
-			}
-			if($param2 == false){
-				$this->session->set_userdata('ftvID', $this->input->post('ftv_id'));
-				$this->session->set_userdata('lcID', $this->input->post('location_id'));
-			}else{
-				$salt = "90408752631";
-                $decrypted_id = base64_decode($param2);
-                $decrypted_id = preg_replace(sprintf('/%s/', $salt), '', $decrypted_id);
-                if(is_numeric($decrypted_id)){
-                	$fe_data['getFtvByLcID'] = $this->mod_booking->getFtvByLcID($decrypted_id);
-                }else{
-                	$fe_data['param2error'] = "error";
-                }				
-			}
-			$fe_data['include_type'] = $include;
-		}else{
-			$fe_data['include_type'] = 'first';
-			$fe_data['festival'] = $this->mod_booking->getFestival();
-		}
-		$this->load->view('index', $fe_data);
-	}
-
-	/**
-     * @insert a new array member at a given index
-     * @param array $array
-     * @param mixed $new_element
-     * @param int $index
-     * @return array
-     */
-     function insertArrayIndex($array, $new_element, $index) {
-        $array[$index] = $new_element;
-        return $array;
-     }
-     /**
-	 * Clear all session of storing array
-     */
-     public function clear_all_for_activity() {
-     	$this->general_lib->empty_main_activities();
-     	$this->general_lib->empty_sub_activities();
-     	$this->general_lib->empty_extra_activities();
-     	$this->general_lib->empty_amount_extra();
-     	$this->general_lib->empty_people_sub_activity();
-     	$this->general_lib->empty_people_main_activity();
-     	$this->general_lib->empty_start_date_activity();
-     	$this->general_lib->empty_end_date_activity();
-     }
-
-     /**
-	 * Clear all session of storing array
-     */
-     public function clear_all_for_accommodation() {
-     	$this->general_lib->empty_people_accommodation();
-     	$this->general_lib->empty_accommodation();
-     	$this->general_lib->empty_checkin_date_accommodation();
-     	$this->general_lib->empty_checkout_date_accommodation();
-     	$this->general_lib->empty_room_type_accommodation();
-     	$this->general_lib->empty_amount_book_room();
-     	$this->general_lib->empty_sub_acc_amount_extra();
-     	$this->general_lib->empty_sub_acc_extr_product();
-     }
-
-     /**
-	* Clear all session for storing array of transportation
-     */
-	public function clear_all_for_transportation() {
-		$this->general_lib->empty_transportation();
-		$this->general_lib->empty_sub_transportation();
-		$this->general_lib->empty_departure_transportation();
-		$this->general_lib->empty_return_date_transportation();
-		$this->general_lib->empty_people_transportation();
-		$this->general_lib->empty_people_sub_transportation();
-		$this->general_lib->empty_sub_trans_extr_product();
-		$this->general_lib->empty_sub_trans_amount_extra();
-	}
-
-	/**
-	* Clear all session for storing array of extra services
-     */
-	public function clear_all_for_extra_services() {
-		$this->general_lib->empty_extra_services();
-		$this->general_lib->empty_num_extra_services();
-	}
-
-	/*
 	* Clear all session of a whole customize booking process.
 	*/
 	protected function clear_all_customize() {
@@ -351,12 +527,13 @@ class Site extends MU_Controller {
 		$this->general_lib->empty_hotel_ids();
 	}
         
-    /*
+        
+    	/*
 	* public function customize
 	* @param $display_page default (false)
 	* load template customizes and include customize
 	*/
-	public function customizes($display_page = false, $pass_id = false){
+        public function customizes($display_page = false, $pass_id = false){
  
 		if($display_page == "customizeTrip"){
 			redirect('site/customizes/transportation');
@@ -465,43 +642,22 @@ class Site extends MU_Controller {
 				}else{
 					$this->general_lib->set_booking_fee($this->input->post('pbk_fee'));	
 
-					if ($pass_id == -1) {
-
-						$passengerInfo = array(
-							'has_passenger'		=> true,
-							'pass_addby' 		=> '',
-							'pass_fname'        => $this->input->post('pfname'),
-				            'pass_lname'        => $this->input->post('plname'),
-				            'pass_email'        => $this->input->post('pemail'),
-				            'pass_phone'        => $this->input->post('phphone'),
-				            'pass_mobile'       => $this->input->post('pmobile'),
-				            'pass_country'      => $this->input->post('pcountry'),
-				            'pass_address'      => $this->input->post('paddress'),
-				            'pass_company'      => $this->input->post('pcompany'),
-				            'pass_gender'       => $this->input->post('pgender'),
-				            'pass_status'       => 1,
-				            'pass_deleted'      => 0,
-						);
-						$this->session->set_userdata($passengerInfo);
-
-					} else {
-						$fe_data['passenger_info'] = $this->customizePersonal_info($pass_id);
-						$passengerInfo = array(
-							'pass_addby'		=> '',
-							'pass_fname'        => $fe_data['passenger_info']->pass_fname,
-				            'pass_lname'        => $fe_data['passenger_info']->pass_lname,
-				            'pass_email'        => $fe_data['passenger_info']->pass_email,
-				            'pass_phone'        => $fe_data['passenger_info']->pass_phone,
-				            'pass_mobile'       => $fe_data['passenger_info']->pass_mobile,
-				            'pass_country'      => $fe_data['passenger_info']->pass_country,
-				            'pass_address'      => $fe_data['passenger_info']->pass_address,
-				            'pass_company'      => $fe_data['passenger_info']->pass_company,
-				            'pass_gender'       => $fe_data['passenger_info']->pass_gender,
-				            'pass_status'       => $fe_data['passenger_info']->pass_status,
-				            'pass_deleted'      => $fe_data['passenger_info']->pass_deleted,
-						);
-						$this->session->set_userdata($passengerInfo);
-					}
+					$passengerInfo = array(
+						'has_passenger'		=> true,
+						'pass_addby' 		=> '',
+						'pass_fname'        => $this->input->post('pfname'),
+			            'pass_lname'        => $this->input->post('plname'),
+			            'pass_email'        => $this->input->post('pemail'),
+			            'pass_phone'        => $this->input->post('phphone'),
+			            'pass_mobile'       => $this->input->post('pmobile'),
+			            'pass_country'      => $this->input->post('pcountry'),
+			            'pass_address'      => $this->input->post('paddress'),
+			            'pass_company'      => $this->input->post('pcompany'),
+			            'pass_gender'       => $this->input->post('pgender'),
+			            'pass_status'       => 1,
+			            'pass_deleted'      => 0,
+					);
+					$this->session->set_userdata($passengerInfo);
 					redirect('site/customizes/payments');	
 				}
 
@@ -511,11 +667,20 @@ class Site extends MU_Controller {
 			}
 		}
 
+
+		/*if ($display_page == 'payments') {
+			if ($this->general_lib->get_booking_fee() == '') {
+				$this->general_lib->set_booking_fee($this->input->post('pbk_fee'));
+			}
+		}*/
+
 		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
 		$fe_data['site_setting'] = "customizes";
 
 		$this->load->view('index', $fe_data);
 	}
+	
+
 
 	/*
 	* public function customize trip information
@@ -540,6 +705,7 @@ class Site extends MU_Controller {
 			}
 			echo "true";
 	} 
+	
 	// function convertDateToRange for customize on the front end
     function convertDateToRange($findDate, $from_date, $end_date, $step = '+1 day', $format = 'Y-m-d' ) {
         if (!empty($findDate)) {
@@ -651,6 +817,7 @@ class Site extends MU_Controller {
 	}
 
 	public function clickCustomizeActivity() {
+//var_dump($this->input->post('actPeopleMainActivity')); 
 		$this->general_lib->set_main_activities($this->input->post('checkbox_activity'));
 		$this->general_lib->set_start_date_activity($this->input->post('txtFrom'));
 		$this->general_lib->set_end_date_activity($this->input->post('txtTo'));
@@ -659,6 +826,8 @@ class Site extends MU_Controller {
 		$this->general_lib->set_amount_extra($this->input->post('amountextras'));
 		$this->general_lib->set_people_sub_activity($this->input->post('actPeopleSubActivity'));
 		$this->general_lib->set_people_main_activity($this->input->post('actPeopleMainActivity'));
+
+//var_dump($this->general_lib->get_people_main_activity()); die();
 	}
 
 	public function selectSubActivity($sub_act){
@@ -676,7 +845,7 @@ class Site extends MU_Controller {
 		}
 		return $subactivity;
 	}
-
+	
 	public function customizeAccommodation(){
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 		$accommodation = $this->mod_fecustomize->accommodation($this->session->userdata('ftvID'), $this->session->userdata('lcID'));
@@ -706,19 +875,6 @@ class Site extends MU_Controller {
 		$this->general_lib->set_amount_book_room($this->input->post('amount_book_room'));
 		$this->general_lib->set_hotel_ids($this->input->post('hotelIDs'));
 
-
-
-/*foreach ($this->input->post('room_type_checked') as $key => $items) {
-	var_dump($key);
-	var_dump($items);
-	foreach ($items as $i => $value) {
-	  echo "$i:\n";
-	}
-}
-
-
-		var_dump($this->input->post('room_type_checked'));
-		var_dump(); die();*/
 	}
 	
 	/*select sub accommodation */
@@ -757,7 +913,6 @@ class Site extends MU_Controller {
 	public function customizeTransportation(){
 		$findate = array();
 		if($this->session->userdata('txtFrom') AND $this->session->userdata('txtTo')) 
-		// {
 			 $findate = array($this->session->userdata('txtFrom'), $this->session->userdata('txtTo'));
 			$transportation = $this->mod_fecustomize->transportation($this->session->userdata('ftvID'), $this->session->userdata('lcID'));		
 			$tp_data = array();
@@ -771,7 +926,6 @@ class Site extends MU_Controller {
 				}
 			}
 			return $tp_data;
-		// }
 	}
 
 	public function clickCustomizeTransportation() {
@@ -811,55 +965,10 @@ class Site extends MU_Controller {
 	public function customizePersonal_info($passenger_id){ 
 		return $this->mod_fecustomize->customizePersonal_info($passenger_id);
 	}
-
 	/*
 	* public function customize_more_passenger
 	* load template fe_more_passenger
 	*/
-	/*public function customize_more_passenger() {
-		$new_sess_passenger = $this->session->userdata('new_passenger_id');
-		$login_sess_passenger = $this->session->userdata("passenger");
-		if ($new_sess_passenger) {
-			$pass_addby = $new_sess_passenger['pass_id'];
-		} else if($login_sess_passenger) {
-			$pass_addby = $login_sess_passenger['pass_id'];
-		} else {
-			$pass_addby = -1;
-		}
-		$passengerInfo = array(
-			'pass_addby' => $pass_addby,
-			'pass_fname'        => $this->input->post('pfname'),
-            'pass_lname'        => $this->input->post('plname'),
-            'pass_email'        => $this->input->post('pemail'),
-            'pass_phone'        => $this->input->post('phphone'),
-            'pass_mobile'       => $this->input->post('pmobile'),
-            'pass_country'      => $this->input->post('pcountry'),
-            'pass_address'      => $this->input->post('paddress'),
-            'pass_company'      => $this->input->post('pcompany'),
-            'pass_gender'       => $this->input->post('pgender'),
-            'pass_status'       => 1,
-            'pass_deleted'      => 0,
-		);
-		$result  = $this->mod_fecustomize->personal_information($passengerInfo);
-		if (!$result) {
-			$arr_errors = array(
-				"success" => false,
-				"sms_type" => "danger",
-				"sms_title" => "Error!",
-				"sms_value" => "Sorry! That email is already registered. Please login before you booking."
-			);
-			echo json_encode($arr_errors);
-		} else {
-			$arr_errors = array(
-				"success" => true,
-				"sms_type" => "success",
-				"sms_title" => "Congradulation!",
-				"sms_value" => "You have been added a passenger with successfully."
-			);
-			echo json_encode($arr_errors);
-		}
-
-	}*/
 
 	/*
 	* Change session amount of people
@@ -939,6 +1048,8 @@ class Site extends MU_Controller {
 			);
 			echo json_encode($arr_errors);
 		} else {
+			$password = $this->generatePassword();
+			$this->session->set_userdata('pass_password',$password);
 			$dataTransportation = $this->getSessionTransportations();
 			$dataAccommodation = $this->getSessionAccommodation();
 			$dataActivity = $this->getSessionActivities();
@@ -955,6 +1066,7 @@ class Site extends MU_Controller {
 	            'pass_country'      => $this->session->userdata('pass_country'),
 	            'pass_address'      => $this->session->userdata('pass_address'),
 	            'pass_company'      => $this->session->userdata('pass_company'),
+	            'pass_password'	=> $password,
 	            'pass_gender'       => $this->session->userdata('pass_gender'),
 	            'pass_status'       => $this->session->userdata('pass_status'),
 	            'pass_deleted'      => $this->session->userdata('pass_deleted'),
@@ -985,7 +1097,7 @@ class Site extends MU_Controller {
 					if($existORnot != "exist"){
 						$result = $this->mod_index->insertSubscriber($subsc);
 						if($result > 0){
-							//$this->emailTOadmin($subsc);
+							// $this->emailTOadmin($subsc);
 						}
 					}
 				}
@@ -1125,8 +1237,8 @@ class Site extends MU_Controller {
 
 		if ($this->general_lib->get_transportation() != "") {
 			foreach ($this->general_lib->get_transportation() as $id) {
-				$field_select = 'tp_id, tp_name, tp_purchaseprice, tp_saleprice, tp_actualstock, tp_texteticket';
-				$object = $this->mod_fecustomize->get_info_of_main_obj('transportation', 'tp_id', $id, $field_select);
+				// $field_select = 'tp_id, tp_name, tp_purchaseprice, tp_saleprice, tp_actualstock, tp_texteticket';
+				$object = $this->mod_fecustomize->get_info_of_transportation($id);
 				$products = array();
 				$num_people = array();
 				if (isset($pass_joined[$id])) {
@@ -1139,8 +1251,8 @@ class Site extends MU_Controller {
 				}
 				if (isset($extra_pro[$id])) {
 					foreach ($extra_pro[$id] as $product_id) {
-						$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
-						$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
+						// $field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
+						$product = $this->mod_fecustomize->get_info_of_extra_service($product_id);
 						$product->amount = $amount_extra_pro[$id][$product_id];
 						array_push($products, $product);
 					}
@@ -1177,8 +1289,7 @@ class Site extends MU_Controller {
 		$arraAccommodations = array();
 		if ($this->general_lib->get_accommodation() != "") {
 			foreach ($this->general_lib->get_accommodation() as $id) {
-				$field_select = 'acc_id, acc_name, acc_texteticket, acc_purchaseprice, acc_saleprice, acc_actualstock, classification_id';
-				$object = $this->mod_fecustomize->get_info_of_main_obj('accommodation', 'acc_id', $id, $field_select);
+				$object = $this->mod_fecustomize->get_info_of_accommodation($id);
 				$num_people = array();
 				$products = array();
 				$arr_rooms = array();
@@ -1195,9 +1306,8 @@ class Site extends MU_Controller {
 				
 				if (isset($extra_pro[$id])) {
 					foreach ($extra_pro[$id] as $product_id) {
-						$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
-						$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
-						$product->amount = $amount_extra_pro[$id][$product_id];
+						$product = $this->mod_fecustomize->get_info_of_extra_service($product_id);
+						$product->amount = $amount_extra_pro[$id][$product_id]; //chhing
 						array_push($products, $product);
 					}
 				}
@@ -1262,8 +1372,7 @@ class Site extends MU_Controller {
 		$arraActivities = array();
 		if ($this->general_lib->get_main_activities() != "") {
 			foreach ($this->general_lib->get_main_activities() as $id) {
-				$field_select = 'act_id, act_name, act_texteticket, act_purchaseprice, act_saleprice, act_actualstock';
-				$object = $this->mod_fecustomize->get_info_of_main_obj('activities', 'act_id', $id, $field_select);
+				$object = $this->mod_fecustomize->get_info_of_activity($id);
 				$num_people = array();
 				$products = array();
 				$sub_acts = array();
@@ -1280,19 +1389,34 @@ class Site extends MU_Controller {
 				}
 
 				if (isset($sub_activities[$id])) {
-					foreach ($sub_activities[$id] as $sub_act_id) {
-						$field_select = 'act_id, act_name, act_texteticket, act_purchaseprice, act_saleprice, act_actualstock';
-						$sub_act = $this->mod_fecustomize->get_info_of_main_obj('activities', 'act_id', $sub_act_id, $field_select);
+					foreach ($sub_activities[$id] as $key => $sub_act_id) {
+						$sub_act = $this->mod_fecustomize->get_info_of_activity($sub_act_id);
+						/*if ($key == $id) {
+							if (!empty($sub_act_people[$id][$sub_act_id])) {
+								$sub_act->amount = $sub_act_people[$id][$sub_act_id];
+							}
+						} else {
+							continue;
+						}*/
 						$sub_act->amount = $sub_act_people[$id][$sub_act_id];
+						/*if ($key == $id) {
+							if (isset($sub_act_people[$id])) {
+								if (isset($sub_act_people[$id][$sub_act_id])) {
+									$sub_act->amount = $sub_act_people[$id][$sub_act_id];
+								}
+							}
+						} else {
+							$sub_act->amount = '0';
+						}*/
 						array_push($sub_acts, $sub_act);
 					}
 
 				}
+				// die();
 
 				if (isset($extra_pro[$id])) {
 					foreach ($extra_pro[$id] as $product_id) {
-						$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
-						$product = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $product_id, $field_select);
+						$product = $this->mod_fecustomize->get_info_of_extra_service($product_id);
 						$product->amount = $amount_extra_pro[$id][$product_id];
 						array_push($products, $product);
 					}
@@ -1324,9 +1448,8 @@ class Site extends MU_Controller {
 		$arraExtServices = array();
 		if ($extra_services != "") {
 			foreach ($extra_services as $id) {
-				$field_select = 'ep_id, ep_name, ep_perperson, ep_perbooking, ep_etickettext, ep_purchaseprice, ep_saleprice, ep_actualstock';
-				$object = $this->mod_fecustomize->get_info_of_main_obj('extraproduct', 'ep_id', $id, $field_select);
-				$object->amount = $amount_extra_pro[$id][0];
+				$object = $this->mod_fecustomize->get_info_of_extra_service($id);
+				$object->amount = $amount_extra_pro[$id][0]; //chhing
 				$arraExtService = array(
 					$id => $object
 				);
@@ -1361,19 +1484,43 @@ class Site extends MU_Controller {
 		$adminMail = MU_Model::getAdminEmail();
 		if($adminMail == ""){
 			$adminMail = "mysoftware77@gmail.com";
-		}
-	$message = "Firstname: ".$data['sub_fname'].
-	"Lastname: ".$data['sub_lname'].
-	"Email: ".$data['sub_email'];
+		}		
+		$message = "Firstname: ".$data['sub_fname'].
+		"Lastname: ".$data['sub_lname'].
+		"Email: ".$data['sub_email'];
 		$this->email->clear();	    
-        $this->email->to($adminMail);
-        $this->email->from($data['sub_email']);
-        $this->email->subject("You got a new subscriber.");
-        $this->email->message($message);
-        $send = $this->email->send();
+	        $this->email->to($adminMail);
+	        $this->email->from($data['sub_email']);
+	        $this->email->subject("You got a new subscriber.");
+	        $this->email->message($message);
+	        $send = $this->email->send();
+	        if($send){
+	        	$this->emailToPassenger();
+	        }
+	}
+	
+	public function emailToPassenger(){
+		$adminMail = MU_Model::getAdminEmail();
+		$email = $this->session->userdata('pass_email');
+		$password = $this->session->userdata('pass_password');
+		$username = $this->session->userdata('pass_fname');
+		if($adminMail == ""){
+			$adminMail = "mysoftware77@gmail.com";
+		}
+		$message = "You have been Booking your trip and you have created an account in the Munich Site". "\n" ." So these are the Username and Password of your account"."\n";
+		$message .= "Username : ".$email."\n";
+		$message .= "Password : ".$password."\n";
+		$this->email->clear();	    
+	        $this->email->to($email);
+	        $this->email->from($adminMail);
+	        $this->email->subject("Welcome to Munich Booking !");
+	        $this->email->message($message);
+	        $send = $this->email->send();
+
 	}
 
-	// Response when using ajax call to show room booking available
+        
+        // Response when using ajax call to show room booking available
 	function getAmountRoomBooking() {
 		$checked_in = $this->input->post('checked_in');
 		$checked_out = $this->input->post('checked_out');
@@ -1491,34 +1638,12 @@ class Site extends MU_Controller {
 
 		echo $panel;
 	}
-
-	/*
-	* Public function subscriber
-	* @noparam
-	* insert record to table subscribe
-	* echo true or false.
-	*/
-	/*public function subscriber(){
-		$subsc['sub_fname'] = $this->input->post("fs_name");
-		$subsc['sub_lname'] = $this->input->post("ls_name");
-		$subsc['sub_email'] = $this->input->post("es_name");
-		$subsc['sub_status'] = 1;
-		$subsc['role_id'] 	= 5;
-		if($subsc['sub_email'] != ""){
-			$existORnot = MU_Model::checkExistEmail('subscriber','sub_email',array("sub_email"=>$subsc['sub_email']));
-			if($existORnot != "exist"){
-				$result = $this->mod_index->insertSubscriber($subsc);
-				if($result > 0){
-					$this->emailTOadmin($subsc);
-					echo "t";
-				}else{
-					echo "f";
-				}
-			}
-		}else{
-			echo "f";
-		}
-	}*/
+	
+/////////////////////////   END CUSTOMIZE SECTION    ///////////////////////////////////
+  
+  
+  
+/////////////////////////////////// PACKAGE SECTION ///////////////////////////////////////
 
 	/*
 	* public function packages
@@ -1537,34 +1662,634 @@ class Site extends MU_Controller {
 			$fe_data["allpackages"] = $this->allpackages();		 	
 		}elseif($display_page == "details"){
 			$fe_data["packagesdetail"] = $this->packagesDetail();
+		}elseif($display_page == "showservice"){
+			$fe_data["packageExtraservice"] = $this->ChooseExtraService();
+			// if($this->session->userdata('nop')){
+			// 	$amount = $this->session->userdata('nop');
+			// 	for($i = 1; $i <= $amount; $i++){
+			// 		$selamount[$i] = $i;
+			// 	}
+
+			// 	$fe_data["selectAmount"] = $selamount;
+			// }
+		}elseif($display_page == "infostep"){
+			$fe_data["packagefinalStep"] = $this->showFinalStep();
+		}elseif($display_page == "tripinfo"){
+			if($this->input->post('tripinfoSubmit')){
+				$config = array(
+					 array('field' => 'numPassenger','label' => 'amount of passenger','rules' => 'trim|required|integer'),
+					 array('field' => 'dpDate','label' => 'departure date','rules' => 'trim|required'),
+					 // array('field' => 'rtDate','label' => 'return date','rules' => 'trim|required'),
+				);
+				$this->form_validation->set_rules($config);
+	           		if ($this->form_validation->run() != FALSE) {
+	
+	           			$dpdate = $this->input->post('dpDate');
+	           			// $rtdate = $this->input->post('rtDate');
+	           			$numOfPass = $this->input->post('numPassenger');
+	
+	           			// if ((strtotime($dpdate)) <= (strtotime($rtdate))){
+	           				$this->session->set_userdata('dpd', $dpdate);
+	           				// $this->session->set_userdata('rtd', $rtdate);
+	           				$this->session->set_userdata('nop', $numOfPass);
+	           				redirect('site/packages/');
+	           			// }else{
+	           			// 	$fe_data['dpdrtderror'] = "The return date cannot bigger than departure date.";
+	           			// }
+	           		}
+			}
 		}
 		$this->load->view('index', $fe_data);
 	}
 
-	/** public function allpackage
-		* @noparam
-		* @access by packages()
-		* return all available packages.
+	/*
+	* public function allpackage
+	* @noparam
+	* @access by packages()
+	* return all available packages.
 	*/
 	public function allpackages(){
 		$ftv = $this->session->userdata('ftvID');
 		$lc = $this->session->userdata('lcID');
-		$allpackages = $this->mod_fepackage->getallpackages($ftv, $lc);
+		$dpdate = $this->session->userdata('dpd');
+		$ppl = $this->session->userdata('nop');
+		// $rtdate = $this->session->userdata('rtd');
+		$allpackages = $this->mod_fepackage->getallpackages($ppl, $ftv, $lc, $dpdate);
 		return $allpackages;
 	}
 
-	/** public function packagesDetail
-		* @noparam
-		* @access by packages()
-		* return detail of each package
+	/*
+	* public function packagesDetail
+	* @noparam
+	* @access by packages()
+	* return detail of each package
 	*/
 	public function packagesDetail(){
 		$key = "90408752631";
-        $pk_id = base64_decode($this->uri->segment(5));
-        $pk_id = preg_replace(sprintf('/%s/', $key), '', $pk_id);
+        	$pk_id = base64url_decode($this->uri->segment(5), $key);
+        	$this->session->set_userdata('pkID', $pk_id);
 		$detailpackages = $this->mod_fepackage->getdetailpackages($pk_id);
 		return $detailpackages;
 	}
+
+	/*
+	* public function ChooseExtraService
+	* @noparam
+	* @access by 
+	* return detail of extraproduct
+	*/
+
+	public function ChooseExtraService(){
+		$servcies = $this->mod_fepackage->getExtraService();
+		if($this->input->post('submitService')){
+			$epschecked = $this->input->post('epchecked');
+			$epscheckedamount = $this->input->post('useramount');
+			if($epschecked == false){				
+				$this->session->unset_userdata('extraservice');
+				redirect('site/packages/infostep/');
+			} else {
+				$this->session->set_userdata('extraservice', $epschecked);
+				$this->session->set_userdata('extraserviceamount', $epscheckedamount);
+				redirect('site/packages/infostep/');
+			}	
+		}
+		return $servcies;
+	}
+
+	/*******/
+	public function showFinalStep(){
+
+		$error['mobilephoneinput'] = '';
+		$error['aboutYouInput'] = '';
+
+		if($this->input->post('btnFinalstep')){
+			$config = array(
+				// array('field' => 'numPassenger','label' => 'number of passenger','rules' => 'trim|required|integer|max_length[2]'),
+				// array('field' => 'dpDate','label' => 'departure date','rules' => 'trim|required'),
+				// array('field' => 'rtDate','label' => 'return date','rules' => 'trim|required'),
+				array('field' => 'fname','label' => 'first name','rules' => 'trim|required|max_length[50]'),
+				array('field' => 'lname','label' => 'last name','rules' => 'trim|required|max_length[50]'),
+				array('field' => 'uemail','label' => 'email','rules' => 'trim|required|valid_email'),
+				array('field' => 'phone','label' => 'phone','rules' => 'trim|required'),
+				array('field' => 'country','label' => 'country','rules' => 'trim|required'),
+				array('field' => 'city','label' => 'city','rules' => 'trim|required'),
+				array('field' => 'address','label' => 'address','rules' => 'trim|required'),
+			);
+
+			// booking data
+			$insertBooking['bk_total_people'] = $this->session->userdata('nop');
+			$insertBooking['bk_arrival_date'] = $this->session->userdata('dpd');
+			// $insertBooking['bk_return_date'] = $this->session->userdata('rtd');			
+    			$today = date("Y-m-d");
+			$insertBooking['bk_date'] = $today;
+			$insertBooking['bk_type'] = 'package';
+			$bkfee = $this->input->post('bookingfee');
+			$pkprice = $this->input->post('pkPrice');
+			// passenger data
+			$insertPassenger['pass_fname'] = $this->input->post('fname');
+			$insertPassenger['pass_lname'] = $this->input->post('lname');
+			$insertPassenger['pass_gender'] = $this->input->post('gender');
+			$insertPassenger['pass_email'] = $this->input->post('uemail');
+			$insertPassenger['pass_phone'] = $this->input->post('phone');
+			$insertPassenger['pass_mobilephone'] = $this->input->post('mobilephone');
+			$insertPassenger['pass_country'] = $this->input->post('country');
+			$insertPassenger['pass_city'] = $this->input->post('city');
+			$insertPassenger['pass_address'] = $this->input->post('address');
+			$insertPassenger['pass_about'] = $this->input->post('aboutYou');
+			$insertPassenger['pass_status'] = 1;
+			$insertPassenger['pass_deleted'] = 0;
+			// $insertPassenger[''] = $this->input->post('');
+			// other
+			$payby = $this->input->post('payby');
+
+			$this->form_validation->set_rules($config);
+            if ($this->form_validation->run() == FALSE) {
+            	if($this->inputvalidation()) $error = $this->inputvalidation();
+            	if($this->input->post('term')) $error['termcheck'] = TRUE; else $error['termcheck'] = FALSE;
+            	if($this->input->post('bookingfee')) $error['bookingfeecheck'] = TRUE; else $error['bookingfeecheck'] = FALSE;
+            	if($this->input->post('payby')) $error['paycheck'] = $this->input->post('payby'); else $error['paycheck'] = FALSE;
+            	if($this->input->post('gender')) $error['gendercheck'] = $this->input->post('gender'); else $error['gendercheck'] = FALSE;
+            	if($this->input->post('mobilephone')) $error['mobilephoneinput'] = $this->input->post('mobilephone'); else $error['mobilephoneinput'] = "";
+            	if($this->input->post('aboutYou')) $error['aboutYouInput'] = $this->input->post('aboutYou'); else $error['aboutYouInput'] = "";
+            	return $error;
+            }else{
+            	if(! $this->inputvalidation() && $this->input->post('term') && $this->input->post('bookingfee') && $this->input->post('term') && $this->input->post('gender') && $this->input->post('payby')){
+            		$insertBooking['bk_pay_price'] = $bkfee + $pkprice;
+            		$insertBooking['bk_addmoreservice'] = NULL;
+            		if($this->session->userdata('extraservice')){
+            			$addservice = $this->session->userdata('extraservice');
+            			$addserviceamount = $this->session->userdata('extraserviceamount');
+            			foreach($addservice as $services){
+            				$extrapro = $this->mod_fepackage->getExtraProductById($services);
+            				$extrapro = json_decode(json_encode($extrapro->result()), true);
+            				$insertBooking['bk_pay_price'] += ($extrapro[0]['ep_saleprice']*$addserviceamount[$services]);
+            				$insertBooking['bk_addmoreservice'][$services] = $extrapro[0];
+            				$insertBooking['bk_addmoreservice'][$services]['amount'] = $addserviceamount[$services];
+            			}
+            		}
+            		if($insertBooking['bk_addmoreservice'] != NULL) $insertBooking['bk_addmoreservice'] = serialize($insertBooking['bk_addmoreservice']);
+            		$insertBooking['bk_pay_price'] = $insertBooking['bk_pay_price'] * $insertBooking['bk_total_people'];
+            		$insertBooking['bk_balance'] = $insertBooking['bk_pay_price']; // balance will update a deposit with pay now process
+            		
+            		$bookingId = $this->mod_fepackage->insertDataBooking($insertBooking);
+            		if($bookingId){
+
+            			$this->session->set_userdata('bookingid', $bookingId);
+            			$insertPassenger['pass_password'] = $this->generatePassword();
+            			$passId = $this->mod_fepackage->insertDataPassenger($insertPassenger);
+            			if($passId){
+            				$this->session->set_userdata('passengerid', $passId);
+            				$pbID = $this->mod_fepackage->insertPassengerBooking($passId, $bookingId);
+            				if($pbID){
+
+            					// need to insert booking ID and package ID into table sale package and update package stock
+		            			$pkID = $this->session->userdata('pkID');
+		            			$this->mod_booking->insertsalepackage($pkID, $bookingId);
+		            			// $pkStock = MU_Model::getForiegnTableName('package_conjection',array('pkcon_id'=> $pkID), 'pkcon_actualstock');
+		                        // if($pkStock > 0){
+		                        //    $pkStock = $pkStock - 1;
+		                        //    MU_Model::updateStockAll('package_conjection',array('pkcon_id'=> $pkID),array('pkcon_actualstock'=> $pkStock));
+		                        //}
+
+            					$this->sendemail($insertBooking, $insertPassenger);
+            					$key = "NLOPSYSMB";
+        						$key = $key.$bookingId;
+        						$bkID = base64url_encode($key);
+            					if($payby == 'paylater'){ 
+            						$this->session->set_userdata('successbooking', 'true');
+            						$this->clearSessionPackage(array('extraservice','extraserviceamount','pkID','nop','dpd','ftvID', 'lcID'));        						
+            						redirect("site/pagesucceed/".$bkID, "location");
+            						// $this->paypal($insertBooking, $insertPassenger, $bookingId);
+            					}elseif($payby == 'paynow'){
+            						redirect("site/paynow/".$bkID, "location");
+            						// $this->ideal($insertBooking, $insertPassenger);
+            					}
+            				}
+            			}else{
+            				$this->session->unset_userdata('bookingid');
+            			}
+            		}else{
+            			$this->session->unset_userdata('bookingid');
+            		}
+            	}else{
+            		$error = $this->inputvalidation();
+            		if($this->input->post('term')) $error['termcheck'] = TRUE; else $error['termcheck'] = FALSE;
+	            	if($this->input->post('bookingfee')) $error['bookingfeecheck'] = TRUE; else $error['bookingfeecheck'] = FALSE;
+	            	if($this->input->post('payby')) $error['paycheck'] = $this->input->post('payby'); else $error['paycheck'] = FALSE;
+	            	if($this->input->post('gender')) $error['gendercheck'] = $this->input->post('gender'); else $error['gendercheck'] = FALSE;
+	            	if($this->input->post('mobilephone')) $error['mobilephoneinput'] = $this->input->post('mobilephone'); else $error['mobilephoneinput'] = "";
+	            	if($this->input->post('aboutYou')) $error['aboutYouInput'] = $this->input->post('aboutYou'); else $error['aboutYouInput'] = "";
+	            	return $error;
+            	}
+            }
+          }
+		return $error;
+	}
+
+	function inputvalidation(){
+		$a = array();
+		if($this->input->post('uemail')){
+			if($this->emailExistCheck($this->input->post('uemail'))){
+				$a['emailerror'] = "The email already used...";
+			}
+		}
+
+		if($this->input->post('fname')){
+			if(! $this->alpha_dash_space($this->input->post('fname'))){
+				$a['fnameError'] = "The first name was not allowed specail charactor...";
+			}
+		}
+
+		if($this->input->post('lname')){
+			if(! $this->alpha_dash_space($this->input->post('lname'))){
+				$a['lnameError'] = "The last name was not allowed specail charactor...";
+			}			
+		}
+
+		if($this->input->post('phone')){
+			if(! $this->formatPhone($this->input->post('phone'))){
+				$a['phoneError'] = "Invalid format of phone number...";
+			}
+		}
+		
+		if($this->input->post('mobilephone')){
+			if(! $this->formatPhone($this->input->post('mobilephone'))){
+				$a['mobilePhoneError'] = "Invalid format of mobile phone number...";
+			}
+		}
+
+		if($a == false){
+			return false;
+		}else{
+			return $a;
+		}
+	}
+
+	// Allow the string input only the alphabet, dash, and space
+	function alpha_dash_space($name)
+	{
+	    return ( ! preg_match("/^([-a-z_ ])+$/i", $name)) ? FALSE : TRUE;
+	}
+
+	// Check the email user existing.
+	function emailExistCheck($email){
+		$emailRecord = MU_Model::getRecordById('passenger', array('pass_email' => $email));
+		if($emailRecord->num_rows() > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	// check phone format
+	public function formatPhone($phone){
+		$phone_pattern_one = "/^\d(?:[-\s]?\d){5,14}$/";
+		$phone_pattern_two = "/^\+?\d(?:[-\s]?\d){6,15}$/";
+		if(preg_match($phone_pattern_one, $phone)){;
+			return true;
+		}elseif(preg_match($phone_pattern_two, $phone)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	/*
+	*	Function generate password
+	*/
+	function generatePassword(){
+	 	// generate password
+		$alph = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789@#$";
+		$pasword = array(); // remember to declare $pass as an array
+		$alphLength = strlen($alph) - 1; // put the length -1 in cache
+		for ($i = 0; $i < 8; $i++) {
+			$n = rand(0, $alphLength);
+			$pasword[] = $alph[$n];
+		}
+		$PasswordGenerate = implode($pasword); //turn the array into a string
+		return $PasswordGenerate;
+	}
+	
+	/////////////// function send email to admin and access to paypal ///////////////////////
+
+	public function sendemail($booking, $passenger){
+		$adminEmail = MU_Model::getAdminEmail();
+		$this->email->set_mailtype("html"); 
+	    $this->email->clear();
+        $msgTo = $this->email->to($passenger['pass_email']);
+        $msgFrom = $this->email->from($adminEmail); // get admin email from table passenger.
+        $msgBcc = $this->email->bcc($adminEmail); // get admin email from table passenger.
+        $msgSubject = $this->email->subject("Confirmation and Login Information");  
+        $messages = '<p>Dear '.$passenger['pass_fname'].' '.$passenger['pass_lname'].',</p>
+<p>Thank for using our service and product which you have booking tour by the following information below: </p>
+<span><b>Booking Information</b></span><br />
+<span>Booking date: </span><span>'.$booking['bk_date'].'</span><br />
+<span>Departure date: </span><span>'.$booking['bk_arrival_date'].'</span><br />
+<span>Return date: </span><span>'.$booking['bk_return_date'].'</span><br />
+<span>Booking type: </span><span>'.$booking['bk_type'].'</span><br />
+<span>Total people: </span><span>'.$booking['bk_total_people'].'</span><br />
+<span>Booking price: </span><span>'.$booking['bk_pay_price'].'$</span><br /><br />
+<span><b>Your Information</b></span><br />
+<span>Name: </span><span>'.$passenger['pass_fname'].' '.$passenger['pass_lname'].'</span><br />
+<span>Email: </span><span>'.$passenger['pass_email'].'</span><br />
+<span>Phone: </span><span>'.$passenger['pass_phone'].'</span><br />
+<span>Country: </span><span>'.$passenger['pass_country'].'</span><br />
+<span>City: </span><span>'.$passenger['pass_city'].'</span><br />
+<span>Address: </span><span>'.$passenger['pass_address'].'</span><br />
+<span>About you: </span><span>'.$passenger['pass_about'].'</span><br /><br />
+<span><b>Login Information</b></span><br />
+<span>Email: </spaln><span>'.$passenger['pass_email'].'</span><br />
+<span>Password: </spaln><span>'.$passenger['pass_password'].'</span><br />
+<p>Click <a href="'.base_url().'fe_login/loginuser">login</a> to detail about booking or download e-ticket.</p>
+<span>NOTE: you must be easily accessible throughout the procedure.</span><br />
+<span>Team: </span><br />
+<span>Email </span><br />
+';
+		$this->email->message($messages);
+        $resultemail = $this->email->send();
+
+        if(! $resultemail){
+        	die('Error...');
+        }
+	}
+
+	// public function paypal($booking, $passenger, $bookingId){
+	// 	$key = 'NLOPSYSMB'.$bookingId;
+	// 	$bk_id = base64url_encode($key);
+	// 	$parameters = array(
+	// 		'cmd' => '_xclick',
+	// 		'business' => 'john@nl.nl',
+	// 		'amount' => $booking['bk_pay_price'],
+	// 		'item_name' => 'MB'.$bookingId,
+	// 		'currency_code' => 'USD',
+	// 		'return' => 'http://masterbooking.codingate.com/nl/site/ipn_listener',
+	// 		'cancel_return' => 'http://masterbooking.codingate.com/nl/site/payCancel/'.$bk_id,
+	// 		'notify_url' => 'http://masterbooking.codingate.com/nl/site/ipn_listener'
+	// 	);
+	// 	$url = $this->urlparameter($parameters);		
+	// 	header("Location: ". $url);
+	// }
+	
+	// public function urlparameter($parameters){
+	// 	parse_str($_SERVER['QUERY_STRING'], $old_parameters_as_array);
+	//     return "https://www.sandbox.paypal.com/cgi-bin/webscr".'?'.http_build_query(array_merge($old_parameters_as_array, $parameters));
+	// }
+
+	// // identify the pay IPN
+	// function ipn_listener(){
+	
+	// // Reading POSTed data directly from $_POST causes serialization issues with array data in the POST.
+	// 	// Instead, read raw POST data from the input stream. 
+	// 	$raw_post_data = file_get_contents('php://input');
+	// 	$raw_post_array = explode('&', $raw_post_data);
+	// 	$myPost = array();
+	// 	foreach ($raw_post_array as $keyval) {
+	// 	  $keyval = explode ('=', $keyval);
+	// 	  if (count($keyval) == 2)
+	// 	     $myPost[$keyval[0]] = urldecode($keyval[1]);
+	// 	}
+	// 	// read the IPN message sent from PayPal and prepend 'cmd=_notify-validate'
+	// 	$req = 'cmd=_notify-validate';
+	// 	if(function_exists('get_magic_quotes_gpc')) {
+	// 	   $get_magic_quotes_exists = true;
+	// 	} 
+	// 	foreach ($myPost as $key => $value) {        
+	// 	   if($get_magic_quotes_exists == true && get_magic_quotes_gpc() == 1) { 
+	// 	        $value = urlencode(stripslashes($value)); 
+	// 	   } else {
+	// 	        $value = urlencode($value);
+	// 	   }
+	// 	   $req .= "&$key=$value";
+	// 	}
+		 
+	// 	// POST IPN data back to PayPal to validate
+		
+	// 	$ch = curl_init('https://www.sandbox.paypal.com/cgi-bin/webscr');
+	// 	curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+	// 	curl_setopt($ch, CURLOPT_POST, 1);
+	// 	curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+	// 	curl_setopt($ch, CURLOPT_POSTFIELDS, $req);
+	// 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+	// 	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+	// 	curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
+	// 	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
+		
+	// 	// In wamp-like environments that do not come bundled with root authority certificates,
+	// 	// please download 'cacert.pem' from "http://curl.haxx.se/docs/caextract.html" and set 
+	// 	// the directory path of the certificate as shown below:
+	// 	// curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__) . '/cacert.pem');
+		
+	// 	if( !($res = curl_exec($ch)) ) {
+	// 	    // error_log("Got " . curl_error($ch) . " when processing IPN data");
+	// 	    echo "exist Here curl_curl_exec";
+	// 	    curl_close($ch);
+	// 	    exit;
+	// 	}
+	// 	curl_close($ch);
+		 
+	// 	// Inspect IPN validation result and act accordingly
+		
+	// 	if (strcmp ($res, "VERIFIED") == 0) {
+	// 	    // The IPN is verified, process it:
+	// 	    // check whether the payment_status is Completed
+	// 	    // check that txn_id has not been previously processed
+	// 	    // check that receiver_email is your Primary PayPal email
+	// 	    // check that payment_amount/payment_currency are correct
+	// 	    // process the notification
+			
+	// 	    // assign posted variables to local variables
+	// 	    $item_name = $_POST['item_name'];
+	// 	    $item_number = $_POST['item_number'];
+	// 	    $payment_status = $_POST['payment_status'];
+	// 	    $payment_amount = $_POST['mc_gross'];
+	// 	    $payment_currency = $_POST['mc_currency'];
+	// 	    $txn_id = $_POST['txn_id'];
+	// 	    $receiver_email = $_POST['receiver_email'];
+	// 	    $payer_email = $_POST['payer_email'];
+	// 	    $pay_date = $_POST['payment_date'];
+		    
+	// 	    // IPN message values depend upon the type of notification sent.
+	// 	    // Update table booking about payment_status(1 == "Completed", 2 = "Panding", 3 = "Failed", 4 = "Unclaimed") and pay_id (txn_id)
+		    
+	// 	    if($item_name){
+	// 		   	$idBooking = explode("B", $item_name);
+	// 		   	if(count($idBooking) > 0){
+	// 		   		$this->mod_fepackage->updateBookingPackage($idBooking[1], $payment_status,$txn_id, $pay_date);
+	// 		   		$this->mod_fepackage->updatePackage($idBooking[1]);
+	// 		   	}
+	// 	    }
+
+	// 	    $key = 'NLOPSYS'.$item_name;
+	// 	    $bk_id = base64url_encode($key);
+	// 	    redirect("site/paysucceed/".$bk_id, "location");
+	// 	} else if (strcmp ($res, "INVALID") == 0) {
+	// 	    // IPN invalid, log for manual investigation
+	// 	    echo "The response from IPN was: <b>" .$res ."</b>";
+	// 	}
+	
+	// }
+	
+	public function clearSessionPackage($ssion = array()){
+		if($ssion != false){
+			foreach($ssion as $ss){
+				if($this->session->userdata($ss)){
+					$this->session->unset_userdata($ss);
+				}
+			}
+		}
+	}
+	
+	public function pagesucceed($bkID = false){
+		$key = "NLOPSYSMB";
+		$bookingID = $bkID;
+		$bkID = base64url_decode($bkID, $key);
+		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
+		$fe_data['getbooking'] = MU_Model::getRecordById('booking',array('bk_id'=>$bkID));
+		$mainpassID = MU_Model::getForiegnTableName('passenger_booking', array('pbk_bk_id'=>$bkID), 'pbk_pass_id');
+		$passbooking = MU_Model::getForiegnTableName('passenger_booking', array('pbk_bk_id'=>$bkID), 'pbk_pass_come_with');
+		if($passbooking){			
+			$fe_data['passengerbooking'] = unserialize($passbooking);
+			$fe_data['passengerbookingrecord'] = $this->mod_fepackage->getPassengerBooking($fe_data['passengerbooking']);
+			// getRecordById
+		}else{
+			$fe_data['passengerbooking'] = array();
+		}
+		
+		$fe_data['passengerbooking_info'] = $this->mod_profilefe->passenger_bookedform($mainpassID);
+		$fe_data['passDetail'] = MU_Model::getRecordById('passenger', array('pass_id' => $mainpassID));
+		$np = MU_Model::getForiegnTableName('booking', array('bk_id'=>$bkID), 'bk_total_people');
+		$fe_data['packagefinalStep'] = array();
+		$fe_data['packagefinalStep']['mobilephoneinput'] = '';
+		$fe_data['packagefinalStep']['aboutYouInput'] = '';
+		if(($fe_data['passengerbooking'] != false) && ((count($fe_data['passengerbooking'])+1) == $np)){
+			$fe_data['errornp'] = 'You have booking for '.($np - 1).' passengers including you. For add more amount of passenger, please make a <a href="#" data-toggle="modal" data-target=".pkcontactadmin">request to admininistor</a>.';
+		}
+		if($this->input->post('submitmorepassenger')){
+			// passenger data
+			$insertPassenger['pass_fname'] = $this->input->post('fname');
+			$insertPassenger['pass_lname'] = $this->input->post('lname');
+			$insertPassenger['pass_gender'] = $this->input->post('gender');
+			$insertPassenger['pass_email'] = $this->input->post('uemail');
+			$insertPassenger['pass_phone'] = $this->input->post('phone');
+			$insertPassenger['pass_mobilephone'] = $this->input->post('mobilephone');
+			$insertPassenger['pass_country'] = $this->input->post('country');
+			$insertPassenger['pass_city'] = $this->input->post('city');
+			$insertPassenger['pass_address'] = $this->input->post('address');
+			$insertPassenger['pass_about'] = $this->input->post('aboutYou');
+			$insertPassenger['pass_addby'] = $mainpassID;
+			$insertPassenger['pass_status'] = 1;
+			$insertPassenger['pass_deleted'] = 0;
+			$insertPassenger['pass_password'] = $this->generatePassword();
+
+			$config = array(
+				array('field' => 'fname','label' => 'first name','rules' => 'trim|required|max_length[50]'),
+				array('field' => 'lname','label' => 'last name','rules' => 'trim|required|max_length[50]'),
+				array('field' => 'uemail','label' => 'email','rules' => 'trim|required|valid_email'),
+				array('field' => 'phone','label' => 'phone','rules' => 'trim|required'),
+				array('field' => 'country','label' => 'country','rules' => 'trim|required'),
+				array('field' => 'city','label' => 'city','rules' => 'trim|required'),
+				array('field' => 'address','label' => 'address','rules' => 'trim|required'),
+			);
+
+			$this->form_validation->set_rules($config);
+			if ($this->form_validation->run() == FALSE) {
+				$error = $this->inputvalidation();
+             	if($this->input->post('gender')) $error['gendercheck'] = $this->input->post('gender'); else $error['gendercheck'] = FALSE;
+   				if($this->input->post('mobilephone')) $error['mobilephoneinput'] = $this->input->post('mobilephone'); else $error['mobilephoneinput'] = "";
+   				if($this->input->post('aboutYou')) $error['aboutYouInput'] = $this->input->post('aboutYou'); else $error['aboutYouInput'] = "";
+				$fe_data['packagefinalStep'] = $error;
+			}else{
+				if(! $this->inputvalidation() && $this->input->post('gender')){
+					if(count($fe_data['passengerbooking']) < ($np - 1)){
+						$passId = $this->mod_fepackage->insertDataPassenger($insertPassenger);
+						$fe_data['passengerbooking'][$passId] = $passId;
+						$updatepassengerbooking['pbk_pass_come_with'] = serialize($fe_data['passengerbooking']);
+						$sadd = $this->mod_fepackage->updatePassengerBooking($bkID, $mainpassID, $updatepassengerbooking);
+						if($sadd){
+							redirect('site/redirectBack/pagesucceed/'.$bookingID);
+						}
+					}else{
+						$fe_data['errornp'] = 'You have booking for '.($np - 1).' passengers including you. For add more amount of passenger, please make a <a href="#" data-toggle="modal" data-target=".pkcontactadmin">request to admininistor</a>.';
+					}
+				}else{
+					$error = $this->inputvalidation();
+	            	if($this->input->post('gender')) $error['gendercheck'] = $this->input->post('gender'); else $error['gendercheck'] = FALSE;
+	            	if($this->input->post('mobilephone')) $error['mobilephoneinput'] = $this->input->post('mobilephone'); else $error['mobilephoneinput'] = "";
+	            	if($this->input->post('aboutYou')) $error['aboutYouInput'] = $this->input->post('aboutYou'); else $error['aboutYouInput'] = "";
+					$fe_data['packagefinalStep'] = $error;
+				}
+			} // validation running
+		}
+		$fe_data['site_setting'] = "pagesucceed";
+		$this->load->view('index', $fe_data);
+	}
+
+	public function redirectBack($uri1 = false, $uri2 = false){
+		redirect('site/'.$uri1.'/'.$uri2);
+	}
+
+	public function paynow($bookingID = false){
+		$fe_data['menu_fe'] = $this->mod_index->getAllMenu();
+		$fe_data['site_setting'] = "paynow";
+		$this->load->view('index', $fe_data);
+	}
+	
+	public function pkcontactadmin(){	    	
+	    $uri3 = $this->uri->segment(4);
+	    if($this->input->post('btnSend')){		
+			
+		// $adminEmail = MU_Model::getAdminEmail();
+		$adminEmail = "lannsolak@gmail.com";
+		$this->email->set_mailtype("html"); 
+	        $sendFrom = $this->input->post('txtemail');
+	        $subject = $this->input->post('txtsubject');
+	        $text = $this->input->post('txtmessage');
+	        $bkID = $this->input->post('txtbkID');
+	        $message = "<p>Booking id: ".$bkID."</p>
+	        <p>".$text."</p>";
+
+	        $this->email->clear();
+	        $this->email->to($adminEmail);
+	        $this->email->from($sendFrom);
+	        $this->email->subject($subject);
+	        $this->email->message($message);
+	        $send = $this->email->send();
+	        if($send){
+	        	$this->session->set_userdata('sendsuccess', 'true');
+	        }else{
+	        	$this->session->set_userdata('sendfail', 'false');	        	
+	        }
+	    }else{
+	        	$this->session->set_userdata('nosend', 'false');
+	    }
+        	redirect('site/pagesucceed/'.$uri3);
+	  }
+	  
+	// Ideal system from Dutch
+
+	// $passenger['pass_fname']
+	// $passenger['pass_lname']
+	// $passenger['pass_gender']
+	// $passenger['pass_email']
+	// $passenger['pass_phone']
+	// $passenger['pass_mobilephone']
+	// $passenger['pass_country']
+	// $passenger['pass_city']
+	// $passenger['pass_address']
+	// $passenger['pass_about']
+	// $passenger['pass_password']
+
+	// $booking['bk_total_people']
+	// $booking['bk_arrival_date']
+	// $booking['bk_return_date']
+	// $booking['bk_date']
+	// $booking['bk_type']
+	// $booking['bk_pay_price']
+	// $booking['bk_addmoreservice']
+
+	// public function ideal($booking, $passenger){
+	// 	return true;
+	// }
 }
 
 /* End of file site.php */

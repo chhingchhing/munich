@@ -393,6 +393,96 @@ class Mod_FeCustomize extends MU_model {
         }
     }
 
+
+
+
+
+
+
+
+    // Get information of accommodation
+    function get_info_of_accommodation($acc_id) {
+        
+        $query = $this->db
+            ->select("*")
+            ->join('acc_calendar','accommodation.acc_id = acc_calendar.accomodations_id')
+            ->join('calendar_available', 'calendar_available.ca_id = acc_calendar.calendar_available_id')
+            ->join('location', 'accommodation.location_id = location.lt_id')
+            ->join('supplier', 'accommodation.acc_supplier_id = supplier.sup_id')
+            ->join('festival', 'accommodation.acc_ftv_id = festival.ftv_id')
+            ->join('photo','photo.photo_id = accommodation.photo_id')
+            ->join('room_types','room_types.rt_id = accommodation.acc_rt_id')
+            ->join('classification','classification.clf_id = accommodation.classification_id')
+            ->join('hotel_detail','hotel_detail.dhrt_id = room_types.rt_id')
+            ->where('accommodation.acc_deleted',0)
+            ->where('accommodation.acc_id', $acc_id)
+            ->get('accommodation');
+        if ($query->num_rows() > 0) {
+            return $query->row();
+        }
+        return false;
+    }
+
+    // Get information of activity
+    function get_info_of_activity($act_id) {
+        $query = $this->db->select('*')
+            ->join('acti_calendar','activities.act_id = acti_calendar.activities_id', 'left')
+            ->join('calendar_available','calendar_available.ca_id = acti_calendar.calendar_available_id', 'left')   
+            ->join('location', 'location.lt_id = activities.location_id', 'left')
+            ->join('supplier', 'supplier.sup_id = activities.act_supplier_id', 'left')
+            ->join('festival', 'festival.ftv_id = activities.act_ftv_id')
+            ->join('photo','photo.photo_id = activities.photo_id') 
+            ->where("activities.act_deleted", 0)
+            ->where('activities.act_id', $act_id)
+            ->get('activities');
+        if ($query->num_rows() > 0) {
+            return $query->row();
+        }
+        return false;
+    }
+
+    // Get information of transportation
+    public function get_info_of_transportation($tp_id){
+        $query = $this->db->select('*')
+            ->join('tp_calendar','tp_calendar.transport_id = transportation.tp_id', 'left')
+            ->join('calendar_available','calendar_available.ca_id = tp_calendar.calendar_available_id')
+            ->join('photo','photo.photo_id = transportation.photo_id', 'left')
+            ->join('location', 'location.lt_id = transportation.tp_pickuplocation','left')
+            ->join('supplier','supplier.sup_id = transportation.tp_supplier_id', 'left')
+            ->join('festival', 'festival.ftv_id = transportation.tp_ftv_id', 'left')
+            ->where('transportation.tp_deleted',0)
+            ->where('transportation.tp_id', $tp_id)
+            ->get('transportation');
+        if ($query->num_rows() > 0) {
+            return $query->row();
+        }
+        return false;
+    }
+
+    // Get information of extra services
+    public function get_info_of_extra_service($ep_id){
+        $query = $this->db->select('*')
+            ->join('extraproduct_calendar','extraproduct.ep_id = extraproduct_calendar.extraproduct_id')
+            ->join('calendar_available','calendar_available.ca_id = extraproduct_calendar.calendar_available_id')
+            ->join('photo','photo.photo_id = extraproduct.photo_id')
+            ->where('extraproduct.ep_deleted',0)
+            ->where('extraproduct.ep_id', $ep_id)
+            ->get('extraproduct');
+        if ($query->num_rows() > 0) {
+            return $query->row();
+        }
+        return false;
+    } 
+
+
+
+
+
+
+
+
+
+
     function get_info_hotel($rt_id) {
         $query = $this->db
             ->join('hotel_detail', 'hotel.ht_id = hotel_detail.dhht_id')
